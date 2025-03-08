@@ -23,7 +23,6 @@
 <div class="container mt-4">
     <h2 class="text-center mb-4">Danh sách sản phẩm</h2>
 
-    <!-- Bộ lọc & Sắp xếp -->
     <form method="GET" action="ProductListCart" class="row mb-4">
         <div class="col-md-3">
             <select name="categoryId" class="form-select">
