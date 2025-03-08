@@ -23,6 +23,9 @@
     <div class="sub-item">
       <a href="UserAddress.jsp">Địa chỉ của tôi</a>
     </div>
+    <div class="sub-item">
+      <a href="UserChangePassword.jsp">Thay đổi mật khẩu</a>
+    </div>
   </div>
 </div>
 </body>

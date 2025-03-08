@@ -42,8 +42,4 @@ public class CustomerService {
         return customerDao.findByUserName(username);
     }
 
-
-    public static void main(String[] args) {
-
-    }
 }

@@ -25,7 +25,7 @@
                 <th>Tên đăng nhập</th>
                 <td>
                     <input type="text" name="name" size="45"
-                           value="<c:out value='${customer.name}' />"
+                           value="<c:out value='${customer.name}' />" readonly
                     />
                 </td>
             </tr>
@@ -33,7 +33,7 @@
                 <th>Email</th>
                 <td>
                     <input type="text" name="email" size="45"
-                           value="<c:out value='${customer.email}' />"
+                           value="<c:out value='${customer.email}' />" required
                     />
                 </td>
             </tr>

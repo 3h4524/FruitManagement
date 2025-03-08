@@ -48,6 +48,7 @@ public class UserServlet extends HttpServlet {
                 createUser(request, response);
                 break;
             case "update":
+                saveUpdateCustomer(request, response);
                 break;
         }
     }
@@ -118,14 +119,14 @@ public class UserServlet extends HttpServlet {
         int id = Integer.parseInt(request.getParameter("id"));
         Customer customer = customerService.getCustomerById(id);
         request.setAttribute("customer", customer);
-        request.getRequestDispatcher("UserUpdate.jsp").forward(request, response);
+        request.getRequestDispatcher("UserProfile.jsp").forward(request, response);
     }
     public void saveUpdateCustomer(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         HttpSession session = request.getSession();
         Customer customer = (Customer) session.getAttribute("customer");
         if (customer.getName() == null || customer.getPasswordHash() == null || customer.getEmail() == null || customer.getName().isEmpty() || customer.getPasswordHash().isEmpty() || customer.getEmail().isEmpty()) {
             request.setAttribute("error", "Vui lòng nhập đầy đủ thông tin!");
-            request.getRequestDispatcher("UserUpdate.jsp").forward(request, response);
+            request.getRequestDispatcher("UserProfile.jsp").forward(request, response);
             return;
         }
         boolean success = customerService.updateCustomer(customer);
@@ -134,7 +135,7 @@ public class UserServlet extends HttpServlet {
         }else{
             request.setAttribute("error", "Cập nhật thất bại");
         }
-        request.getRequestDispatcher("UserUpdate.jsp").forward(request, response);
+        request.getRequestDispatcher("UserProfile.jsp").forward(request, response);
     }
     public void changePassword(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String oldPassword = request.getParameter("oldPassword");

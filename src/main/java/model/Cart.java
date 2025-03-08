@@ -3,22 +3,27 @@ package model;
 import java.util.List;
 
 public class Cart {
-    private List<Product> products;
-    public Cart() {}
-    public Cart(List<Product> products) {}
+    private List<CartItem> items;
 
-    public List<Product> getProducts() {
-        return products;
+    public Cart(List<CartItem> items) {
+        this.items = items;
     }
 
-    public void setProducts(List<Product> products) {
-        this.products = products;
+    public Cart() {
+    }
+
+    public List<CartItem> getItems() {
+        return items;
+    }
+
+    public void setItems(List<CartItem> items) {
+        this.items = items;
     }
 
     @Override
     public String toString() {
         return "Cart{" +
-                "products=" + products +
+                "items=" + items +
                 '}';
     }
 }
