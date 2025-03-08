@@ -6,10 +6,12 @@ import org.hibernate.annotations.Nationalized;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.List;
 
 @Entity
 @Table(name = "Products")
-public class Product {
+public class
+Product {
     @Id
     @Column(name = "ProductID", nullable = false)
     private Integer id;
@@ -33,7 +35,13 @@ public class Product {
     @ColumnDefault("getdate()")
     @Column(name = "ImportDate")
     private Instant importDate;
-
+    @ManyToMany
+    @JoinTable(
+            name = "ProductsCategories",
+            joinColumns = @JoinColumn(name = "productID"),
+            inverseJoinColumns = @JoinColumn(name = "categoryID")
+    )
+    private List<Category> categories;
     public Integer getId() {
         return id;
     }
