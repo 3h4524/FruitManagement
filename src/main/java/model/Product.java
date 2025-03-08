@@ -5,6 +5,7 @@ import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.Nationalized;
 
 import java.math.BigDecimal;
+import java.text.ParseException;
 import java.time.Instant;
 
 @Entity
@@ -78,8 +79,7 @@ public class Product {
         return importDate;
     }
 
-    public void setImportDate(Instant importDate) {
-        this.importDate = importDate;
+    public void setImportDate(String importDate) throws ParseException {
+        this.importDate = Instant.parse(importDate);
     }
-
 }

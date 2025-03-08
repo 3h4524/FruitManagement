@@ -23,7 +23,7 @@ import java.util.List;
         return productDAO.update(product);
     }
 
-    public boolean deleteProduct(int id) {
-        return productDAO.delete(id);
+    public void deleteProduct(int id) {
+        productDAO.delete(id);
     }
 }
