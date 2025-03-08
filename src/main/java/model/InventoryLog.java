@@ -8,6 +8,13 @@ import java.time.Instant;
 
 @Entity
 @Table(name = "InventoryLogs")
+@NamedQueries({
+        @NamedQuery(name = "InventoryLogs.findAll", query = "SELECT i FROM InventoryLog i"),
+        @NamedQuery(name = "InventoryLogs.findByLogID", query = "SELECT i FROM InventoryLog i WHERE i.id = :logID"),
+        @NamedQuery(name = "InventoryLogs.findByActionType", query = "SELECT i FROM InventoryLog i WHERE i.actionType = :actionType"),
+        @NamedQuery(name = "InventoryLogs.findByQuantityChanged", query = "SELECT i FROM InventoryLog i WHERE i.quantityChanged = :quantityChanged"),
+        @NamedQuery(name = "InventoryLogs.findByActionDate", query = "SELECT i FROM InventoryLog i WHERE i.actionDate = :actionDate"),
+        @NamedQuery(name = "InventoryLogs.findByStoreLocation", query = "SELECT i FROM InventoryLog i WHERE i.storeLocation = :storeLocation")})
 public class InventoryLog {
     @Id
     @Column(name = "LogID", nullable = false)

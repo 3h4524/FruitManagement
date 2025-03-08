@@ -6,7 +6,7 @@ import jakarta.servlet.annotation.*;
 
 import java.io.IOException;
 
-@WebServlet(name = "productServlet", value = "/productServlet")
+@WebServlet(name = "productServlet", value = "/products")
 public class ProductServlet extends HttpServlet {
 
     @Override

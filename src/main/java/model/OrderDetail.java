@@ -8,6 +8,11 @@ import java.math.BigDecimal;
 
 @Entity
 @Table(name = "OrderDetails")
+@NamedQueries({
+        @NamedQuery(name = "OrderDetails.findAll", query = "SELECT o FROM OrderDetail o"),
+        @NamedQuery(name = "OrderDetails.findByOrderDetailID", query = "SELECT o FROM OrderDetail o WHERE o.id = :orderDetailID"),
+        @NamedQuery(name = "OrderDetails.findByQuantity", query = "SELECT o FROM OrderDetail o WHERE o.quantity = :quantity"),
+        @NamedQuery(name = "OrderDetails.findByPrice", query = "SELECT o FROM OrderDetail o WHERE o.price = :price")})
 public class OrderDetail {
     @Id
     @Column(name = "OrderDetailID", nullable = false)

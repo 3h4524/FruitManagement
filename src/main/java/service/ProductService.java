@@ -26,4 +26,7 @@ import java.util.List;
     public boolean deleteProduct(int id) {
         return productDAO.delete(id);
     }
+    public List<Product> findByName(String name) {
+            return productDAO.findByName(name);
+    }
 }

@@ -11,6 +11,12 @@ import java.time.Instant;
 
 @Entity
 @Table(name = "Orders")
+@NamedQueries({
+        @NamedQuery(name = "Orders.findAll", query = "SELECT o FROM Order o"),
+        @NamedQuery(name = "Orders.findByOrderID", query = "SELECT o FROM Order o WHERE o.id = :orderID"),
+        @NamedQuery(name = "Orders.findByOrderDate", query = "SELECT o FROM Order o WHERE o.orderDate = :orderDate"),
+        @NamedQuery(name = "Orders.findByTotalAmount", query = "SELECT o FROM Order o WHERE o.totalAmount = :totalAmount"),
+        @NamedQuery(name = "Orders.findByStatus", query = "SELECT o FROM Order o WHERE o.status = :status")})
 public class Order {
     @Id
     @Column(name = "OrderID", nullable = false)

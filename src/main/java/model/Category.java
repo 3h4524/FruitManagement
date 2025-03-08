@@ -5,6 +5,11 @@ import org.hibernate.annotations.Nationalized;
 
 @Entity
 @Table(name = "Categories")
+@NamedQueries({
+        @NamedQuery(name = "Categories.findAll", query = "SELECT c FROM Category c"),
+        @NamedQuery(name = "Categories.findByCategoryID", query = "SELECT c FROM Category c WHERE c.id = :categoryID"),
+        @NamedQuery(name = "Categories.findByName", query = "SELECT c FROM Category c WHERE c.name LIKE :name"),
+        @NamedQuery(name = "Categories.findByDescription", query = "SELECT c FROM Category c WHERE c.description = :description")})
 public class Category {
     @Id
     @Column(name = "CategoryID", nullable = false)

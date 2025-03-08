@@ -8,8 +8,18 @@ import java.time.Instant;
 
 @Entity
 @Table(name = "Customers")
+@NamedQueries({
+        @NamedQuery(name = "Customers.findAll", query = "SELECT c FROM Customer c"),
+        @NamedQuery(name = "Customers.findByCustomerID", query = "SELECT c FROM Customer c WHERE c.id = :customerID"),
+        @NamedQuery(name = "Customers.findByName", query = "SELECT c FROM Customer c WHERE c.name = :name"),
+        @NamedQuery(name = "Customers.findByEmail", query = "SELECT c FROM Customer c WHERE c.email = :email"),
+        @NamedQuery(name = "Customers.findByPasswordHash", query = "SELECT c FROM Customer c WHERE c.passwordHash = :passwordHash"),
+        @NamedQuery(name = "Customers.findByPhone", query = "SELECT c FROM Customer c WHERE c.phone = :phone"),
+        @NamedQuery(name = "Customers.findByAddress", query = "SELECT c FROM Customer c WHERE c.address = :address"),
+        @NamedQuery(name = "Customers.findByRegistrationDate", query = "SELECT c FROM Customer c WHERE c.registrationDate = :registrationDate")})
 public class Customer {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "CustomerID", nullable = false)
     private Integer id;
 
@@ -37,6 +47,10 @@ public class Customer {
     @ColumnDefault("getdate()")
     @Column(name = "RegistrationDate")
     private Instant registrationDate;
+
+    @ColumnDefault("'ACTIVE'")
+    @Column(name = "Status", nullable = false, length = 10)
+    private String status;
 
     public Integer getId() {
         return id;
@@ -92,6 +106,14 @@ public class Customer {
 
     public void setRegistrationDate(Instant registrationDate) {
         this.registrationDate = registrationDate;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 
 }
