@@ -1,9 +1,12 @@
 package service;
 
 import dao.GenericDAO;
+import model.Category;
 import model.Product;
-
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.TypedQuery;
 import java.util.List;
+
 
     public class ProductService {
         private final GenericDAO<Product> productDAO = new GenericDAO<>(Product.class);
@@ -23,10 +26,7 @@ import java.util.List;
         return productDAO.update(product);
     }
 
-    public boolean deleteProduct(int id) {
-        return productDAO.delete(id);
+    public void deleteProduct(int id) {
+        productDAO.delete(id);
     }
-    public List<Product> findByName(String name) {
-            return productDAO.findByName(name);
     }
-}
