@@ -6,7 +6,7 @@ import jakarta.persistence.Persistence;
 import java.util.List;
 
 public abstract class BaseDAO<T> {
-    static final EntityManagerFactory emf = Persistence.createEntityManagerFactory("FruitManagementPU");
+    public static final EntityManagerFactory emf = Persistence.createEntityManagerFactory("FruitManagementPU");
     public abstract List<T> getAll();
     public abstract T findById(int id);
     public abstract void insert(T t) ;

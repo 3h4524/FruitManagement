@@ -3,6 +3,8 @@ package model;
 import jakarta.persistence.*;
 import org.hibernate.annotations.Nationalized;
 
+import java.util.List;
+
 @Entity
 @Table(name = "Categories")
 public class Category {
@@ -18,6 +20,8 @@ public class Category {
     @Lob
     @Column(name = "Description")
     private String description;
+    @ManyToMany(mappedBy = "categories")
+    private List<Product> products;
 
     public Integer getId() {
         return id;
