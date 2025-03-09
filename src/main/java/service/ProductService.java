@@ -26,8 +26,8 @@ import java.util.List;
         return productDAO.update(product);
     }
 
-    public boolean deleteProduct(int id) {
-        return productDAO.delete(id);
+    public void deleteProduct(int id) {
+        productDAO.delete(id);
     }
         public List<Product> searchAndFilterProducts(String name, String categoryID, String sortType) {
             EntityManager em = GenericDAO.emf.createEntityManager();

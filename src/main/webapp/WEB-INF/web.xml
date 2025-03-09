@@ -7,4 +7,5 @@
         <exception-type>java.lang.Exception</exception-type>
         <location>/errorhandler</location>
     </error-page>
+
 </web-app>
