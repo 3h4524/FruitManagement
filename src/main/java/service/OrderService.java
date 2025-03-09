@@ -30,13 +30,13 @@ public class OrderService {
             orderDetailDao.insert(orderDetail);
         }
     }
-//    public List<OrderDetail> getOrderDetails(int orderId) {
-//        List<OrderDetail> orderDetails = new ArrayList<OrderDetail>();
-//        for(OrderDetail orderDetail : orderDetailDao.getAll()){
-//            if(orderDetail.getOrderID() == orderId){
-//                orderDetails.add(orderDetail);
-//            }
-//        }
-//        return orderDetails;
-//    }
+    public List<OrderDetail> getOrderDetails(int orderId) {
+        List<OrderDetail> orderDetails = new ArrayList<OrderDetail>();
+        for(OrderDetail orderDetail : orderDetailDao.getAll()){
+            if(orderDetail.getOrderID().getId() == orderId){
+                orderDetails.add(orderDetail);
+            }
+        }
+        return orderDetails;
+    }
 }

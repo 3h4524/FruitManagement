@@ -35,13 +35,14 @@ public class ProductServlet extends HttpServlet {
                 break;
             default:
                 listProducts(request, response);
+                break;
         }
     }
 
     private void listProducts(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         List<Product> products = productService.getAllProducts();
         request.setAttribute("products", products);
-        request.getRequestDispatcher("/product/ProductList.jsp").forward(request, response);
+        request.getRequestDispatcher("product/ProductList.jsp").forward(request, response);
     }
 
     private void sendToUpdateProduct(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

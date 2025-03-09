@@ -21,7 +21,7 @@ public class UserServlet extends HttpServlet {
         }
         switch(action){
             case "create":
-                response.sendRedirect("/user/UserCreate.jsp");
+                response.sendRedirect(request.getContextPath() + "/Register.jsp");
                 break;
             case "search":
                 searchCustomer(request, response);
@@ -96,7 +96,7 @@ public class UserServlet extends HttpServlet {
             request.setAttribute("error", "Đăng ký không thành công. Vui lòng thử lại!");
         }
 
-        request.getRequestDispatcher("register.jsp").forward(request, response);
+        request.getRequestDispatcher("Register.jsp").forward(request, response);
     }
 
     public void deleteCustomer(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
