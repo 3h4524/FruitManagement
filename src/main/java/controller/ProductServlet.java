@@ -4,22 +4,29 @@ import jakarta.servlet.*;
 import jakarta.servlet.http.*;
 import jakarta.servlet.annotation.*;
 import model.Product;
+import service.InventoryService;
 import service.ProductService;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.List;
 
-@WebServlet(name = "ProductServlet", value = "/products")
+@WebServlet("/products")
 public class ProductServlet extends HttpServlet {
-    ProductService productService = new ProductService();
+
+    ProductService productService;
+    public void init(){
+        productService = new ProductService();
+    }
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String action = request.getParameter("action");
         if(action == null){
-            action = "list";
+            action = "";
         }
         switch(action){
             case "create":
+                request.getRequestDispatcher("/product/CreateProduct.jsp").forward(request, response);
                 break;
             case "update":
                 sendToUpdateProduct(request, response);
@@ -35,6 +42,7 @@ public class ProductServlet extends HttpServlet {
                 break;
             default:
                 listProducts(request, response);
+                break;
         }
     }
 
@@ -49,7 +57,7 @@ public class ProductServlet extends HttpServlet {
             int id = Integer.parseInt(request.getParameter("productId"));
             Product product = productService.getProductById(id);
             request.setAttribute("product", product);
-            request.getRequestDispatcher("/product/ProductUpdate.jsp").forward(request, response);
+            request.getRequestDispatcher("/product/UpdateProduct.jsp").forward(request, response);
         } catch (NumberFormatException e){
             throw new NumberFormatException("id must be an integer");
         }
@@ -89,7 +97,7 @@ public class ProductServlet extends HttpServlet {
                 createProduct(request, response);
                 break;
             case "update":
-
+                updateProduct(request, response);
                 break;
         }
     }
@@ -113,6 +121,27 @@ public class ProductServlet extends HttpServlet {
     }
 
     public void updateProduct(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
+        String message = "";
+        try{
+            int id = Integer.parseInt(request.getParameter("productId"));
+            String name = request.getParameter("name");
+            BigDecimal price = new BigDecimal(request.getParameter("price"));
+            String description = request.getParameter("description");
+            String imageURL = request.getParameter("imageURL");
 
+            Product product = productService.getProductById(id);
+            if(product != null){
+                product.setName(name);
+                product.setPrice(price);
+                product.setDescription(description);
+                product.setImageURL(imageURL);
+                productService.updateProduct(product);
+            }
+            message = "Update product successfully";
+        } catch (NumberFormatException e){
+            message = "Update product fail";
+            request.setAttribute("message", message);
+            request.getRequestDispatcher("/product/CreateProduct.jsp").forward(request, response);
+        }
     }
 }

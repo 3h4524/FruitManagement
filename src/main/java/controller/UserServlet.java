@@ -21,7 +21,7 @@ public class UserServlet extends HttpServlet {
         }
         switch(action){
             case "create":
-                response.sendRedirect("/user/UserCreate.jsp");
+                response.sendRedirect(request.getContextPath()+ "/Register.jsp");
                 break;
             case "search":
                 searchCustomer(request, response);
