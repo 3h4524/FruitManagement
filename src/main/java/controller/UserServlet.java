@@ -12,7 +12,10 @@ import java.util.List;
 
 @WebServlet(name = "userServlet", value = "/users")
 public class UserServlet extends HttpServlet {
-    private CustomerService customerService = new CustomerService();
+    private CustomerService customerService;
+    public void init(){
+        customerService = new CustomerService();
+    }
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String action = request.getParameter("action");
@@ -21,7 +24,7 @@ public class UserServlet extends HttpServlet {
         }
         switch(action){
             case "create":
-                response.sendRedirect(request.getContextPath() + "/Register.jsp");
+                response.sendRedirect("/user/UserCreate.jsp");
                 break;
             case "search":
                 searchCustomer(request, response);
@@ -96,7 +99,7 @@ public class UserServlet extends HttpServlet {
             request.setAttribute("error", "Đăng ký không thành công. Vui lòng thử lại!");
         }
 
-        request.getRequestDispatcher("Register.jsp").forward(request, response);
+        request.getRequestDispatcher("register.jsp").forward(request, response);
     }
 
     public void deleteCustomer(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

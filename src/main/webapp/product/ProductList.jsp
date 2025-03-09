@@ -24,7 +24,6 @@
         <th>Name</th>
         <th>Price</th>
         <th>Description</th>
-        <th>Stock</th>
         <th>Import Date</th>
         <th>Views</th> <!-- Thêm cột số lần xem -->
         <th>Action</th>
@@ -36,7 +35,6 @@
                 <td>${product.name}</td>
                 <td>${product.price}</td>
                 <td>${product.description}</td>
-                <td>${product.stock}</td>
                 <td>${product.importDate}</td>
                 <td>
                         ${applicationScope.productViewCount[product.id] != null ? applicationScope.productViewCount[product.id] : 0}

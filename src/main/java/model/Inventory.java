@@ -8,11 +8,11 @@ import org.hibernate.annotations.OnDeleteAction;
 
 @Entity
 @Table(name = "Inventory")
-@NamedQueries({
-        @NamedQuery(name = "Inventory.findAll", query = "SELECT i FROM Inventory i"),
+@NamedQueries({@NamedQuery(name = "Inventory.findAll", query = "SELECT i FROM Inventory i"),
         @NamedQuery(name = "Inventory.findByInventoryID", query = "SELECT i FROM Inventory i WHERE i.id = :inventoryID"),
         @NamedQuery(name = "Inventory.findByStoreLocation", query = "SELECT i FROM Inventory i WHERE i.storeLocation = :storeLocation"),
         @NamedQuery(name = "Inventory.findByQuantity", query = "SELECT i FROM Inventory i WHERE i.quantity = :quantity")})
+@NamedQuery(name = "Inventory.setStockInInventory", query = "UPDATE Inventory i SET i.quantity = :quantity WHERE i.storeLocation = :storelocation AND i.productID = :productID")
 public class Inventory {
     @Id
     @Column(name = "InventoryID", nullable = false)

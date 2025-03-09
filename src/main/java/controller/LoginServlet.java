@@ -23,6 +23,10 @@ public class LoginServlet extends HttpServlet {
         String pasword = request.getParameter("password");
         Customer customer = customerService.checkExistUserName(username);
         if(customer != null && Utils.checkPassword(pasword, customer.getPasswordHash())) {
+            if(customer.getStatus().equals("INACTIVE")){
+                request.setAttribute("message", "Tài khoản này đã bị vô hiệu hóa.");
+                request.getRequestDispatcher("login.jsp").forward(request, response);
+            }
             HttpSession session = request.getSession();
             session.setAttribute("customer", customer);
             response.sendRedirect("index.jsp");

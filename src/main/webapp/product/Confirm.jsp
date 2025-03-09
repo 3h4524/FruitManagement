@@ -46,7 +46,7 @@
     </form>
 
     <br>
-    <a href="ProductCreate.jsp"></a>
+    <a href="CreateProduct.jsp"></a>
 </Center>
 
 </body>

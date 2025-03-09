@@ -4,6 +4,7 @@ import jakarta.servlet.*;
 import jakarta.servlet.http.*;
 import jakarta.servlet.annotation.*;
 import model.*;
+import service.InventoryService;
 import service.OrderService;
 
 import java.io.IOException;
@@ -13,7 +14,12 @@ import java.util.stream.Collectors;
 
 @WebServlet(name = "CheckoutServlet", value = "/checkout")
 public class CheckoutServlet extends HttpServlet {
-    private OrderService orderService = new OrderService();
+    private OrderService orderService;
+    private InventoryService inventoryService;
+    public void init(){
+        orderService = new OrderService();
+        inventoryService = new InventoryService();
+    }
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
     }
@@ -53,7 +59,14 @@ public class CheckoutServlet extends HttpServlet {
 
         // Lưu danh sách OrderDetail vào database
         orderService.addOrderDetails(orderDetails);
-
+        List<Inventory> inventoryList = orderDetails.stream().map(orderDetail -> {
+            Inventory inventory = new Inventory();
+            inventory.setStoreLocation("Main WareHouse");
+            inventory.setProductID(orderDetail.getProductID());
+            inventory.setQuantity(orderDetail.getQuantity());
+            return inventory;
+        }).collect(Collectors.toList());
+        inventoryService.setStockInInventory(inventoryList);
         // Xóa giỏ hàng khỏi session và chuyển hướng
         session.removeAttribute("cart");
         response.sendRedirect("success.jsp");

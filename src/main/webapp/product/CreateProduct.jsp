@@ -9,7 +9,7 @@
 <body>
 <center>
     <h1>Product Management</h1>
-    <form action="confirm.jsp" method="post">
+    <form action="Confirm.jsp" method="post">
         <table border="1" cellpadding="5">
             <tr><th>Product Name:</th><td><input type="text" name="name" required/></td></tr>
             <tr><th>Price:</th><td><input type="number" name="price" step="0.01" required/></td></tr>
