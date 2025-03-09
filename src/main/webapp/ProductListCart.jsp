@@ -47,6 +47,7 @@
         <div class="col-md-3">
             <button type="submit" class="btn btn-primary w-100">Lọc & Tìm kiếm</button>
         </div>
+
     </form>
     <c:choose>
     <c:when test="${empty products}">
