@@ -37,8 +37,11 @@ public class UserService {
         return userDao.findByName(name);
     }
 
-    public User checkExistUserName(String username) {
-        return userDao.findByUserName(username);
+    public boolean checkEmailExisted(String email) {
+        return userDao.findByAttribute("email", email) != null;
     }
-
+    public User getUserByEmail(String email) {
+        List<User> users = userDao.findByAttribute("email", email);
+        return users.get(0);
+    }
 }

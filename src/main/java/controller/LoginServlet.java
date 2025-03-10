@@ -11,7 +11,7 @@ import java.io.IOException;
 
 @WebServlet(name = "LoginServlet", value = "/login")
 public class LoginServlet extends HttpServlet {
-    private UserService customerService = new UserService();
+    private UserService userService = new UserService();
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
@@ -19,9 +19,9 @@ public class LoginServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String username = request.getParameter("username");
+        String email = request.getParameter("email");
         String pasword = request.getParameter("password");
-        User user = customerService.checkExistUserName(username);
+        User user = userService.getUserByEmail(email);
         if(user != null && Utils.checkPassword(pasword, user.getPasswordHash())) {
             if(user.getStatus().equals("INACTIVE")){
                 request.setAttribute("message", "Tài khoản này đã bị vô hiệu hóa.");

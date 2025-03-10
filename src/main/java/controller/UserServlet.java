@@ -63,11 +63,11 @@ public class UserServlet extends HttpServlet {
     public void createUser(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         HttpSession session = request.getSession();
-        User user = (User) session.getAttribute("user");
+        User user = (User) session.getAttribute("UserLogin");
 
         if (user == null) {
             request.setAttribute("error", "Dữ liệu không hợp lệ!");
-            request.getRequestDispatcher("register.jsp").forward(request, response);
+            request.getRequestDispatcher("Register.jsp").forward(request, response);
             return;
         }
 
@@ -78,14 +78,14 @@ public class UserServlet extends HttpServlet {
         // Kiểm tra thông tin có đầy đủ không
         if (name.isEmpty() || email.isEmpty() || password.isEmpty()) {
             request.setAttribute("error", "Vui lòng nhập đầy đủ thông tin!");
-            request.getRequestDispatcher("register.jsp").forward(request, response);
+            request.getRequestDispatcher("Register.jsp").forward(request, response);
             return;
         }
 
         // Kiểm tra tên đăng nhập đã tồn tại chưa
-        if (userService.checkExistUserName(name) != null) {
+        if (userService.checkEmailExisted(email)) {
             request.setAttribute("error", "Tên đăng nhập đã tồn tại!");
-            request.getRequestDispatcher("register.jsp").forward(request, response);
+            request.getRequestDispatcher("Register.jsp").forward(request, response);
             return;
         }
 
@@ -95,11 +95,11 @@ public class UserServlet extends HttpServlet {
         // Lưu vào database
         if (userService.addUser(user)) {
             request.setAttribute("success", "Đăng ký thành công!");
+            response.sendRedirect(request.getContextPath() + "/index.jsp");
         } else {
             request.setAttribute("error", "Đăng ký không thành công. Vui lòng thử lại!");
+            request.getRequestDispatcher("Register.jsp").forward(request, response);
         }
-
-        request.getRequestDispatcher("register.jsp").forward(request, response);
     }
 
     public void deleteUser(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

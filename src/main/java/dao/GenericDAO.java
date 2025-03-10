@@ -2,7 +2,9 @@ package dao;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;
+import service.Utils;
 
+import java.util.Collections;
 import java.util.List;
 
 public class GenericDAO<T> extends BaseDAO<T> {
@@ -113,6 +115,20 @@ public class GenericDAO<T> extends BaseDAO<T> {
                     .getSingleResult(); // Lấy một kết quả duy nhất
         } catch (NoResultException e) {
             return null; // Nếu không tìm thấy, trả về null
+        } finally {
+            em.close();
+        }
+    }
+    public List<T> findByAttribute(String attributeName, Object value) {
+        EntityManager em = emf.createEntityManager();
+        try {
+            String queryName = entityClass.getSimpleName() + ".findBy" + Utils.capitalizeFirstLetter(attributeName);
+            return em.createNamedQuery(queryName, entityClass)
+                    .setParameter(attributeName, value)
+                    .getResultList();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Collections.emptyList();
         } finally {
             em.close();
         }
