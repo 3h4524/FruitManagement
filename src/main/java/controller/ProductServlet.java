@@ -4,30 +4,38 @@ import jakarta.servlet.*;
 import jakarta.servlet.http.*;
 import jakarta.servlet.annotation.*;
 import model.Product;
+import model.ProductStock;
 import model.ProductVariant;
 import service.ProductService;
+import service.ProductStockService;
 import service.ProductVariantService;
 
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.util.List;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 
 @WebServlet("/products")
 public class ProductServlet extends HttpServlet {
 
     ProductService productService;
     ProductVariantService productVariantService;
-    public void init(){
+
+    public void init() {
         productService = new ProductService();
         productVariantService = new ProductVariantService();
     }
+
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String action = request.getParameter("action");
-        if(action == null){
+        if (action == null) {
             action = "";
         }
-        switch(action){
+        switch (action) {
             case "create":
                 request.getRequestDispatcher("/product/CreateProduct.jsp").forward(request, response);
                 break;
@@ -60,9 +68,14 @@ public class ProductServlet extends HttpServlet {
         try {
             int productId = Integer.parseInt(request.getParameter("productId"));
             List<ProductVariant> productVariants = productVariantService.getAllProductVariants(productId);
+            HashMap<ProductVariant, Integer> productVariantQuantity = new HashMap<>();
+            ProductStockService productStockService = new ProductStockService();
+            for (ProductVariant productVariant : productVariants) {
+                Integer amount = productStockService.getProductStock(productVariant.getId()).getAmount();
+                productVariantQuantity.put(productVariant, amount);
+            }
             Product product = productService.getProductById(productId);
-
-            request.setAttribute("productVariants", productVariants);
+            request.setAttribute("productVariants", productVariantQuantity);
             request.setAttribute("product", product);
             request.getRequestDispatcher("/product/UpdateProduct.jsp").forward(request, response);
         } catch (NumberFormatException e) {
@@ -75,31 +88,30 @@ public class ProductServlet extends HttpServlet {
     }
 
     private void deleteProduct(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        try{
-            int id = Integer.parseInt(request.getParameter("id"));
+        try {
+            int id = Integer.parseInt(request.getParameter("productId"));
             productService.deleteProduct(id);
-            response.sendRedirect("/products");
-        } catch (NumberFormatException e){
+            response.sendRedirect(request.getContextPath()+ "/products");
+        } catch (NumberFormatException e) {
             throw new NumberFormatException("id must be an integer");
         }
     }
 
     private void detailProduct(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        try{
+        try {
             int id = Integer.parseInt(request.getParameter("id"));
             Product product = productService.getProductById(id);
             request.setAttribute("product", product);
             request.getRequestDispatcher("/product/ProductDetail.jsp").forward(request, response);
-        } catch (NumberFormatException e){
+        } catch (NumberFormatException e) {
             throw new NumberFormatException("id must be an integer");
         }
     }
 
-
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String action = request.getParameter("action");
-        switch(action){
+        switch (action) {
             case "create":
                 createProduct(request, response);
                 break;
@@ -110,47 +122,122 @@ public class ProductServlet extends HttpServlet {
     }
 
     public void createProduct(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException{
+            throws ServletException, IOException {
         String message = "";
         try {
-            Product newProduct = (Product) request.getSession().getAttribute("product");
-            if(newProduct == null){
-                throw new RuntimeException("Invalid product.");
-            }
+            String name = request.getParameter("name");
+            BigDecimal price = new BigDecimal(request.getParameter("price"));
+            String size = request.getParameter("size");
+            String description = request.getParameter("description");
+            Integer stock = Integer.parseInt(request.getParameter("stock"));
+            String imageURL = request.getParameter("imageURL");
+
+            String dateStr = request.getParameter("importDate");
+            LocalDate localDate = LocalDate.parse(dateStr, DateTimeFormatter.ISO_DATE);
+            Instant importDate = localDate.atStartOfDay(ZoneId.systemDefault()).toInstant();
+
+            Product newProduct = new Product();
+            newProduct.setName(name);
+            newProduct.setDescription(description);
+            newProduct.setImageURL(imageURL);
+            newProduct.setImportDate(importDate);
+
             productService.addProduct(newProduct);
-            message = "Add new product successfully";
+
+            ProductVariant productVariant = new ProductVariant();
+            productVariant.setProductID(newProduct);
+            productVariant.setSize(size);
+            productVariant.setPrice(price);
+            productVariantService.addProductVariant(productVariant);
+
+            ProductStock productStock = new ProductStock();
+            productStock.setProductVariantID(productVariant);
+            productStock.setAmount(stock);
+            new ProductStockService().addProductStock(productStock);
+            message = "add product successfully";
             request.setAttribute("message", message);
         } catch (Exception e) {
-            message = e.getMessage();
+            message = "add product fail";
             request.setAttribute("error", message);
         }
         request.getRequestDispatcher("/product/CreateProduct.jsp").forward(request, response);
     }
 
-    public void updateProduct(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
+    public void updateProduct(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String message = "";
-        try{
+        try {
             int productId = Integer.parseInt(request.getParameter("productId"));
             String name = request.getParameter("name");
-            BigDecimal price = new BigDecimal(request.getParameter("price"));
             String description = request.getParameter("description");
             String imageURL = request.getParameter("imageURL");
-            String size = request.getParameter("size");
+            String[] sizes = request.getParameterValues("sizes");
+            String[] prices = request.getParameterValues("prices");
+            String[] quantities = request.getParameterValues("quantities");
+
+            ProductStockService productStockService = new ProductStockService();
 
             Product product = productService.getProductById(productId);
-            if(product != null){
+            if (product != null) {
                 product.setName(name);
                 product.setDescription(description);
                 product.setImageURL(imageURL);
                 productService.updateProduct(product);
             }
-
-            ProductVariant productVariant = productVariantService.getVariantByProductAndSize(productId, size);
-            if(productVariant != null){
-                productVariant.setPrice(price);
+            List<ProductVariant> existingVariants = productVariantService.getAllProductVariants(productId);
+            Set<String> newSizeSet = null;
+            if (sizes != null) {
+                newSizeSet = new HashSet<>(Arrays.asList(sizes));
             }
-            response.sendRedirect("/products");
-        } catch (NumberFormatException e){
+
+            for (ProductVariant variant : existingVariants) {
+                if (!newSizeSet.contains(variant.getSize())) {
+                    productStockService.deleteByVariantId(variant.getId());
+                    productVariantService.deleteProductVariant(variant.getId());
+                }
+            }
+
+
+            if (sizes != null && prices != null && quantities != null) {
+                for (int i = 0; i < sizes.length; i++) {
+                    try {
+                        String size = sizes[i];
+                        BigDecimal price = new BigDecimal(prices[i]);
+                        Integer quantity = Integer.parseInt(quantities[i]);
+
+                        ProductVariant productVariant = productVariantService.getVariantByProductAndSize(productId, size);
+                        if (productVariant != null) {
+                            // Nếu size đã có thì cập nhật giá
+                            productVariant.setPrice(price);
+                            productVariantService.updateVariant(productVariant);
+                        } else {
+                            // Nếu size chưa có, tạo mới
+                            productVariant = new ProductVariant();
+                            productVariant.setProductID(product); // Sửa lỗi ở đây
+                            productVariant.setSize(size);
+                            productVariant.setPrice(price);
+                            productVariantService.updateVariant(productVariant); // Thêm mới variant vào DB
+                        }
+
+
+                        // Cập nhật hoặc thêm mới ProductStock
+                        ProductStock productStock = productStockService.getProductStock(productVariant.getId());
+                        if (productStock != null) {
+                            productStock.setAmount(quantity);
+                            productStockService.updateProductStock(productStock);
+                        } else {
+                            ProductStock newStock = new ProductStock();
+                            newStock.setAmount(quantity);
+                            newStock.setProductVariantID(productVariant);
+                            productStockService.updateProductStock(newStock);
+                        }
+                    } catch (NumberFormatException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            response.sendRedirect(request.getContextPath() + "/products");
+        } catch (NumberFormatException e) {
             request.setAttribute("error", e.getMessage());
             request.getRequestDispatcher("/product/CreateProduct.jsp").forward(request, response);
         }

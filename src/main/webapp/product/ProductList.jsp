@@ -113,6 +113,7 @@
         <a href="${pageContext.request.contextPath}/products?action=create">Add New Product</a>
     </div>
 
+    <c:set var="products" value="${requestScope.products}"/>
     <c:set var="pageSize" value="10"/>
     <c:set var="currentPage" value="${param.page != null ? param.page : 1}"/>
     <c:set var="start" value="${(currentPage - 1) * pageSize}"/>
@@ -124,9 +125,7 @@
         <tr>
             <th>ID</th>
             <th>Name</th>
-            <th>Price</th>
             <th>Description</th>
-            <th>Stock</th>
             <th>Import Date</th>
             <th>Views</th>
             <th>Action</th>
@@ -143,8 +142,8 @@
                             ${applicationScope.productViewCount[product.id] != null ? applicationScope.productViewCount[product.id] : 0}
                     </td>
                     <td class="action-links">
-                        <a href="${pageContext.request.contextPath}/products?action=edit&id=${product.id}" class="edit">Edit</a>
-                        <a href="${pageContext.request.contextPath}/products?action=delete&id=${product.id}" class="delete">Delete</a>
+                        <a href="${pageContext.request.contextPath}/products?action=update&productId=${product.id}" class="edit">Edit</a>
+                        <a href="${pageContext.request.contextPath}/products?action=delete&productId=${product.id}" class="delete">Delete</a>
                     </td>
                 </tr>
             </c:if>

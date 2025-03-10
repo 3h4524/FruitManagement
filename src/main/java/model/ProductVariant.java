@@ -59,6 +59,7 @@ public class ProductVariant {
         this.productID = productID;
     }
 
+
     public String getSize() {
         return size;
     }

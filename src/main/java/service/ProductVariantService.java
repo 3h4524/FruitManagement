@@ -13,11 +13,15 @@ import java.util.List;
 import java.util.Map;
 
 public class ProductVariantService {
-    private GenericDAO<ProductVariant> productVariantDao = new GenericDAO<>(ProductVariant.class);
+    private final GenericDAO<ProductVariant> productVariantDao = new GenericDAO<>(ProductVariant.class);
     static final EntityManagerFactory emf = Persistence.createEntityManagerFactory("FruitManagementPU");
 
     public List<ProductVariant> getAllProductVariants(int productID) {
         return productVariantDao.findByAttribute("productID", productID);
+    }
+
+    public void addProductVariant(ProductVariant productVariant) {
+        productVariantDao.insert(productVariant);
     }
 
     public ProductVariant getVariantByProductAndSize(int productId, String size) {
@@ -42,18 +46,10 @@ public class ProductVariantService {
     }
 
     public void updateVariant(ProductVariant variant) {
-        emf.createEntityManager().merge(variant);
+        productVariantDao.update(variant);
     }
 
-    public Map<String, BigDecimal> getSizePriceMap(List<ProductVariant> variants) {
-        Map<String, BigDecimal> priceMap = new HashMap<>();
-        for (ProductVariant variant : variants) {
-            priceMap.put(variant.getSize(), variant.getPrice());
-        }
-        return priceMap;
+    public void deleteProductVariant(Integer variantId) {
+        productVariantDao.delete(variantId);
     }
-
-
-
-
 }

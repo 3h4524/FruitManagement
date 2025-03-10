@@ -34,8 +34,10 @@ public class GenericDAO<T> extends BaseDAO<T> {
             em.getTransaction().begin();
             em.persist(t);
             em.getTransaction().commit();
+            System.out.println("added");
             return true; // Chèn thành công
         } catch (Exception e) {
+            System.out.println(e.getMessage());
             em.getTransaction().rollback(); // Rollback nếu có lỗi
             e.printStackTrace(); // In lỗi ra console (hoặc log)
             return false; // Chèn thất bại
@@ -46,29 +48,34 @@ public class GenericDAO<T> extends BaseDAO<T> {
 
 
     @Override
-    public boolean update(T t){
+    public boolean update(T t) {
         EntityManager em = emf.createEntityManager();
         try {
             em.getTransaction().begin();
 
-            // Kiểm tra entity có tồn tại không
-            if (em.find(entityClass, em.getEntityManagerFactory().getPersistenceUnitUtil().getIdentifier(t)) == null) {
-                return false; // Không tìm thấy => không cập nhật
+            if (!em.contains(t)) {
+                t = em.merge(t);
             }
 
-            em.merge(t);
+            em.flush();  // Đảm bảo dữ liệu cập nhật ngay lập tức
+            em.refresh(t); // Load lại entity sau khi trigger chạy
+
             em.getTransaction().commit();
             return true;
         } catch (Exception e) {
-            em.getTransaction().rollback();
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
+            e.printStackTrace();
             return false;
         } finally {
             em.close();
         }
     }
 
+
     @Override
-    public boolean delete(int id)  {
+    public boolean delete(int id) {
         EntityManager em = emf.createEntityManager();
         try {
             em.getTransaction().begin();
@@ -97,6 +104,7 @@ public class GenericDAO<T> extends BaseDAO<T> {
             em.close();
         }
     }
+
     public List<T> findByName(String name) {
         EntityManager em = emf.createEntityManager();
         try {
@@ -110,8 +118,8 @@ public class GenericDAO<T> extends BaseDAO<T> {
 
     public List<T> listWithOffset(int page, int pageSize) {
         EntityManager em = emf.createEntityManager();
-        try{
-            return em.createNamedQuery(entityClass.getSimpleName() + "listWithOffset", entityClass).setFirstResult((page -1) * pageSize).setMaxResults(pageSize).getResultList();
+        try {
+            return em.createNamedQuery(entityClass.getSimpleName() + "listWithOffset", entityClass).setFirstResult((page - 1) * pageSize).setMaxResults(pageSize).getResultList();
         } finally {
             em.close();
         }
