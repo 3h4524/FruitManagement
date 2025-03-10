@@ -20,7 +20,9 @@ import java.math.BigDecimal;
                 query = "SELECT p FROM ProductVariant p WHERE p.size = :size"),
 
         @NamedQuery(name = "ProductVariant.findByPriceRange",
-                query = "SELECT p FROM ProductVariant p WHERE p.price BETWEEN :minPrice AND :maxPrice")
+                query = "SELECT p FROM ProductVariant p WHERE p.price BETWEEN :minPrice AND :maxPrice"),
+        @NamedQuery(name="ProductVariant.listWithOffset",
+                query = "SELECT p FROM ProductVariant p ORDER BY p.id")
 })
 @Entity
 public class ProductVariant {

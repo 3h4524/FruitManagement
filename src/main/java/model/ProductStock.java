@@ -21,7 +21,9 @@ import org.hibernate.annotations.OnDeleteAction;
                 query = "SELECT p FROM ProductStock p WHERE p.amount > :amount"),
 
         @NamedQuery(name = "ProductStock.findByAmountLessThan",
-                query = "SELECT p FROM ProductStock p WHERE p.amount < :amount")
+                query = "SELECT p FROM ProductStock p WHERE p.amount < :amount"),
+        @NamedQuery(name="ProductStock.listWithOffset",
+                query = "SELECT p FROM ProductStock p ORDER BY p.id")
 })
 @Entity
 public class ProductStock {

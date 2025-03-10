@@ -15,7 +15,9 @@ import java.time.Instant;
         @NamedQuery(name = "InventoryLogs.findByQuantityChanged", query = "SELECT i FROM InventoryLog i WHERE i.quantityChanged = :quantityChanged"),
         @NamedQuery(name = "InventoryLogs.findByActionDate", query = "SELECT i FROM InventoryLog i WHERE i.actionDate = :actionDate"),
         @NamedQuery(name = "InventoryLogs.findByStoreLocation", query = "SELECT i FROM InventoryLog i WHERE i.storeLocation = :storeLocation"),
-        @NamedQuery(name = "InventoryLogs.findByProductVariant", query = "SELECT i FROM InventoryLog i WHERE i.productVariantID.id = :productVariantID")
+        @NamedQuery(name = "InventoryLogs.findByProductVariant", query = "SELECT i FROM InventoryLog i WHERE i.productVariantID.id = :productVariantID"),
+        @NamedQuery(name="InventoryLogs.listWithOffset",
+                query = "SELECT i FROM InventoryLog i ORDER BY i.id")
 })
 public class InventoryLog {
     @Id

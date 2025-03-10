@@ -2,7 +2,9 @@ package dao;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;
+import service.Utils;
 
+import java.util.Collections;
 import java.util.List;
 
 public class GenericDAO<T> extends BaseDAO<T> {
@@ -105,14 +107,26 @@ public class GenericDAO<T> extends BaseDAO<T> {
             em.close();
         }
     }
-    public T findByUserName(String name) {
+
+    public List<T> listWithOffset(int page, int pageSize) {
+        EntityManager em = emf.createEntityManager();
+        try{
+            return em.createNamedQuery(entityClass.getSimpleName() + "listWithOffset", entityClass).setFirstResult((page -1) * pageSize).setMaxResults(pageSize).getResultList();
+        } finally {
+            em.close();
+        }
+    }
+
+    public List<T> findByAttribute(String attributeName, Object value) {
         EntityManager em = emf.createEntityManager();
         try {
-            return em.createNamedQuery(entityClass.getSimpleName() + ".findByName", entityClass)
-                    .setParameter("name", name) // Không dùng dấu % nữa
-                    .getSingleResult(); // Lấy một kết quả duy nhất
-        } catch (NoResultException e) {
-            return null; // Nếu không tìm thấy, trả về null
+            String queryName = entityClass.getSimpleName() + ".findBy" + Utils.capitalizeFirstLetter(attributeName);
+            return em.createNamedQuery(queryName, entityClass)
+                    .setParameter(attributeName, value)
+                    .getResultList();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Collections.emptyList();
         } finally {
             em.close();
         }

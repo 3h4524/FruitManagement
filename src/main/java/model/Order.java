@@ -17,7 +17,9 @@ import java.time.Instant;
         @NamedQuery(name = "Orders.findByOrderDate", query = "SELECT o FROM Order o WHERE o.orderDate = :orderDate"),
         @NamedQuery(name = "Orders.findByTotalAmount", query = "SELECT o FROM Order o WHERE o.totalAmount = :totalAmount"),
         @NamedQuery(name = "Orders.findByStatus", query = "SELECT o FROM Order o WHERE o.status = :status"),
-        @NamedQuery(name = "Orders.findByUserID", query = "SELECT o FROM Order o WHERE o.userID.id = :UserID")
+        @NamedQuery(name = "Orders.findByUserID", query = "SELECT o FROM Order o WHERE o.userID.id = :UserID"),
+        @NamedQuery(name="Orders.listWithOffset",
+                query = "SELECT o FROM Order o ORDER BY o.id")
 })
 public class Order {
     @Id

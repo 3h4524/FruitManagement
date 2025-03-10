@@ -16,7 +16,9 @@ import java.time.Instant;
         @NamedQuery(name = "Product.findByDescription", query = "SELECT p FROM Product p WHERE p.description = :description"),
         @NamedQuery(name = "Product.findByPrice", query = "SELECT p FROM Product p WHERE p.price = :price"),
         @NamedQuery(name = "Product.findByImageURL", query = "SELECT p FROM Product p WHERE p.imageURL = :imageURL"),
-        @NamedQuery(name = "Product.findByImportDate", query = "SELECT p FROM Product p WHERE p.importDate = :importDate")
+        @NamedQuery(name = "Product.findByImportDate", query = "SELECT p FROM Product p WHERE p.importDate = :importDate"),
+        @NamedQuery(name="Product.listWithOffset",
+                query = "SELECT p FROM Product p ORDER BY p.id")
 })
 public class Product {
     @Id
@@ -32,8 +34,6 @@ public class Product {
     @Column(name = "Description")
     private String description;
 
-    @Column(name = "Price", nullable = false, precision = 10, scale = 2)
-    private BigDecimal price;
 
     @Nationalized
     @Column(name = "ImageURL")
@@ -65,14 +65,6 @@ public class Product {
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    public BigDecimal getPrice() {
-        return price;
-    }
-
-    public void setPrice(BigDecimal price) {
-        this.price = price;
     }
 
     public String getImageURL() {

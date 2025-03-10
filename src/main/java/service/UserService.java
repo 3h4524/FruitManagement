@@ -1,6 +1,7 @@
 package service;
 
 import dao.GenericDAO;
+import model.Product;
 import model.User;
 
 import java.util.List;
@@ -37,8 +38,7 @@ public class UserService {
         return userDao.findByName(name);
     }
 
-    public User checkExistUserName(String username) {
-        return userDao.findByUserName(username);
+    public List<User> listWithOffset(int page, int pageSize){
+        return userDao.listWithOffset(page, pageSize);
     }
-
 }

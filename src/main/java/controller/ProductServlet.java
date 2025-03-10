@@ -4,8 +4,9 @@ import jakarta.servlet.*;
 import jakarta.servlet.http.*;
 import jakarta.servlet.annotation.*;
 import model.Product;
-import service.InventoryService;
+import model.ProductVariant;
 import service.ProductService;
+import service.ProductVariantService;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -15,8 +16,10 @@ import java.util.List;
 public class ProductServlet extends HttpServlet {
 
     ProductService productService;
+    ProductVariantService productVariantService;
     public void init(){
         productService = new ProductService();
+        productVariantService = new ProductVariantService();
     }
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -52,14 +55,18 @@ public class ProductServlet extends HttpServlet {
         request.getRequestDispatcher("product/ProductList.jsp").forward(request, response);
     }
 
+
     private void sendToUpdateProduct(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        try{
-            int id = Integer.parseInt(request.getParameter("productId"));
-            Product product = productService.getProductById(id);
+        try {
+            int productId = Integer.parseInt(request.getParameter("productId"));
+            List<ProductVariant> productVariants = productVariantService.getAllProductVariants(productId);
+            Product product = productService.getProductById(productId);
+
+            request.setAttribute("productVariants", productVariants);
             request.setAttribute("product", product);
             request.getRequestDispatcher("/product/UpdateProduct.jsp").forward(request, response);
-        } catch (NumberFormatException e){
-            throw new NumberFormatException("id must be an integer");
+        } catch (NumberFormatException e) {
+            throw new NumberFormatException("ID must be an integer");
         }
     }
 
@@ -123,24 +130,28 @@ public class ProductServlet extends HttpServlet {
     public void updateProduct(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
         String message = "";
         try{
-            int id = Integer.parseInt(request.getParameter("productId"));
+            int productId = Integer.parseInt(request.getParameter("productId"));
             String name = request.getParameter("name");
             BigDecimal price = new BigDecimal(request.getParameter("price"));
             String description = request.getParameter("description");
             String imageURL = request.getParameter("imageURL");
+            String size = request.getParameter("size");
 
-            Product product = productService.getProductById(id);
+            Product product = productService.getProductById(productId);
             if(product != null){
                 product.setName(name);
-                product.setPrice(price);
                 product.setDescription(description);
                 product.setImageURL(imageURL);
                 productService.updateProduct(product);
             }
-            message = "Update product successfully";
+
+            ProductVariant productVariant = productVariantService.getVariantByProductAndSize(productId, size);
+            if(productVariant != null){
+                productVariant.setPrice(price);
+            }
+            response.sendRedirect("/products");
         } catch (NumberFormatException e){
-            message = "Update product fail";
-            request.setAttribute("message", message);
+            request.setAttribute("error", e.getMessage());
             request.getRequestDispatcher("/product/CreateProduct.jsp").forward(request, response);
         }
     }
