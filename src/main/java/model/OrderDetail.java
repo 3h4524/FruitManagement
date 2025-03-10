@@ -12,7 +12,9 @@ import java.math.BigDecimal;
         @NamedQuery(name = "OrderDetails.findAll", query = "SELECT o FROM OrderDetail o"),
         @NamedQuery(name = "OrderDetails.findByOrderDetailID", query = "SELECT o FROM OrderDetail o WHERE o.id = :orderDetailID"),
         @NamedQuery(name = "OrderDetails.findByQuantity", query = "SELECT o FROM OrderDetail o WHERE o.quantity = :quantity"),
-        @NamedQuery(name = "OrderDetails.findByPrice", query = "SELECT o FROM OrderDetail o WHERE o.price = :price")})
+        @NamedQuery(name = "OrderDetails.findByPrice", query = "SELECT o FROM OrderDetail o WHERE o.price = :price"),
+        @NamedQuery(name = "OrderDetails.findByProductVariantID", query = "SELECT o FROM OrderDetail o WHERE o.productVariantID.id = :productVariantID")
+})
 public class OrderDetail {
     @Id
     @Column(name = "OrderDetailID", nullable = false)
@@ -23,16 +25,23 @@ public class OrderDetail {
     @JoinColumn(name = "OrderID", nullable = false)
     private model.Order orderID;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    @JoinColumn(name = "ProductID", nullable = false)
-    private model.Product productID;
-
     @Column(name = "Quantity", nullable = false)
     private Integer quantity;
 
     @Column(name = "Price", nullable = false, precision = 10, scale = 2)
     private BigDecimal price;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ProductVariantID")
+    private ProductVariant productVariantID;
+
+    public ProductVariant getProductVariantID() {
+        return productVariantID;
+    }
+
+    public void setProductVariantID(ProductVariant productVariantID) {
+        this.productVariantID = productVariantID;
+    }
 
     public Integer getId() {
         return id;
@@ -48,14 +57,6 @@ public class OrderDetail {
 
     public void setOrderID(model.Order orderID) {
         this.orderID = orderID;
-    }
-
-    public model.Product getProductID() {
-        return productID;
-    }
-
-    public void setProductID(model.Product productID) {
-        this.productID = productID;
     }
 
     public Integer getQuantity() {

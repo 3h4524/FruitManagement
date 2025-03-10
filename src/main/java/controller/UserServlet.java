@@ -3,8 +3,8 @@ package controller;
 import jakarta.servlet.*;
 import jakarta.servlet.http.*;
 import jakarta.servlet.annotation.*;
-import model.Customer;
-import service.CustomerService;
+import model.User;
+import service.UserService;
 import service.Utils;
 
 import java.io.IOException;
@@ -12,9 +12,9 @@ import java.util.List;
 
 @WebServlet(name = "userServlet", value = "/users")
 public class UserServlet extends HttpServlet {
-    private CustomerService customerService;
+    private UserService userService;
     public void init(){
-        customerService = new CustomerService();
+        userService = new UserService();
     }
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -24,19 +24,19 @@ public class UserServlet extends HttpServlet {
         }
         switch(action){
             case "create":
-                response.sendRedirect("/user/UserCreate.jsp");
+                response.sendRedirect(request.getContextPath() + "/user/UserCreate.jsp");
                 break;
             case "search":
-                searchCustomer(request, response);
+                searchUser(request, response);
                 break;
             case "update":
-                updateCustomer(request, response);
+                updateUser(request, response);
                 break;
             case "delete":
-                deleteCustomer(request, response);
+                deleteUser(request, response);
                 break;
                 default:
-                customerList(request, response);
+                userList(request, response);
         }
     }
 
@@ -51,29 +51,29 @@ public class UserServlet extends HttpServlet {
                 createUser(request, response);
                 break;
             case "update":
-                saveUpdateCustomer(request, response);
+                saveUpdateUser(request, response);
                 break;
         }
     }
-    public void customerList(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        List<Customer> customers = customerService.getAllCustomer();
-        request.setAttribute("customers", customers);
-        request.getRequestDispatcher("UserList.jsp").forward(request, response);
+    public void userList(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        List<User> users = userService.getAllUser();
+        request.setAttribute("users", users);
+        request.getRequestDispatcher("user/UserList.jsp").forward(request, response);
     }
     public void createUser(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         HttpSession session = request.getSession();
-        Customer customer = (Customer) session.getAttribute("customer");
+        User user = (User) session.getAttribute("user");
 
-        if (customer == null) {
+        if (user == null) {
             request.setAttribute("error", "Dữ liệu không hợp lệ!");
             request.getRequestDispatcher("register.jsp").forward(request, response);
             return;
         }
 
-        String name = customer.getName() != null ? customer.getName().trim() : "";
-        String email = customer.getEmail() != null ? customer.getEmail().trim() : "";
-        String password = customer.getPasswordHash() != null ? customer.getPasswordHash().trim() : "";
+        String name = user.getName() != null ? user.getName().trim() : "";
+        String email = user.getEmail() != null ? user.getEmail().trim() : "";
+        String password = user.getPasswordHash() != null ? user.getPasswordHash().trim() : "";
 
         // Kiểm tra thông tin có đầy đủ không
         if (name.isEmpty() || email.isEmpty() || password.isEmpty()) {
@@ -83,17 +83,17 @@ public class UserServlet extends HttpServlet {
         }
 
         // Kiểm tra tên đăng nhập đã tồn tại chưa
-        if (customerService.checkExistUserName(name) != null) {
+        if (userService.checkExistUserName(name) != null) {
             request.setAttribute("error", "Tên đăng nhập đã tồn tại!");
             request.getRequestDispatcher("register.jsp").forward(request, response);
             return;
         }
 
         // Mã hóa mật khẩu và cập nhật lại cho Customer
-        customer.setPasswordHash(Utils.hashPassword(password));
+        user.setPasswordHash(Utils.hashPassword(password));
 
         // Lưu vào database
-        if (customerService.addCustomer(customer)) {
+        if (userService.addUser(user)) {
             request.setAttribute("success", "Đăng ký thành công!");
         } else {
             request.setAttribute("error", "Đăng ký không thành công. Vui lòng thử lại!");
@@ -102,9 +102,9 @@ public class UserServlet extends HttpServlet {
         request.getRequestDispatcher("register.jsp").forward(request, response);
     }
 
-    public void deleteCustomer(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    public void deleteUser(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         int id = Integer.parseInt(request.getParameter("id"));
-        boolean success = customerService.deleteCustomer(id);
+        boolean success = userService.deleteUser(id);
         if (success) {
             request.setAttribute("success", "Xóa người dùng thành công!");
         } else {
@@ -112,27 +112,27 @@ public class UserServlet extends HttpServlet {
         }
         request.getRequestDispatcher("UserList.jsp").forward(request, response);
     }
-    public void searchCustomer(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    public void searchUser(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         int id = Integer.parseInt(request.getParameter("id"));
-        Customer customer = customerService.getCustomerById(id);
-        request.setAttribute("customer", customer);
+        User user = userService.getUserById(id);
+        request.setAttribute("users", user);
         request.getRequestDispatcher("UserList.jsp").forward(request, response);
     }
-    public void updateCustomer(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    public void updateUser(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         int id = Integer.parseInt(request.getParameter("id"));
-        Customer customer = customerService.getCustomerById(id);
-        request.setAttribute("customer", customer);
+        User user = userService.getUserById(id);
+        request.setAttribute("user", user);
         request.getRequestDispatcher("UserProfile.jsp").forward(request, response);
     }
-    public void saveUpdateCustomer(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    public void saveUpdateUser(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         HttpSession session = request.getSession();
-        Customer customer = (Customer) session.getAttribute("customer");
-        if (customer.getName() == null || customer.getPasswordHash() == null || customer.getEmail() == null || customer.getName().isEmpty() || customer.getPasswordHash().isEmpty() || customer.getEmail().isEmpty()) {
+        User user = (User) session.getAttribute("user");
+        if (user.getName() == null || user.getPasswordHash() == null || user.getEmail() == null || user.getName().isEmpty() || user.getPasswordHash().isEmpty() || user.getEmail().isEmpty()) {
             request.setAttribute("error", "Vui lòng nhập đầy đủ thông tin!");
             request.getRequestDispatcher("UserProfile.jsp").forward(request, response);
             return;
         }
-        boolean success = customerService.updateCustomer(customer);
+        boolean success = userService.updateUser(user);
         if(success){
             request.setAttribute("success", "Cập nhật thông thành công");
         }else{
@@ -143,14 +143,14 @@ public class UserServlet extends HttpServlet {
     public void changePassword(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String oldPassword = request.getParameter("oldPassword");
         HttpSession session = request.getSession();
-        Customer customer = (Customer) session.getAttribute("customer");
-        boolean isMatch = Utils.checkPassword(oldPassword, customer.getPasswordHash());
+        User user = (User) session.getAttribute("user");
+        boolean isMatch = Utils.checkPassword(oldPassword, user.getPasswordHash());
         if (isMatch) {
             String newPassword = request.getParameter("newPassword");
             String confirmPassword = request.getParameter("confirmPassword");
             if(newPassword.equals(confirmPassword)){
                 newPassword = Utils.hashPassword(newPassword);
-                customer.setPasswordHash(newPassword);
+                user.setPasswordHash(newPassword);
                 request.setAttribute("success", "Cập nhật mật khẩu mới thành công");
             }else{
                 request.setAttribute("error", "Mật khẩu nhập lại không khớp với mật khẩu đã nhập");

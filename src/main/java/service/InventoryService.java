@@ -18,24 +18,24 @@ public class InventoryService {
         return inventoryDAO.findById(id);
     }
 
-    public void setStockInInventory(List<Inventory> inventoryList){
-        EntityManager em = emf.createEntityManager();
-        try {
-            em.getTransaction().begin();
-            for (Inventory inventory : inventoryList) {
-                em.createNamedQuery(Inventory.class.getSimpleName() + ".setStockInInventory")
-                        .setParameter("storeLocation", inventory.getStoreLocation())
-                        .setParameter("productID", inventory.getProductID().getId())
-                        .setParameter("quantity", inventory.getQuantity())
-                        .executeUpdate();
-            }
-            em.getTransaction().commit();
-        } catch (Exception e) {
-            em.getTransaction().rollback(); // Rollback nếu có lỗi
-            e.printStackTrace();
-        } finally {
-            em.close();
-        }
-    }
+//    public void setStockInInventory(List<Inventory> inventoryList){
+//        EntityManager em = emf.createEntityManager();
+//        try {
+//            em.getTransaction().begin();
+//            for (Inventory inventory : inventoryList) {
+//                em.createNamedQuery(Inventory.class.getSimpleName() + ".setStockInInventory")
+//                        .setParameter("storeLocation", inventory.getStoreLocation())
+//                        .setParameter("productID", inventory.getProduct().getId())
+//                        .setParameter("quantity", inventory.getQuantity())
+//                        .executeUpdate();
+//            }
+//            em.getTransaction().commit();
+//        } catch (Exception e) {
+//            em.getTransaction().rollback(); // Rollback nếu có lỗi
+//            e.printStackTrace();
+//        } finally {
+//            em.close();
+//        }
+//    }
 
 }

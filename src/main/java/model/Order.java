@@ -16,7 +16,9 @@ import java.time.Instant;
         @NamedQuery(name = "Orders.findByOrderID", query = "SELECT o FROM Order o WHERE o.id = :orderID"),
         @NamedQuery(name = "Orders.findByOrderDate", query = "SELECT o FROM Order o WHERE o.orderDate = :orderDate"),
         @NamedQuery(name = "Orders.findByTotalAmount", query = "SELECT o FROM Order o WHERE o.totalAmount = :totalAmount"),
-        @NamedQuery(name = "Orders.findByStatus", query = "SELECT o FROM Order o WHERE o.status = :status")})
+        @NamedQuery(name = "Orders.findByStatus", query = "SELECT o FROM Order o WHERE o.status = :status"),
+        @NamedQuery(name = "Orders.findByUserID", query = "SELECT o FROM Order o WHERE o.userID.id = :UserID")
+})
 public class Order {
     @Id
     @Column(name = "OrderID", nullable = false)
@@ -25,7 +27,7 @@ public class Order {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "CustomerID", nullable = false)
-    private Customer customerID;
+    private User userID;
 
     @ColumnDefault("getdate()")
     @Column(name = "OrderDate")
@@ -47,12 +49,12 @@ public class Order {
         this.id = id;
     }
 
-    public Customer getCustomerID() {
-        return customerID;
+    public User getUserID() {
+        return userID;
     }
 
-    public void setCustomerID(Customer customerID) {
-        this.customerID = customerID;
+    public void setUserID(User userID) {
+        this.userID = userID;
     }
 
     public Instant getOrderDate() {

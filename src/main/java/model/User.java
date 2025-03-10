@@ -7,20 +7,20 @@ import org.hibernate.annotations.Nationalized;
 import java.time.Instant;
 
 @Entity
-@Table(name = "Customers")
+@Table(name = "Users")
 @NamedQueries({
-        @NamedQuery(name = "Customers.findAll", query = "SELECT c FROM Customer c"),
-        @NamedQuery(name = "Customers.findByCustomerID", query = "SELECT c FROM Customer c WHERE c.id = :customerID"),
-        @NamedQuery(name = "Customers.findByName", query = "SELECT c FROM Customer c WHERE c.name = :name"),
-        @NamedQuery(name = "Customers.findByEmail", query = "SELECT c FROM Customer c WHERE c.email = :email"),
-        @NamedQuery(name = "Customers.findByPasswordHash", query = "SELECT c FROM Customer c WHERE c.passwordHash = :passwordHash"),
-        @NamedQuery(name = "Customers.findByPhone", query = "SELECT c FROM Customer c WHERE c.phone = :phone"),
-        @NamedQuery(name = "Customers.findByAddress", query = "SELECT c FROM Customer c WHERE c.address = :address"),
-        @NamedQuery(name = "Customers.findByRegistrationDate", query = "SELECT c FROM Customer c WHERE c.registrationDate = :registrationDate")})
-public class Customer {
+        @NamedQuery(name = "User.findAll", query = "SELECT u FROM User u"),
+        @NamedQuery(name = "User.findById", query = "SELECT u FROM User u WHERE u.id = :id"),
+        @NamedQuery(name = "User.findByEmail", query = "SELECT u FROM User u WHERE u.email = :email"),
+        @NamedQuery(name = "User.findByStatus", query = "SELECT u FROM User u WHERE u.status = :status"),
+        @NamedQuery(name = "User.findByRole", query = "SELECT u FROM User u WHERE u.role = :role"),
+        @NamedQuery(name = "User.findByRegistrationDateRange",
+                query = "SELECT u FROM User u WHERE u.registrationDate BETWEEN :startDate AND :endDate")
+})
+public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "CustomerID", nullable = false)
+    @Column(name = "UserID", nullable = false)
     private Integer id;
 
     @Nationalized
@@ -40,8 +40,7 @@ public class Customer {
     private String phone;
 
     @Nationalized
-    @Lob
-    @Column(name = "Address")
+    @Column(name = "Address", length = 200)
     private String address;
 
     @ColumnDefault("getdate()")
@@ -51,6 +50,11 @@ public class Customer {
     @ColumnDefault("'ACTIVE'")
     @Column(name = "Status", nullable = false, length = 10)
     private String status;
+
+    @Nationalized
+    @ColumnDefault("'Customer'")
+    @Column(name = "Role", length = 20)
+    private String role;
 
     public Integer getId() {
         return id;
@@ -116,4 +120,11 @@ public class Customer {
         this.status = status;
     }
 
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
 }

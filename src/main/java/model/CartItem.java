@@ -2,11 +2,11 @@ package model;
 
 public class CartItem {
     private int quantity;
-    private Product product;
+    private ProductVariant productVariant;
 
-    public CartItem(int quantity, Product product) {
+    public CartItem(int quantity, ProductVariant productVariant) {
         this.quantity = quantity;
-        this.product = product;
+        this.productVariant = productVariant;
     }
 
     public CartItem() {
@@ -20,19 +20,19 @@ public class CartItem {
         this.quantity = quantity;
     }
 
-    public Product getProduct() {
-        return product;
+    public ProductVariant getProductVariant() {
+        return productVariant;
     }
 
-    public void setProduct(Product product) {
-        this.product = product;
+    public void setProductVariant(ProductVariant productVariant) {
+        this.productVariant = productVariant;
     }
 
     @Override
     public String toString() {
         return "CartItem{" +
                 "quantity=" + quantity +
-                ", product=" + product +
+                ", product=" + productVariant +
                 '}';
     }
 }

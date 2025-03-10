@@ -28,22 +28,22 @@ public class CheckoutServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         HttpSession session = request.getSession();
         Cart cart = (Cart) session.getAttribute("cart");
-        Customer customer = (Customer) session.getAttribute("UserLogin");
+        User user = (User) session.getAttribute("UserLogin");
 
         // Kiểm tra giỏ hàng và đăng nhập
-        if (cart == null || cart.getItems().isEmpty() || customer == null) {
+        if (cart == null || cart.getItems().isEmpty()) {
             response.sendRedirect("cart/Cart.jsp");
             return;
         }
 
         // Tính tổng giá trị đơn hàng
         BigDecimal totalPrice = cart.getItems().stream()
-                .map(item -> item.getProduct().getPrice().multiply(BigDecimal.valueOf(item.getQuantity())))
+                .map(item -> item.getProductVariant().getPrice().multiply(BigDecimal.valueOf(item.getQuantity())))
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
         // Tạo đơn hàng
         Order order = new Order();
-        order.setCustomerID(customer);
+        order.setUserID(user);
         order.setStatus("Pending");
         orderService.createOrder(order);
 
@@ -51,22 +51,14 @@ public class CheckoutServlet extends HttpServlet {
         List<OrderDetail> orderDetails = cart.getItems().stream().map(item -> {
             OrderDetail orderDetail = new OrderDetail();
             orderDetail.setOrderID(order);
-            orderDetail.setProductID(item.getProduct());
+            orderDetail.setProductVariantID(item.getProductVariant());
             orderDetail.setQuantity(item.getQuantity());
-            orderDetail.setPrice(item.getProduct().getPrice().multiply(BigDecimal.valueOf(item.getQuantity())));
+            orderDetail.setPrice(item.getProductVariant().getPrice().multiply(BigDecimal.valueOf(item.getQuantity())));
             return orderDetail;
         }).collect(Collectors.toList());
 
         // Lưu danh sách OrderDetail vào database
         orderService.addOrderDetails(orderDetails);
-        List<Inventory> inventoryList = orderDetails.stream().map(orderDetail -> {
-            Inventory inventory = new Inventory();
-            inventory.setStoreLocation("Main WareHouse");
-            inventory.setProductID(orderDetail.getProductID());
-            inventory.setQuantity(orderDetail.getQuantity());
-            return inventory;
-        }).collect(Collectors.toList());
-        inventoryService.setStockInInventory(inventoryList);
         // Xóa giỏ hàng khỏi session và chuyển hướng
         session.removeAttribute("cart");
         response.sendRedirect("success.jsp");
