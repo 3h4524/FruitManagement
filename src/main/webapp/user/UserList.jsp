@@ -1,77 +1,93 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%--
-  Created by IntelliJ IDEA.
-  User: DELL
-  Date: 10/03/2025
-  Time: 10:17 SA
-  To change this template use File | Settings | File Templates.
---%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
-    <title>User list</title>
+    <title>Danh sách người dùng</title>
+    <link rel="stylesheet" href="<%= request.getContextPath() %>/css/bootstrap/bootstrap.min.css">
 </head>
 <body>
-<form action="users" method="get">
-    <input type="hidden" name="action" value="find">
-    Enter User Name: <input type="text" name="name">
-    <input type="submit" value="search">
-</form>
-<a href="<%= request.getContextPath()%>/user/UserCreateAddress.jsp">Create</a>
-<h1>User List</h1>
-<c:set var="pageSize" value="10"/>
-<c:set var="currentPage" value="${param.page != null ? param.page : 1}"/>
-<c:set var="start" value="${(currentPage - 1) * pageSize}"/>
-<c:set var="end" value="${start + pageSize}"/>
-<c:set var="totalUsers" value="${users.size()}"/>
-<c:set var="totalPages" value="${Math.ceil(totalUsers / pageSize)}"/>
-<table border="1">
-    <tr>
-        <th>ID</th>
-        <th>Name</th>
-        <th>Email</th>
-        <th>Phone</th>
-        <th>Address</th>
-        <th>Registration Date</th>
-        <th>Status</th>
-        <th>Role</th>
-    </tr>
-    <c:forEach var="user" items="${customers}" varStatus="status">
-        <c:if test="${status.index >= start && status.index < end}">
-            <tr>
-                <td>${user.id}</td>
-                <td>${user.name}</td>
-                <td>${user.email}</td>
-                <td>${user.phone}</td>
-                <td>${user.address}</td>
-                <td>${user.registrationDate}</td>
-                <td>${user.status}</td>
-                <td>${user.role}</td>
-                <td><a href="users?action=edit&id=${user.id}">Edit</a>
-                    <a href="#" onclick="doDelete('${user.id}')">Delete</a></td>
-            </tr>
-        </c:if>
-    </c:forEach>
-    <div>
-        <c:if test="${currentPage > 1}">
-            <a href="<%= request.getContextPath()%>/users?page=${currentPage - 1}">Previous</a>
+<div class="container mt-4">
+    <h2 class="text-center mb-4">Danh sách người dùng</h2>
 
-        </c:if>
+    <!-- Tìm kiếm -->
+    <form action="users" method="get" class="mb-3 d-flex justify-content-center">
+        <input type="hidden" name="action" value="find">
+        <input type="text" name="name" class="form-control w-25 me-2" placeholder="Nhập tên người dùng">
+        <button type="submit" class="btn btn-primary">🔍 Tìm kiếm</button>
+    </form>
 
-        <c:forEach var="i" begin="1" end="${totalPages}">
-            <c:choose>
-                <c:when test="${currentPage == i}">
-                    <strong>${i}</strong>
-                </c:when>
-                <c:otherwise>
-                    <a href="<%= request.getContextPath()%>/users?page=${i}">${i}</a>
-                </c:otherwise>
-            </c:choose>
+    <table class="table table-bordered table-hover">
+        <thead class="table-dark">
+        <tr>
+            <th>ID</th>
+            <th>Tên</th>
+            <th>Email</th>
+            <th>Điện thoại</th>
+            <th>Địa chỉ</th>
+            <th>Ngày đăng ký</th>
+            <th>Trạng thái</th>
+            <th>Vai trò</th>
+            <th>Hành động</th>
+        </tr>
+        </thead>
+        <tbody>
+        <c:forEach var="user" items="${requestScope.users}" varStatus="status">
+            <c:if test="${status.index >= start && status.index < end}">
+                <tr>
+                    <td>${user.id}</td>
+                    <td>${user.name}</td>
+                    <td>${user.email}</td>
+                    <td>${user.phone}</td>
+                    <td>${user.address}</td>
+                    <td>${user.registrationDate}</td>
+                    <td>
+                            <span class="badge ${user.status == 'ACTIVE' ? 'bg-success' : 'bg-danger'}">
+                                    ${user.status}
+                            </span>
+                    </td>
+                    <td>${user.role}</td>
+                    <td>
+                        <a href="users?action=update&id=${user.id}" class="btn btn-warning btn-sm">✏️ Sửa</a>
+                        <c:choose>
+                            <c:when test="${user.status == 'INACTIVE'}">
+                                <a href="users?action=restore&id=${user.id}" class="btn btn-success btn-sm">🔄 Khôi phục</a>
+                            </c:when>
+                            <c:otherwise>
+                                <a href="users?action=delete&id=${user.id}" class="btn btn-danger btn-sm">🗑️ Xóa</a>
+                            </c:otherwise>
+                        </c:choose>
+                    </td>
+                </tr>
+            </c:if>
         </c:forEach>
-        <c:if test="${currentPage < totalPages}">
-            <a href="<%= request.getContextPath()%>/users?page=${currentPage + 1}">Next</a>
-        </c:if>
-    </div>
-</table>
+        </tbody>
+    </table>
+
+    <!-- Phân trang -->
+    <nav class="d-flex justify-content-center">
+        <ul class="pagination">
+            <c:if test="${currentPage > 1}">
+                <li class="page-item">
+                    <a class="page-link" href="users?page=${currentPage - 1}">«</a>
+                </li>
+            </c:if>
+
+            <c:forEach var="i" begin="1" end="${totalPages}">
+                <li class="page-item ${currentPage == i ? 'active' : ''}">
+                    <a class="page-link" href="users?page=${i}">${i}</a>
+                </li>
+            </c:forEach>
+
+            <c:if test="${currentPage < totalPages}">
+                <li class="page-item">
+                    <a class="page-link" href="users?page=${currentPage + 1}">»</a>
+                </li>
+            </c:if>
+        </ul>
+    </nav>
+</div>
+
+<!-- Bootstrap JS -->
+<script src="<%= request.getContextPath() %>/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

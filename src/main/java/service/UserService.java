@@ -33,15 +33,22 @@ public class UserService {
         return false;
     }
 
+    public boolean restoreUser(int id) {
+        User user = userDao.findById(id);
+        if (user != null) {
+            user.setStatus("ACTIVE");
+            userDao.update(user);
+            return true;
+        }
+        return false;
+    }
+
     public List<User> getCustomerByName(String name){
         return userDao.findByName(name);
     }
 
-    public boolean checkEmailExisted(String email) {
-        return userDao.findByAttribute("email", email) != null;
-    }
     public User getUserByEmail(String email) {
         List<User> users = userDao.findByAttribute("email", email);
-        return users.get(0);
+        return users.isEmpty() ? null : users.get(0);
     }
 }

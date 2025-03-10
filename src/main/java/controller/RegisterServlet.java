@@ -8,6 +8,7 @@ import service.UserService;
 import service.Utils;
 
 import java.io.IOException;
+import java.time.Instant;
 
 @WebServlet(name = "RegisterServlet", value = "/registers")
 public class  RegisterServlet extends HttpServlet {
@@ -20,34 +21,39 @@ public class  RegisterServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         HttpSession session = request.getSession();
-        User user = (User) session.getAttribute("UserLogin");
 
+        // Lấy UserLogin từ session, nếu chưa có thì tạo mới
+        User user = (User) session.getAttribute("UserLogin");
         if (user == null) {
-            request.setAttribute("error", "Dữ liệu không hợp lệ!");
+            user = new User();
+        }
+
+        // Lấy dữ liệu từ form và cập nhật vào user
+        user.setName(request.getParameter("name").trim());
+        user.setEmail(request.getParameter("email").trim());
+        user.setPasswordHash(Utils.hashPassword(request.getParameter("password")));
+        user.setPhone(request.getParameter("phone").trim());
+        user.setAddress(request.getParameter("address").trim());
+        user.setStatus("ACTIVE");
+        user.setRole("Customer");
+        user.setRegistrationDate(Instant.now());
+
+        // Lưu lại user vào session sau khi cập nhật dữ liệu
+        session.setAttribute("UserLogin", user);
+
+        // Kiểm tra thông tin có đầy đủ không
+        if (user.getName().isEmpty() || user.getEmail().isEmpty() || user.getPasswordHash().isEmpty()) {
+            request.setAttribute("error", "Vui lòng nhập đầy đủ thông tin!");
             request.getRequestDispatcher("/user/Register.jsp").forward(request, response);
             return;
         }
 
-        String name = user.getName() != null ? user.getName().trim() : "";
-        String email = user.getEmail() != null ? user.getEmail().trim() : "";
-        String password = user.getPasswordHash() != null ? user.getPasswordHash().trim() : "";
-
-        // Kiểm tra thông tin có đầy đủ không
-        if (name.isEmpty() || email.isEmpty() || password.isEmpty()) {
-            request.setAttribute("error", "Vui lòng nhập đầy đủ thông tin!");
-            request.getRequestDispatcher("user/Register.jsp").forward(request, response);
-            return;
-        }
-
         // Kiểm tra tên đăng nhập đã tồn tại chưa
-        if (userService.checkEmailExisted(email)) {
-            request.setAttribute("error", "Tên đăng nhập đã tồn tại!");
-            request.getRequestDispatcher("users/Register.jsp").forward(request, response);
+        if (userService.getUserByEmail(user.getEmail()) != null) {
+            request.setAttribute("error", "Email đã tồn tại!");
+            request.getRequestDispatcher("/user/Register.jsp").forward(request, response);
             return;
         }
-
-        // Mã hóa mật khẩu và cập nhật lại cho Customer
-        user.setPasswordHash(Utils.hashPassword(password));
 
         // Lưu vào database
         if (userService.addUser(user)) {
@@ -55,9 +61,7 @@ public class  RegisterServlet extends HttpServlet {
             response.sendRedirect(request.getContextPath() + "/index.jsp");
         } else {
             request.setAttribute("error", "Đăng ký không thành công. Vui lòng thử lại!");
-            request.getRequestDispatcher("user/Register.jsp").forward(request, response);
+            request.getRequestDispatcher("/user/Register.jsp").forward(request, response);
         }
-
-
     }
 }

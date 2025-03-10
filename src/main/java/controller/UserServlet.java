@@ -23,9 +23,6 @@ public class UserServlet extends HttpServlet {
             action = "";
         }
         switch(action){
-            case "create":
-                response.sendRedirect(request.getContextPath() + "/user/UserCreate.jsp");
-                break;
             case "search":
                 searchUser(request, response);
                 break;
@@ -34,6 +31,9 @@ public class UserServlet extends HttpServlet {
                 break;
             case "delete":
                 deleteUser(request, response);
+                break;
+            case "restore":
+                restoreUser(request, response);
                 break;
                 default:
                 userList(request, response);
@@ -83,7 +83,7 @@ public class UserServlet extends HttpServlet {
         }
 
         // Kiểm tra tên đăng nhập đã tồn tại chưa
-        if (userService.checkEmailExisted(email)) {
+        if (userService.getUserByEmail(email) != null) {
             request.setAttribute("error", "Tên đăng nhập đã tồn tại!");
             request.getRequestDispatcher("Register.jsp").forward(request, response);
             return;
@@ -105,12 +105,13 @@ public class UserServlet extends HttpServlet {
     public void deleteUser(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         int id = Integer.parseInt(request.getParameter("id"));
         boolean success = userService.deleteUser(id);
-        if (success) {
-            request.setAttribute("success", "Xóa người dùng thành công!");
-        } else {
-            request.setAttribute("error", "Xóa người dùng thất bại!");
-        }
-        request.getRequestDispatcher("UserList.jsp").forward(request, response);
+        response.sendRedirect(request.getContextPath() + "/users");
+//        if (success) {
+//            request.setAttribute("success", "Xóa người dùng thành công!");
+//        } else {ute("error", "Xóa người dùng thất bại!");
+////        }
+//            request.setAttrib
+//        request.getRequestDispatcher("users").forward(request, response);
     }
     public void searchUser(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         int id = Integer.parseInt(request.getParameter("id"));
@@ -121,15 +122,21 @@ public class UserServlet extends HttpServlet {
     public void updateUser(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         int id = Integer.parseInt(request.getParameter("id"));
         User user = userService.getUserById(id);
-        request.setAttribute("user", user);
-        request.getRequestDispatcher("UserProfile.jsp").forward(request, response);
+        HttpSession session = request.getSession();
+        session.setAttribute("user", user);
+        request.getRequestDispatcher("/user/UserEdit.jsp").forward(request, response);
     }
     public void saveUpdateUser(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         HttpSession session = request.getSession();
         User user = (User) session.getAttribute("user");
-        if (user.getName() == null || user.getPasswordHash() == null || user.getEmail() == null || user.getName().isEmpty() || user.getPasswordHash().isEmpty() || user.getEmail().isEmpty()) {
+        if (user.getName() == null || user.getEmail() == null || user.getName().isEmpty() || user.getEmail().isEmpty()) {
             request.setAttribute("error", "Vui lòng nhập đầy đủ thông tin!");
-            request.getRequestDispatcher("UserProfile.jsp").forward(request, response);
+            request.getRequestDispatcher("user/UserEdit.jsp").forward(request, response);
+            return;
+        }
+        if(userService.getUserByEmail(user.getEmail()) != null){
+            request.setAttribute("error", "Email đã tồn tại");
+            request.getRequestDispatcher("user/UserEdit.jsp").forward(request, response);
             return;
         }
         boolean success = userService.updateUser(user);
@@ -138,7 +145,7 @@ public class UserServlet extends HttpServlet {
         }else{
             request.setAttribute("error", "Cập nhật thất bại");
         }
-        request.getRequestDispatcher("UserProfile.jsp").forward(request, response);
+        request.getRequestDispatcher("users").forward(request, response);
     }
     public void changePassword(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String oldPassword = request.getParameter("oldPassword");
@@ -160,5 +167,9 @@ public class UserServlet extends HttpServlet {
         }
         request.getRequestDispatcher("UserChangePassword.jsp").forward(request, response);
     }
-
+    public void restoreUser(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        int id = Integer.parseInt(request.getParameter("id"));
+        userService.restoreUser(id);
+        response.sendRedirect(request.getContextPath() + "/users");
+    }
 }

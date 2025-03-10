@@ -17,8 +17,7 @@ public class Test {
             System.out.println("Danh sách sản phẩm:");
             for (Product product : products) {
                 System.out.println("ID: " + product.getId() +
-                        ", Name: " + product.getName() +
-                        ", Price: " + product.getPrice());
+                        ", Name: " + product.getName());
             }
         }
     }

@@ -2,6 +2,8 @@ package dao;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;
+import jakarta.persistence.PersistenceException;
+import jakarta.persistence.Query;
 import service.Utils;
 
 import java.util.Collections;
@@ -34,38 +36,36 @@ public class GenericDAO<T> extends BaseDAO<T> {
             em.getTransaction().begin();
             em.persist(t);
             em.getTransaction().commit();
-            return true; // Chèn thành công
-        } catch (Exception e) {
-            em.getTransaction().rollback(); // Rollback nếu có lỗi
-            e.printStackTrace(); // In lỗi ra console (hoặc log)
-            return false; // Chèn thất bại
-        } finally {
-            em.close();
-        }
-    }
-
-
-    @Override
-    public boolean update(T t){
-        EntityManager em = emf.createEntityManager();
-        try {
-            em.getTransaction().begin();
-
-            // Kiểm tra entity có tồn tại không
-            if (em.find(entityClass, em.getEntityManagerFactory().getPersistenceUnitUtil().getIdentifier(t)) == null) {
-                return false; // Không tìm thấy => không cập nhật
-            }
-
-            em.merge(t);
-            em.getTransaction().commit();
             return true;
         } catch (Exception e) {
-            em.getTransaction().rollback();
+            em.getTransaction().rollback(); // Rollback nếu có lỗi
+            System.out.println("LỖI INSERT: " + e.getMessage()); // In lỗi ra console
+            e.printStackTrace(); // In toàn bộ lỗi
             return false;
         } finally {
             em.close();
         }
     }
+
+
+
+    @Override
+    public boolean update(T t) {
+        EntityManager em = emf.createEntityManager();
+        try {
+            em.getTransaction().begin();
+            em.merge(t); // Hibernate sẽ kiểm tra ID, nếu có thì cập nhật, không có thì thêm mới
+            em.getTransaction().commit();
+            return true;
+        } catch (Exception e) {
+            em.getTransaction().rollback();
+            e.printStackTrace(); // In lỗi ra console để debug
+            return false;
+        } finally {
+            em.close();
+        }
+    }
+
 
     @Override
     public boolean delete(int id)  {
@@ -121,18 +121,29 @@ public class GenericDAO<T> extends BaseDAO<T> {
     }
     public List<T> findByAttribute(String attributeName, Object value) {
         EntityManager em = emf.createEntityManager();
+        List<T> resultList = Collections.emptyList(); // Tránh trả về null
         try {
+            // Tạo tên NamedQuery dựa trên entity
             String queryName = entityClass.getSimpleName() + ".findBy" + Utils.capitalizeFirstLetter(attributeName);
-            return em.createNamedQuery(queryName, entityClass)
+            System.out.println("Executing NamedQuery: " + queryName + " with value: " + value);
+
+            // Thực thi NamedQuery
+            resultList = em.createNamedQuery(queryName, entityClass)
                     .setParameter(attributeName, value)
                     .getResultList();
+        } catch (IllegalArgumentException e) {
+            System.err.println("❌ ERROR: NamedQuery '" + attributeName + "' không tồn tại hoặc tham số không hợp lệ: " + e.getMessage());
+        } catch (PersistenceException e) {
+            System.err.println("❌ Database Error khi thực thi query: " + e.getMessage());
         } catch (Exception e) {
-            e.printStackTrace();
-            return Collections.emptyList();
+            System.err.println("❌ Unexpected Error trong findByAttribute: " + e.getMessage());
         } finally {
             em.close();
         }
+        return resultList;
     }
+
+
 
 }
 

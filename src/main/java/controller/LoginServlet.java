@@ -14,7 +14,7 @@ public class LoginServlet extends HttpServlet {
     private UserService userService = new UserService();
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
+        response.sendRedirect(request.getContextPath() + "/user/Login.jsp");
     }
 
     @Override

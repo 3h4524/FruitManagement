@@ -132,7 +132,6 @@ public class ProductServlet extends HttpServlet {
             Product product = productService.getProductById(id);
             if(product != null){
                 product.setName(name);
-                product.setPrice(price);
                 product.setDescription(description);
                 product.setImageURL(imageURL);
                 productService.updateProduct(product);
