@@ -2,8 +2,6 @@ package dao;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;
-import model.Customer;
-import model.Product;
 
 import java.util.List;
 

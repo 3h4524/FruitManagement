@@ -4,13 +4,14 @@
   <persistence-unit name="FruitManagementPU">
     <class>model.Product</class>
     <class>model.Category</class>
-    <class>model.Customer</class>
+    <class>model.User</class>
 
     <class>model.Inventory</class>
     <class>model.InventoryLog</class>
     <class>model.Order</class>
     <class>model.OrderDetail</class>
-
+    <class>model.ProductStock</class>
+    <class>model.ProductVariant</class>
 
     <properties>
       <property name="jakarta.persistence.jdbc.driver" value="com.microsoft.sqlserver.jdbc.SQLServerDriver"/>

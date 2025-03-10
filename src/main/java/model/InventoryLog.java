@@ -14,15 +14,13 @@ import java.time.Instant;
         @NamedQuery(name = "InventoryLogs.findByActionType", query = "SELECT i FROM InventoryLog i WHERE i.actionType = :actionType"),
         @NamedQuery(name = "InventoryLogs.findByQuantityChanged", query = "SELECT i FROM InventoryLog i WHERE i.quantityChanged = :quantityChanged"),
         @NamedQuery(name = "InventoryLogs.findByActionDate", query = "SELECT i FROM InventoryLog i WHERE i.actionDate = :actionDate"),
-        @NamedQuery(name = "InventoryLogs.findByStoreLocation", query = "SELECT i FROM InventoryLog i WHERE i.storeLocation = :storeLocation")})
+        @NamedQuery(name = "InventoryLogs.findByStoreLocation", query = "SELECT i FROM InventoryLog i WHERE i.storeLocation = :storeLocation"),
+        @NamedQuery(name = "InventoryLogs.findByProductVariant", query = "SELECT i FROM InventoryLog i WHERE i.productVariantID.id = :productVariantID")
+})
 public class InventoryLog {
     @Id
     @Column(name = "LogID", nullable = false)
     private Integer id;
-
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "ProductID", nullable = false)
-    private model.Product productID;
 
     @Nationalized
     @Column(name = "ActionType", nullable = false, length = 10)
@@ -40,20 +38,24 @@ public class InventoryLog {
     @Column(name = "StoreLocation", length = 100)
     private String storeLocation;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ProductVariantID")
+    private ProductVariant productVariantID;
+
+    public ProductVariant getProductVariantID() {
+        return productVariantID;
+    }
+
+    public void setProductVariantID(ProductVariant productVariantID) {
+        this.productVariantID = productVariantID;
+    }
+
     public Integer getId() {
         return id;
     }
 
     public void setId(Integer id) {
         this.id = id;
-    }
-
-    public model.Product getProductID() {
-        return productID;
-    }
-
-    public void setProductID(model.Product productID) {
-        this.productID = productID;
     }
 
     public String getActionType() {
