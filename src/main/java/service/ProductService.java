@@ -29,4 +29,8 @@ import java.util.List;
     public void deleteProduct(int id) {
         productDAO.delete(id);
     }
+    public List<Product> listWithOffset(int page, int pageSize) {
+            return productDAO.listWithOffset(page, pageSize);
+    }
+
     }

@@ -3,6 +3,7 @@ package service;
 import dao.GenericDAO;
 import model.Order;
 import model.OrderDetail;
+import model.Product;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,5 +39,9 @@ public class OrderService {
             }
         }
         return orderDetails;
+    }
+
+    public List<OrderDetail> listWithOffset(int page, int pageSize) {
+        return orderDetailDao.listWithOffset(page, pageSize);
     }
 }

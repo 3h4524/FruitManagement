@@ -1,6 +1,7 @@
 package service;
 
 import dao.GenericDAO;
+import model.Product;
 import model.User;
 
 import java.util.List;
@@ -47,8 +48,10 @@ public class UserService {
         return userDao.findByName(name);
     }
 
+
     public User getUserByEmail(String email) {
         List<User> users = userDao.findByAttribute("email", email);
         return users.isEmpty() ? null : users.get(0);
+
     }
 }

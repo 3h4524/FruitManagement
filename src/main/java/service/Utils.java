@@ -12,6 +12,7 @@ public class Utils {
     public static String capitalizeFirstLetter(String input) {
         return input.substring(0, 1).toUpperCase() + input.substring(1);
     }
+
     public static String normalizeName(String name) {
         if (name == null || name.isEmpty()) {
             return "";
@@ -49,4 +50,5 @@ public class Utils {
         String emailPattern = "^[a-zA-Z0-9._%+-]+@gmail\\.com$";
         return email != null && email.matches(emailPattern);
     }
+
 }
