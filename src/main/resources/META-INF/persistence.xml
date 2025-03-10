@@ -16,7 +16,7 @@
       <property name="jakarta.persistence.jdbc.driver" value="com.microsoft.sqlserver.jdbc.SQLServerDriver"/>
       <property name="jakarta.persistence.jdbc.url" value="jdbc:sqlserver://localhost:1433;databaseName=FruitManagementSystem;encrypt=true;trustServerCertificate=true"/>
       <property name="jakarta.persistence.jdbc.user" value="sa"/>
-      <property name="jakarta.persistence.jdbc.password" value="Khang1234@"/>
+      <property name="jakarta.persistence.jdbc.password" value="3H452004hh@"/>
       <property name="jakarta.persistence.schema-generation.database.action" value="none"/>
       <property name="jakarta.persistence.logging.level" value="FINE"/>
     </properties>
