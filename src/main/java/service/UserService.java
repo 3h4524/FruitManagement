@@ -34,11 +34,24 @@ public class UserService {
         return false;
     }
 
+    public boolean restoreUser(int id) {
+        User user = userDao.findById(id);
+        if (user != null) {
+            user.setStatus("ACTIVE");
+            userDao.update(user);
+            return true;
+        }
+        return false;
+    }
+
     public List<User> getCustomerByName(String name){
         return userDao.findByName(name);
     }
 
-    public List<User> listWithOffset(int page, int pageSize){
-        return userDao.listWithOffset(page, pageSize);
+
+    public User getUserByEmail(String email) {
+        List<User> users = userDao.findByAttribute("email", email);
+        return users.isEmpty() ? null : users.get(0);
+
     }
 }

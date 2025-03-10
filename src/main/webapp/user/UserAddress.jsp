@@ -1,31 +1,47 @@
-<%--
-  Created by IntelliJ IDEA.
-  User: DELL
-  Date: 08/03/2025
-  Time: 11:47 SA
-  To change this template use File | Settings | File Templates.
---%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <html>
 <head>
-    <meta charset="UTF-8">
-    <title>Quản lý địa chỉ</title>
-    <link rel="stylesheet" href="<%= request.getContextPath()%>/css/bootstrap/bootstrap.min.css">
-    <script src="<%= request.getContextPath()%>/js/bootstrap/bootstrap.bundle.min.js"></script>
+    <title>Địa chỉ của tôi</title>
+    <link rel="stylesheet" href="<%= request.getContextPath() %>/css/bootstrap/bootstrap.min.css">
 </head>
 <body>
-<c:set var="customer" value="${sessionScope.customer}"/>
-<c:set var="addresses" value="${customer.address}"/>
 <div class="container mt-4">
-<c:choose>
-    <!-- Nếu chưa có địa chỉ -->
-    <c:when test="${empty addresses}">
-        <a href="UserCreateAddress.jsp">Thêm địa chỉ mới</a>
-    </c:when>
-    <c:otherwise>
+    <h2 class="text-center mb-4">Quản lý địa chỉ</h2>
 
-    </c:otherwise>
+    <div class="card p-4 shadow-sm">
+        <form action="saveAddress" method="post">
+            <div class="mb-3">
+                <label class="form-label">Số nhà & Đường</label>
+                <input type="text" name="street" class="form-control" placeholder="VD: 123 Nguyễn Văn Linh" required/>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Phường/Xã</label>
+                <input type="text" name="ward" class="form-control" required/>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Quận/Huyện</label>
+                <input type="text" name="district" class="form-control" required/>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Thành phố/Tỉnh</label>
+                <input type="text" name="city" class="form-control" required/>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Mã bưu chính</label>
+                <input type="text" name="zipcode" class="form-control" required/>
+            </div>
+
+            <div class="text-center">
+                <button type="submit" class="btn btn-success">Lưu địa chỉ</button>
+                <a href="UserAccount.jsp" class="btn btn-secondary">Quay lại</a>
+            </div>
+        </form>
+    </div>
 </div>
 </body>
 </html>
