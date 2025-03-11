@@ -3,6 +3,7 @@ package controller;
 import jakarta.servlet.*;
 import jakarta.servlet.http.*;
 import jakarta.servlet.annotation.*;
+import model.Category;
 import model.Product;
 import model.ProductVariant;
 import service.ProductService;
@@ -72,6 +73,20 @@ public class ProductServlet extends HttpServlet {
 
     // Thang bo sung phan search product
     private void searchProduct(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String categoryID = request.getParameter("categoryId");
+        String sort = request.getParameter("sort");
+        String searchName = request.getParameter("searchName");
+
+        // Gọi service để lấy sản phẩm với giá của size "Small"
+        List<Product> products = productService.searchAndFilterProducts(searchName, categoryID, sort);
+        List<Category> categories = productService.getAllCategories();
+
+        request.setAttribute("products", products);
+        request.setAttribute("categories", categories);
+        request.setAttribute("selectedCategory", categoryID);
+        request.setAttribute("selectedSort", sort);
+        request.setAttribute("searchName", searchName);
+        request.getRequestDispatcher("/product/ProductListCart.jsp").forward(request, response);
     }
 
     private void deleteProduct(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
