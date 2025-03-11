@@ -2,6 +2,11 @@ package service;
 
 import org.mindrot.jbcrypt.BCrypt;
 
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+
 public class Utils {
     public static String hashPassword(String password) {
         return BCrypt.hashpw(password, BCrypt.gensalt(12));
@@ -32,7 +37,7 @@ public class Utils {
         String regex = "^(\\d{9}|\\d{10})$";
         return phone.matches(regex);
     }
-    public boolean isValidPassword(String password) {
+    public static boolean isValidPassword(String password) {
         if (password.length() < 8) {
             return false;
         }
@@ -50,5 +55,16 @@ public class Utils {
         String emailPattern = "^[a-zA-Z0-9._%+-]+@gmail\\.com$";
         return email != null && email.matches(emailPattern);
     }
+    public static String dateTimeFormat(Instant dateTime) {
+        if (dateTime == null) {
+            return "";
+        }
+        // Chuyển Instant sang LocalDateTime với múi giờ Việt Nam
+        LocalDateTime localDateTime = LocalDateTime.ofInstant(dateTime, ZoneId.of("Asia/Ho_Chi_Minh"));
 
+        // Định dạng ngày giờ
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
+
+        return localDateTime.format(formatter);
+    }
 }

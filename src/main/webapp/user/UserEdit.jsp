@@ -10,9 +10,7 @@
   <div class="row justify-content-center">
     <div class="col-md-6">
       <div class="card shadow-lg rounded">
-        <div class="card-header bg-primary text-white text-center">
-          <h3>Chỉnh sửa thông tin</h3>
-        </div>
+
         <div class="card-body">
           <c:set var="user" value="${sessionScope.user}"/>
           <form action="${pageContext.request.contextPath}/user/Confirm.jsp" method="post">
@@ -23,7 +21,7 @@
 
             <div class="mb-3">
               <label class="form-label">Email</label>
-              <input type="email" name="email" class="form-control" value="${user.email}" required />
+              <input type="email" name="email" class="form-control" value="${user.email}" required readonly/>
             </div>
 
             <div class="mb-3">
@@ -38,12 +36,21 @@
 
             <div class="mb-3">
               <label class="form-label">Địa chỉ</label>
-              <input type="text" name="address" class="form-control" value="${user.address}" />
+                <c:choose>
+                  <c:when test="${empty user.address}">
+                    <a href="user/UserCreateAddress.jsp">Thêm địa chỉ</a>
+                  </c:when>
+                  <c:otherwise>
+                    <input type="text" name="address" class="form-control" value="${user.address}" />
+                    <a href="user/UserCreateAddress.jsp">Thay đổi địa chỉ</a>
+                  </c:otherwise>
+                </c:choose>
             </div>
+
 
             <div class="text-center">
               <button type="submit" class="btn btn-success px-4">Lưu</button>
-              <a href="UserAccount.jsp?page=user/UserProfile.jsp" class="btn btn-secondary px-4">Hủy</a>
+              <a href="<%= request.getHeader("Referer") %>" class="btn btn-secondary px-4">Hủy</a>
             </div>
           </form>
         </div>

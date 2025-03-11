@@ -125,6 +125,7 @@ public class ProductServlet extends HttpServlet {
             throws ServletException, IOException {
         String message = "";
         try {
+            // Lấy dữ liệu từ request
             String name = request.getParameter("name");
             BigDecimal price = new BigDecimal(request.getParameter("price"));
             String size = request.getParameter("size");
@@ -136,28 +137,38 @@ public class ProductServlet extends HttpServlet {
             LocalDate localDate = LocalDate.parse(dateStr, DateTimeFormatter.ISO_DATE);
             Instant importDate = localDate.atStartOfDay(ZoneId.systemDefault()).toInstant();
 
+            // Tạo Product
             Product newProduct = new Product();
             newProduct.setName(name);
             newProduct.setDescription(description);
             newProduct.setImageURL(imageURL);
             newProduct.setImportDate(importDate);
 
+            // Lưu sản phẩm trước
             productService.addProduct(newProduct);
 
+            // Tạo ProductVariant
             ProductVariant productVariant = new ProductVariant();
             productVariant.setProductID(newProduct);
             productVariant.setSize(size);
             productVariant.setPrice(price);
+
+            // Lưu productVariant trước khi sử dụng nó
             productVariantService.addProductVariant(productVariant);
 
+            // Tạo ProductStock
             ProductStock productStock = new ProductStock();
             productStock.setProductVariantID(productVariant);
             productStock.setAmount(stock);
+
+            // Lưu ProductStock vào database
             new ProductStockService().addProductStock(productStock);
-            message = "add product successfully";
+
+            message = "Thêm sản phẩm thành công";
             request.setAttribute("message", message);
         } catch (Exception e) {
-            message = "add product fail";
+            e.printStackTrace(); // Debug lỗi dễ hơn
+            message = "Thêm sản phẩm thất bại";
             request.setAttribute("error", message);
         }
         request.getRequestDispatcher("/product/CreateProduct.jsp").forward(request, response);

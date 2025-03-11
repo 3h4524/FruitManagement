@@ -35,6 +35,7 @@ public class GenericDAO<T> extends BaseDAO<T> {
             em.getTransaction().begin();
             em.persist(t);
             em.getTransaction().commit();
+            System.out.println("added");
             return true;
         } catch (Exception e) {
             em.getTransaction().rollback(); // Rollback nếu có lỗi

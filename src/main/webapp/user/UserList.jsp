@@ -1,5 +1,14 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page import="service.UserService" %>
+<%@ page import="java.util.List" %>
+<%@ page import="service.Utils" %>
+<jsp:useBean id="userService" class="service.UserService" scope="page" />
+<%
+    if(session.getAttribute("users") == null){
+        session.setAttribute("users", userService.getAllUser());
+    }
+%>
 <html>
 <head>
     <title>Danh sách người dùng</title>
@@ -13,25 +22,32 @@
     <form action="users" method="get" class="mb-3 d-flex justify-content-center">
         <input type="hidden" name="action" value="find">
         <input type="text" name="name" class="form-control w-25 me-2" placeholder="Nhập tên người dùng">
-        <button type="submit" class="btn btn-primary">🔍 Tìm kiếm</button>
+        <button type="submit" class="btn btn-primary">Tìm kiếm</button>
     </form>
-
+    <c:set var="users" value="${sessionScope.users}"/>
+    <c:set var="pageSize" value="10"/>
+    <c:set var="currentPage" value="${param.page != null ? param.page : 1}"/>
+    <c:set var="start" value="${(currentPage - 1) * pageSize}"/>
+    <c:set var="end" value="${start + pageSize}"/>
+    <c:set var="totalUsers" value="${users.size()}"/>
+    <c:set var="totalPages" value="${Math.ceil(totalUsers / pageSize)}"/>
     <table class="table table-bordered table-hover">
         <thead class="table-dark">
         <tr>
             <th>ID</th>
-            <th>Tên</th>
+            <th>Tên Tài khoản</th>
             <th>Email</th>
-            <th>Điện thoại</th>
+            <th>Số điện thoại</th>
             <th>Địa chỉ</th>
             <th>Ngày đăng ký</th>
             <th>Trạng thái</th>
             <th>Vai trò</th>
-            <th>Hành động</th>
+            <th></th>
         </tr>
         </thead>
         <tbody>
-        <c:forEach var="user" items="${requestScope.users}" varStatus="status">
+
+        <c:forEach var="user" items="${users}" varStatus="status">
             <c:if test="${status.index >= start && status.index < end}">
                 <tr>
                     <td>${user.id}</td>
@@ -39,7 +55,7 @@
                     <td>${user.email}</td>
                     <td>${user.phone}</td>
                     <td>${user.address}</td>
-                    <td>${user.registrationDate}</td>
+                    <td>${Utils.dateTimeFormat(user.registrationDate)}</td>
                     <td>
                             <span class="badge ${user.status == 'ACTIVE' ? 'bg-success' : 'bg-danger'}">
                                     ${user.status}
@@ -47,13 +63,13 @@
                     </td>
                     <td>${user.role}</td>
                     <td>
-                        <a href="users?action=update&id=${user.id}" class="btn btn-warning btn-sm">✏️ Sửa</a>
+                        <a href="users?action=update&id=${user.id}" class="btn btn-warning btn-sm">Sửa</a>
                         <c:choose>
                             <c:when test="${user.status == 'INACTIVE'}">
-                                <a href="users?action=restore&id=${user.id}" class="btn btn-success btn-sm">🔄 Khôi phục</a>
+                                <a href="users?action=restore&id=${user.id}" class="btn btn-success btn-sm">Khôi phục</a>
                             </c:when>
                             <c:otherwise>
-                                <a href="users?action=delete&id=${user.id}" class="btn btn-danger btn-sm">🗑️ Xóa</a>
+                                <a href="users?action=delete&id=${user.id}" class="btn btn-danger btn-sm">Xóa</a>
                             </c:otherwise>
                         </c:choose>
                     </td>

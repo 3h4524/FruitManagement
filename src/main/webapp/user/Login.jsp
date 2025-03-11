@@ -116,7 +116,7 @@
   <h2>Đăng nhập</h2>
   <form action="login" method="POST">
     <div class="input-group">
-      <input type="text" id="username" name="userName" placeholder="Nhập email hoặc số điện thoại" required>
+      <input type="text" id="email" name="email" placeholder="Email" required>
     </div>
     <div class="input-group">
       <input type="password" id="password" name="password" placeholder="Mật khẩu" required>

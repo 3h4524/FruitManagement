@@ -58,7 +58,8 @@ public class UserServlet extends HttpServlet {
     }
     public void userList(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         List<User> users = userService.getAllUser();
-        request.setAttribute("users", users);
+        HttpSession session = request.getSession();
+        session.setAttribute("users", users);
         request.getRequestDispatcher("user/UserList.jsp").forward(request, response);
     }
     public void createUser(HttpServletRequest request, HttpServletResponse response)
