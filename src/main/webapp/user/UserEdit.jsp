@@ -28,10 +28,16 @@
     <div class="col-md-6">
       <div class="card shadow-lg rounded">
         <div class="card-body">
+          <c:if test="${not empty sessionScope.error}">
+            <div class="alert alert-danger">${sessionScope.error}</div>
+            <c:remove var="error" scope="session"/>
+          </c:if>
+
+          <c:if test="${not empty sessionScope.success}">
+            <div class="alert alert-success">${sessionScope.success}</div>
+            <c:remove var="success" scope="session"/>
+          </c:if>
           <form action="${pageContext.request.contextPath}/user/Confirm.jsp" method="post">
-            <c:if test="${not empty requestScope.error}">
-              <div class="alert alert-danger">${requestScope.error}</div>
-            </c:if>
 
             <div class="mb-3">
               <label class="form-label">Email</label>

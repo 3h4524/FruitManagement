@@ -5,6 +5,7 @@ import jakarta.servlet.*;
 import jakarta.servlet.http.*;
 import jakarta.servlet.annotation.*;
 import model.User;
+import service.MailService;
 import service.UserService;
 import service.Utils;
 
@@ -59,6 +60,12 @@ public class UserServlet extends HttpServlet {
                 break;
             case "changePassword":
                 changePassword(request, response);
+                break;
+            case "generateOtp":
+                generateOtp(request, response);
+                break;
+            case "verifyOtp":
+                verifyOtp(request, response);
                 break;
         }
     }
@@ -132,24 +139,34 @@ public class UserServlet extends HttpServlet {
     public void saveUpdateUser(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         HttpSession session = request.getSession();
         User user = (User) session.getAttribute("user");
-        if (user.getName() == null || user.getEmail() == null || user.getName().isEmpty() || user.getEmail().isEmpty()) {
-            request.setAttribute("error", "Vui lòng nhập đầy đủ thông tin!");
-            request.getRequestDispatcher("user/UserEdit.jsp").forward(request, response);
+
+        // 1️⃣ Lấy URL trang trước đó
+        String referer = request.getHeader("Referer");
+        String contextPath = request.getContextPath();
+
+        // 2️⃣ Kiểm tra dữ liệu hợp lệ
+        if (user == null || user.getName() == null || user.getEmail() == null ||
+                user.getName().isEmpty() || user.getEmail().isEmpty()) {
+            session.setAttribute("error", "Vui lòng nhập đầy đủ thông tin!");
+            response.sendRedirect(referer != null ? referer : contextPath + "/user/UserEdit.jsp");
             return;
         }
-        if(userService.getUserByEmail(user.getEmail()) != null){
-            request.setAttribute("error", "Email đã tồn tại");
-            request.getRequestDispatcher("user/UserEdit.jsp").forward(request, response);
-            return;
-        }
+
+        // 3️⃣ Cập nhật thông tin
         boolean success = userService.updateUser(user);
-        if(success){
-            request.setAttribute("success", "Cập nhật thông thành công");
-        }else{
-            request.setAttribute("error", "Cập nhật thất bại");
+
+        // 4️⃣ Đặt thông báo vào session để tránh mất dữ liệu khi chuyển hướng
+        if (success) {
+            session.setAttribute("success", "Cập nhật thông tin thành công!");
+        } else {
+            session.setAttribute("error", "Cập nhật thất bại, vui lòng thử lại!");
         }
-        request.getRequestDispatcher("users").forward(request, response);
+
+        // 5️⃣ Chuyển hướng về trang trước đó hoặc UserEdit.jsp nếu không có referer
+        String redirectUrl = contextPath + Utils.getCorrectRedirect(referer, "/user/UserEdit.jsp") ; // Mặc định
+        response.sendRedirect(redirectUrl);
     }
+
     public void changePassword(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String oldPassword = request.getParameter("oldPassword");
         String newPassword = request.getParameter("newPassword");
@@ -189,16 +206,14 @@ public class UserServlet extends HttpServlet {
         String ward = request.getParameter("ward");
 
         // 2️⃣ Lấy đường dẫn trang trước đó
+        String contextPath = request.getContextPath();
         String referer = request.getHeader("Referer");
-        if (referer == null) {
-            referer = request.getContextPath() + "/user/UserAccount.jsp"; // Mặc định về trang UserAccount nếu không có referer
-        }
 
         // 3️⃣ Kiểm tra dữ liệu hợp lệ
-        if (street == null || street.isEmpty() || city == null || city.isEmpty() || ward == null || ward.isEmpty() ||
-                district == null || district.isEmpty()) {
+        if (street == null || street.isEmpty() || city == null || city.isEmpty() ||
+                ward == null || ward.isEmpty() || district == null || district.isEmpty()) {
             request.getSession().setAttribute("error", "Vui lòng điền đầy đủ thông tin địa chỉ.");
-            response.sendRedirect(referer);
+            response.sendRedirect(referer != null ? referer : contextPath + "/user/UserAccount.jsp");
             return;
         }
 
@@ -211,16 +226,58 @@ public class UserServlet extends HttpServlet {
 
         if (user != null) {
             user.setAddress(address);
-            userService.updateUser(user);
             session.setAttribute("user", user);
-            session.setAttribute("success", "Thay đổi địa chỉ thành công.");
         } else {
             session.setAttribute("error", "Không tìm thấy thông tin người dùng.");
         }
 
-        // 6️⃣ Chuyển hướng về trang trước đó
-        response.sendRedirect(referer);
+        // 6️⃣ Kiểm tra tham số "page" trong URL của referer
+        String redirectUrl = contextPath + Utils.getCorrectRedirect(referer, "/user/UserEdit.jsp") ; // Mặc định
+        response.sendRedirect(redirectUrl);
     }
+    public void generateOtp(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String email = request.getParameter("email");
 
-
+        HttpSession session = request.getSession();
+        if(email == null || email.isEmpty()){
+            session.setAttribute("error", "Vui lòng nhập email");
+            response.sendRedirect(request.getContextPath() + "/user/UserForgotPassword.jsp");
+            return;
+        }
+        User user = userService.getUserByEmail(email);
+        if(user == null){
+            session.setAttribute("error", "Không tìm người dùng với email đã nhập");
+            response.sendRedirect(request.getContextPath() + "/user/UserForgotPassword.jsp");
+            return;
+        }
+        String otp = Utils.generateOTP(6);
+        boolean success = MailService.sendOTP(email, otp);
+        if(success){
+            session.setAttribute("success", "Gửi OTP thành công, vui lòng đợi trong giây lát");
+            session.setAttribute("otp", otp);
+            session.setAttribute("email", email);
+        }else{
+            session.setAttribute("error", "Gửi OTP thất bại");
+        }
+        response.sendRedirect(request.getContextPath() + "/user/UserForgotPassword.jsp");
+    }
+    public void verifyOtp(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String otp = request.getParameter("otp");
+        HttpSession session = request.getSession();
+        String email = (String) session.getAttribute("email");
+        if(otp == null || otp.isEmpty()){
+            session.setAttribute("error", "Vui lòng nhập OTP");
+            response.sendRedirect(request.getContextPath() + "/user/UserForgotPassword.jsp");
+            return;
+        }
+        String otpSession = (String) session.getAttribute("otp");
+        if((otpSession != null || !otpSession.isEmpty()) && (otp.equals(otpSession))){
+            User user = userService.getUserByEmail(email);
+            session.setAttribute("user", user);
+            response.sendRedirect(request.getContextPath() + "/user/UserChangePassword.jsp");
+        }else{
+            session.setAttribute("error", "Mã otp không hợp lệ");
+            response.sendRedirect(request.getContextPath() + "/user/UserForgotPassword.jsp");
+        }
+    }
 }

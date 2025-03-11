@@ -1,7 +1,7 @@
 package service;
 
 import org.mindrot.jbcrypt.BCrypt;
-
+import java.security.SecureRandom;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -69,5 +69,19 @@ public class Utils {
     }
     public static String[] splitAddressDetails(String address){
         return address.split(",");
+    }
+    public static String generateOTP(int length) {
+        SecureRandom random = new SecureRandom();
+        StringBuilder otp = new StringBuilder();
+        for (int i = 0; i < length; i++) {
+            otp.append(random.nextInt(10)); // Chỉ lấy số từ 0-9
+        }
+        return otp.toString();
+    }
+    public static String getCorrectRedirect(String referer, String targetURL){
+        if (referer != null && referer.contains("page=")) {
+            return "/user/UserAccount.jsp?page=" + targetURL; // Giữ nguyên URL của referer nếu có tham số "page"
+        }
+        return "/" + targetURL;
     }
 }
