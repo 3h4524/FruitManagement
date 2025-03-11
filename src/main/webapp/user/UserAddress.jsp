@@ -2,46 +2,35 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
-    <title>Địa chỉ của tôi</title>
-    <link rel="stylesheet" href="<%= request.getContextPath() %>/css/bootstrap/bootstrap.min.css">
+  <title>Quản lý địa chỉ</title>
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/css/bootstrap/bootstrap.min.css">
 </head>
 <body>
 <div class="container mt-4">
-    <h2 class="text-center mb-4">Quản lý địa chỉ</h2>
+  <h4 class="mb-3 d-flex justify-content-between">
+    Địa chỉ của tôi
+    <c:if test="${empty sessionScope.user.address}">
+      <a href="<%= request.getContextPath()%>/user/UserSaveAddress.jsp" class="btn btn-danger btn-sm">➕ Thêm địa chỉ mới</a>
+    </c:if>
+  </h4>
+  <hr>
 
-    <div class="card p-4 shadow-sm">
-        <form action="saveAddress" method="post">
-            <div class="mb-3">
-                <label class="form-label">Số nhà & Đường</label>
-                <input type="text" name="street" class="form-control" placeholder="VD: 123 Nguyễn Văn Linh" required/>
-            </div>
+  <c:set var="user" value="${sessionScope.user}"/>
 
-            <div class="mb-3">
-                <label class="form-label">Phường/Xã</label>
-                <input type="text" name="ward" class="form-control" required/>
-            </div>
-
-            <div class="mb-3">
-                <label class="form-label">Quận/Huyện</label>
-                <input type="text" name="district" class="form-control" required/>
-            </div>
-
-            <div class="mb-3">
-                <label class="form-label">Thành phố/Tỉnh</label>
-                <input type="text" name="city" class="form-control" required/>
-            </div>
-
-            <div class="mb-3">
-                <label class="form-label">Mã bưu chính</label>
-                <input type="text" name="zipcode" class="form-control" required/>
-            </div>
-
-            <div class="text-center">
-                <button type="submit" class="btn btn-success">Lưu địa chỉ</button>
-                <a href="UserAccount.jsp" class="btn btn-secondary">Quay lại</a>
-            </div>
-        </form>
+  <c:if test="${not empty user.address}">
+    <h5>Địa chỉ</h5>
+    <div class="p-3 border rounded d-flex justify-content-between align-items-center">
+      <div>
+        <strong>${user.name}</strong> | <span class="text-muted">${user.phone}</span> <br>
+        <span class="text-muted">${user.address}</span>
+      </div>
+      <div>
+        <a href="UserAccount.jsp?page=user/UserSaveAddress.jsp" class="text-primary me-2">Cập nhật</a>
+      </div>
     </div>
+  </c:if>
 </div>
+
+<script src="${pageContext.request.contextPath}/js/bootstrap/bootstrap.bundle.min.js"></script>
 </body>
 </html>

@@ -15,6 +15,12 @@ public class LoginServlet extends HttpServlet {
     private UserService userService = new UserService();
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        HttpSession session = request.getSession();
+        User user = (User) session.getAttribute("user");
+        if(user == null) {
+            user = new User();
+            session.setAttribute("user", user);
+        }
         response.sendRedirect(request.getContextPath() + "/user/Login.jsp");
     }
 
@@ -25,15 +31,15 @@ public class LoginServlet extends HttpServlet {
         User user = userService.getUserByEmail(email);
         if(user != null && Utils.checkPassword(pasword, user.getPasswordHash())) {
             if(user.getStatus().equals("INACTIVE")){
-                request.setAttribute("message", "Tài khoản này đã bị vô hiệu hóa.");
-                request.getRequestDispatcher("login.jsp").forward(request, response);
+                request.setAttribute("error", "Tài khoản này đã bị vô hiệu hóa.");
+                request.getRequestDispatcher("/user/Login.jsp").forward(request, response);
             }
             HttpSession session = request.getSession();
-            session.setAttribute("UserLogin", user);
+            session.setAttribute("user", user);
             response.sendRedirect("index.jsp");
         }else{
-            request.setAttribute("error", "Tên đăng nhập hoặc mật khẩu không đúng");
-            request.getRequestDispatcher("login.jsp").forward(request, response);
+            request.setAttribute("error", "Email hoặc mật khẩu không đúng");
+            request.getRequestDispatcher("/user/Login.jsp").forward(request, response);
         }
     }
 }

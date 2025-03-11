@@ -67,4 +67,7 @@ public class Utils {
 
         return localDateTime.format(formatter);
     }
+    public static String[] splitAddressDetails(String address){
+        return address.split(",");
+    }
 }

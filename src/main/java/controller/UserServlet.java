@@ -54,6 +54,12 @@ public class UserServlet extends HttpServlet {
             case "update":
                 saveUpdateUser(request, response);
                 break;
+            case "saveAddress":
+                saveAddressUser(request, response);
+                break;
+            case "changePassword":
+                changePassword(request, response);
+                break;
         }
     }
     public void userList(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -108,12 +114,7 @@ public class UserServlet extends HttpServlet {
         int id = Integer.parseInt(request.getParameter("id"));
         boolean success = userService.deleteUser(id);
         response.sendRedirect(request.getContextPath() + "/users");
-//        if (success) {
-//            request.setAttribute("success", "Xóa người dùng thành công!");
-//        } else {ute("error", "Xóa người dùng thất bại!");
-////        }
-//            request.setAttrib
-//        request.getRequestDispatcher("users").forward(request, response);
+
     }
     public void searchUser(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         int id = Integer.parseInt(request.getParameter("id"));
@@ -151,15 +152,21 @@ public class UserServlet extends HttpServlet {
     }
     public void changePassword(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String oldPassword = request.getParameter("oldPassword");
+        String newPassword = request.getParameter("newPassword");
+        String confirmPassword = request.getParameter("confirmPassword");
         HttpSession session = request.getSession();
         User user = (User) session.getAttribute("user");
+        if(oldPassword == null || newPassword == null || oldPassword.isEmpty() || newPassword.isEmpty() || confirmPassword == null || confirmPassword.isEmpty()){
+            request.setAttribute("error", "Vui lòng điền đầy đủ thông tin");
+            request.getRequestDispatcher("/user/UserAccount.jsp?page=user/UserChangePassword.jsp").forward(request, response);
+            return;
+        }
         boolean isMatch = Utils.checkPassword(oldPassword, user.getPasswordHash());
         if (isMatch) {
-            String newPassword = request.getParameter("newPassword");
-            String confirmPassword = request.getParameter("confirmPassword");
             if(newPassword.equals(confirmPassword)){
                 newPassword = Utils.hashPassword(newPassword);
                 user.setPasswordHash(newPassword);
+                userService.updateUser(user);
                 request.setAttribute("success", "Cập nhật mật khẩu mới thành công");
             }else{
                 request.setAttribute("error", "Mật khẩu nhập lại không khớp với mật khẩu đã nhập");
@@ -167,11 +174,53 @@ public class UserServlet extends HttpServlet {
         }else{
             request.setAttribute("error", "Mật khẩu cũ không đúng");
         }
-        request.getRequestDispatcher("UserChangePassword.jsp").forward(request, response);
+        request.getRequestDispatcher("/user/UserAccount.jsp?page=user/UserChangePassword.jsp").forward(request, response);
     }
     public void restoreUser(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         int id = Integer.parseInt(request.getParameter("id"));
         userService.restoreUser(id);
         response.sendRedirect(request.getContextPath() + "/users");
     }
+    public void saveAddressUser(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        // 1️⃣ Lấy thông tin từ request
+        String street = request.getParameter("street");
+        String district = request.getParameter("district");
+        String city = request.getParameter("city");
+        String ward = request.getParameter("ward");
+
+        // 2️⃣ Lấy đường dẫn trang trước đó
+        String referer = request.getHeader("Referer");
+        if (referer == null) {
+            referer = request.getContextPath() + "/user/UserAccount.jsp"; // Mặc định về trang UserAccount nếu không có referer
+        }
+
+        // 3️⃣ Kiểm tra dữ liệu hợp lệ
+        if (street == null || street.isEmpty() || city == null || city.isEmpty() || ward == null || ward.isEmpty() ||
+                district == null || district.isEmpty()) {
+            request.getSession().setAttribute("error", "Vui lòng điền đầy đủ thông tin địa chỉ.");
+            response.sendRedirect(referer);
+            return;
+        }
+
+        // 4️⃣ Ghép địa chỉ hoàn chỉnh
+        String address = street.trim() + ", " + ward.trim() + ", " + district.trim() + ", " + city.trim();
+
+        // 5️⃣ Cập nhật địa chỉ cho user
+        HttpSession session = request.getSession();
+        User user = (User) session.getAttribute("user");
+
+        if (user != null) {
+            user.setAddress(address);
+            userService.updateUser(user);
+            session.setAttribute("user", user);
+            session.setAttribute("success", "Thay đổi địa chỉ thành công.");
+        } else {
+            session.setAttribute("error", "Không tìm thấy thông tin người dùng.");
+        }
+
+        // 6️⃣ Chuyển hướng về trang trước đó
+        response.sendRedirect(referer);
+    }
+
+
 }
