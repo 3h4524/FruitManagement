@@ -23,7 +23,7 @@
       <div class="list-group">
         <a href="<%= request.getContextPath()%>/user/UserAccount.jsp?page=user/UserEdit.jsp" class="list-group-item list-group-item-action">Chỉnh sửa hồ sơ</a>
         <a href="<%= request.getContextPath()%>/user/UserAccount.jsp?page=user/UserAddress.jsp" class="list-group-item list-group-item-action">Địa chỉ</a>
-        <a href="<%= request.getContextPath()%>/user/UserAccount.jsp?page=user/UserChangePassword.jsp" class="list-group-item list-group-item-action">Đổi mật khẩu</a>
+        <a href="<%= request.getContextPath()%>/user/UserAccount.jsp?page=user/UserChangePasswordByOldPassword.jsp" class="list-group-item list-group-item-action">Đổi mật khẩu</a>
         <a href="<%= request.getContextPath()%>/logout" class="list-group-item list-group-item-action text-danger">Đăng xuất</a>
 
       </div>

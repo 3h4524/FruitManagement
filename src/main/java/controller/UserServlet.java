@@ -8,7 +8,6 @@ import model.User;
 import service.MailService;
 import service.UserService;
 import service.Utils;
-
 import java.io.IOException;
 import java.util.List;
 
@@ -37,6 +36,8 @@ public class UserServlet extends HttpServlet {
             case "restore":
                 restoreUser(request, response);
                 break;
+            case "two_step_verification":
+                break;
                 default:
                 userList(request, response);
         }
@@ -57,6 +58,9 @@ public class UserServlet extends HttpServlet {
                 break;
             case "saveAddress":
                 saveAddressUser(request, response);
+                break;
+            case "changePasswordByOldPassword":
+                changePasswordByOldPassword(request, response);
                 break;
             case "changePassword":
                 changePassword(request, response);
@@ -167,7 +171,7 @@ public class UserServlet extends HttpServlet {
         response.sendRedirect(redirectUrl);
     }
 
-    public void changePassword(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    public void changePasswordByOldPassword(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String oldPassword = request.getParameter("oldPassword");
         String newPassword = request.getParameter("newPassword");
         String confirmPassword = request.getParameter("confirmPassword");
@@ -175,23 +179,22 @@ public class UserServlet extends HttpServlet {
         User user = (User) session.getAttribute("user");
         if(oldPassword == null || newPassword == null || oldPassword.isEmpty() || newPassword.isEmpty() || confirmPassword == null || confirmPassword.isEmpty()){
             request.setAttribute("error", "Vui lòng điền đầy đủ thông tin");
-            request.getRequestDispatcher("/user/UserAccount.jsp?page=user/UserChangePassword.jsp").forward(request, response);
+            request.getRequestDispatcher("/user/UserAccount.jsp?page=user/UserChangePasswordByOldPassword.jsp").forward(request, response);
             return;
         }
         boolean isMatch = Utils.checkPassword(oldPassword, user.getPasswordHash());
         if (isMatch) {
-            if(newPassword.equals(confirmPassword)){
-                newPassword = Utils.hashPassword(newPassword);
-                user.setPasswordHash(newPassword);
-                userService.updateUser(user);
-                request.setAttribute("success", "Cập nhật mật khẩu mới thành công");
+            if(userService.changePassword(user, newPassword, confirmPassword)){
+                session.invalidate();
+                response.sendRedirect(request.getContextPath() + "/user/Login.jsp?success=Đổi mật khẩu thành công, vui lòng đăng nhập lại!");
             }else{
-                request.setAttribute("error", "Mật khẩu nhập lại không khớp với mật khẩu đã nhập");
+                session.setAttribute("error", "Mật khẩu Nhập lại không đúng");
+                response.sendRedirect(request.getContextPath() + "/user/UserChangePasswordByOldPassword.jsp");
             }
         }else{
-            request.setAttribute("error", "Mật khẩu cũ không đúng");
+            session.setAttribute("error", "Mật khẩu cũ không đúng");
         }
-        request.getRequestDispatcher("/user/UserAccount.jsp?page=user/UserChangePassword.jsp").forward(request, response);
+        request.getRequestDispatcher("/user/UserAccount.jsp?page=user/UserChangePasswordByOldPassword.jsp").forward(request, response);
     }
     public void restoreUser(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         int id = Integer.parseInt(request.getParameter("id"));
@@ -237,30 +240,32 @@ public class UserServlet extends HttpServlet {
     }
     public void generateOtp(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String email = request.getParameter("email");
-
         HttpSession session = request.getSession();
-        if(email == null || email.isEmpty()){
-            session.setAttribute("error", "Vui lòng nhập email");
-            response.sendRedirect(request.getContextPath() + "/user/UserForgotPassword.jsp");
+
+        if (email == null || email.isEmpty()) {
+            response.getWriter().write("error: Vui lòng nhập email");
             return;
         }
+
         User user = userService.getUserByEmail(email);
-        if(user == null){
-            session.setAttribute("error", "Không tìm người dùng với email đã nhập");
-            response.sendRedirect(request.getContextPath() + "/user/UserForgotPassword.jsp");
+        if (user == null) {
+            response.getWriter().write("error: Không tìm thấy người dùng với email đã nhập");
             return;
         }
+
         String otp = Utils.generateOTP(6);
         boolean success = MailService.sendOTP(email, otp);
-        if(success){
-            session.setAttribute("success", "Gửi OTP thành công, vui lòng đợi trong giây lát");
+        if (success) {
             session.setAttribute("otp", otp);
             session.setAttribute("email", email);
-        }else{
-            session.setAttribute("error", "Gửi OTP thất bại");
+            response.getWriter().write("success");
+        } else {
+            response.getWriter().write("error: Gửi OTP thất bại");
         }
-        response.sendRedirect(request.getContextPath() + "/user/UserForgotPassword.jsp");
     }
+
+
+
     public void verifyOtp(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String otp = request.getParameter("otp");
         HttpSession session = request.getSession();
@@ -278,6 +283,20 @@ public class UserServlet extends HttpServlet {
         }else{
             session.setAttribute("error", "Mã otp không hợp lệ");
             response.sendRedirect(request.getContextPath() + "/user/UserForgotPassword.jsp");
+        }
+    }
+
+    public void changePassword(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String newPassword = request.getParameter("newPassword");
+        String confirmPassword = request.getParameter("confirmPassword");
+        HttpSession session = request.getSession();
+        User user = (User) session.getAttribute("user");
+        if(userService.changePassword(user, newPassword, confirmPassword)){
+            session.invalidate();
+            response.sendRedirect(request.getContextPath() + "/user/Login.jsp?success=Đổi mật khẩu thành công, vui lòng đăng nhập lại!");
+        }else{
+            session.setAttribute("error", "Mật khẩu Nhập lại không đúng");
+            response.sendRedirect(request.getContextPath() + "/user/UserChangPassword.jsp");
         }
     }
 }

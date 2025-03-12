@@ -52,6 +52,15 @@ public class UserService {
     public User getUserByEmail(String email) {
         List<User> users = userDao.findByAttribute("email", email);
         return users.isEmpty() ? null : users.get(0);
-
+    }
+    public boolean changePassword(User user, String newPassword, String confirmPassword) {
+        if(confirmPassword.equals(newPassword)) {
+           newPassword = Utils.hashPassword(confirmPassword);
+           user.setPasswordHash(newPassword);
+           if(updateUser(user)){
+               return true;
+           }
+        }
+        return false;
     }
 }

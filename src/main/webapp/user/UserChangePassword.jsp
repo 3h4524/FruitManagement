@@ -24,10 +24,6 @@
         </c:if>
         <form action="<%= request.getContextPath()%>/users?action=changePassword" method="post">
           <div class="mb-3">
-            <label for="oldPassword" class="form-label">Mật khẩu cũ:</label>
-            <input type="password" id="oldPassword" name="oldPassword" class="form-control" required>
-          </div>
-          <div class="mb-3">
             <label for="newPassword" class="form-label">Mật khẩu mới:</label>
             <input type="password" id="newPassword" name="newPassword" class="form-control" required>
           </div>

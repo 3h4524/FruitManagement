@@ -116,8 +116,14 @@
 <body>
 <div class="login-container">
   <h2>Đăng nhập</h2>
-  <c:if test="${not empty error}">
-    <div class="alert alert-danger" role="alert">${error}</div>
+  <c:if test="${not empty requestScope.error}">
+    <div class="alert alert-danger">${requestScope.error}</div>
+    <c:remove var="error" scope="request"/>
+  </c:if>
+
+  <c:if test="${not empty requestScope.success}">
+    <div class="alert alert-success">${requestScope.success}</div>
+    <c:remove var="success" scope="request"/>
   </c:if>
   <form action="<%= request.getContextPath()%>/login" method="POST">
     <div class="input-group">

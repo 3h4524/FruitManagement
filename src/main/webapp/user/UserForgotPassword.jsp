@@ -30,7 +30,8 @@
                         <div class="mb-3">
                             <label class="form-label">Email</label>
                             <div class="input-group">
-                                <input type="email" id="email" name="email" class="form-control" placeholder="Nhập email của bạn" required />
+                                <input type="email" id="email" name="email" class="form-control" placeholder="Nhập email của bạn"
+                                       value="${requestScope.email}" required />
                                 <button type="submit" class="btn btn-primary">Lấy mã xác nhận</button>
                             </div>
                         </div>

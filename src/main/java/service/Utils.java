@@ -84,4 +84,23 @@ public class Utils {
         }
         return "/" + targetURL;
     }
+    public static String maskEmail(String email) {
+        if (email == null || !email.contains("@")) {
+            return "Invalid Email";
+        }
+
+        String[] parts = email.split("@");
+        String namePart = parts[0];
+        String domainPart = parts[1];
+
+        // Hiển thị 2 ký tự đầu và che phần còn lại bằng "*"
+        if (namePart.length() > 2) {
+            namePart = namePart.substring(0, 2) + "****";
+        } else {
+            namePart = namePart.charAt(0) + "****"; // Nếu tên quá ngắn
+        }
+
+        return namePart + "@" + domainPart;
+    }
+
 }
