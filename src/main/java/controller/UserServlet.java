@@ -36,8 +36,6 @@ public class UserServlet extends HttpServlet {
             case "restore":
                 restoreUser(request, response);
                 break;
-            case "two_step_verification":
-                break;
                 default:
                 userList(request, response);
         }
@@ -238,8 +236,9 @@ public class UserServlet extends HttpServlet {
         String redirectUrl = contextPath + Utils.getCorrectRedirect(referer, "/user/UserEdit.jsp") ; // Mặc định
         response.sendRedirect(redirectUrl);
     }
-    public void generateOtp(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    private void generateOtp(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String email = request.getParameter("email");
+        String type = request.getParameter("type"); // 'register' hoặc 'forgot-password'
         HttpSession session = request.getSession();
 
         if (email == null || email.isEmpty()) {
@@ -248,11 +247,24 @@ public class UserServlet extends HttpServlet {
         }
 
         User user = userService.getUserByEmail(email);
-        if (user == null) {
-            response.getWriter().write("error: Không tìm thấy người dùng với email đã nhập");
+        System.out.println(email != null ? email : "null");
+        System.out.println(type != null ? type : "null");
+        if ("register".equals(type)) {
+            if (user != null) {
+                response.getWriter().write("error: Email đã được đăng ký");
+                return;
+            }
+        } else if ("forgot-password".equals(type)) {
+            if (user == null) {
+                response.getWriter().write("error: Không tìm thấy người dùng với email đã nhập");
+                return;
+            }
+        } else {
+            response.getWriter().write("error: Loại yêu cầu không hợp lệ");
             return;
         }
 
+        // Tạo và gửi OTP
         String otp = Utils.generateOTP(6);
         boolean success = MailService.sendOTP(email, otp);
         if (success) {
@@ -263,7 +275,6 @@ public class UserServlet extends HttpServlet {
             response.getWriter().write("error: Gửi OTP thất bại");
         }
     }
-
 
 
     public void verifyOtp(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

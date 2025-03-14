@@ -33,7 +33,6 @@ public class  RegisterServlet extends HttpServlet {
         user.setEmail(request.getParameter("email").trim());
         user.setPasswordHash(Utils.hashPassword(request.getParameter("password")));
         user.setPhone(request.getParameter("phone").trim());
-        user.setAddress(request.getParameter("address").trim());
         user.setStatus("ACTIVE");
         user.setRole("Customer");
         user.setRegistrationDate(Instant.now());

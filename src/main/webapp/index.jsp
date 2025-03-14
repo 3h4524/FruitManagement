@@ -5,12 +5,15 @@
   Time: 2:31 CH
   To change this template use File | Settings | File Templates.
 --%>
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
 <html>
 <head>
     <title>Title</title>
 </head>
 <body>
-hello world
+<%@ include file="templates/header.jsp" %>
+<%@ include file="user/Register.jsp"%>
+<%@ include file="templates/footer.jsp" %>
+
 </body>
 </html>

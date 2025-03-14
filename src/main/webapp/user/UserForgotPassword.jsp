@@ -1,62 +1,73 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<html>
+
+<%
+    // Kiểm tra xem người dùng đã đăng nhập chưa
+    String email = (String) session.getAttribute("email");
+    boolean isLoggedIn = (email != null);
+%>
+
+<!DOCTYPE html>
+<html lang="vi">
 <head>
-    <title>Quên Mật Khẩu</title>
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/bootstrap/bootstrap.min.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Xác Minh Email</title>
+    <link href="${pageContext.request.contextPath}/css/bootstrap/bootstrap.min.css" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
-<body>
-
-<div class="container mt-5">
+<body class="d-flex justify-content-center align-items-center" style="height: 100vh; background-color: #f8f9fa;">
+<div class="container">
     <div class="row justify-content-center">
-        <div class="col-md-6">
-            <div class="card shadow-lg rounded">
-                <div class="card-body">
-                    <h3 class="text-center mb-4">Quên Mật Khẩu</h3>
+        <div class="col-md-5">
+            <div class="card shadow p-4">
+                <h3 class="mb-3 text-center">Xác Minh Email</h3>
 
-                    <!-- Hiển thị thông báo lỗi hoặc thành công -->
-                    <c:if test="${not empty sessionScope.error}">
-                        <div class="alert alert-danger">${sessionScope.error}</div>
-                        <c:remove var="error" scope="session"/>
-                    </c:if>
-                    <c:if test="${not empty sessionScope.success}">
-                        <div class="alert alert-success">${sessionScope.success}</div>
-                        <c:remove var="success" scope="session"/>
-                    </c:if>
+                <!-- Thông báo lỗi / thành công -->
+                <c:if test="${not empty sessionScope.error}">
+                    <div class="alert alert-danger">${sessionScope.error}</div>
+                    <c:remove var="error" scope="session"/>
+                </c:if>
+                <c:if test="${not empty sessionScope.success}">
+                    <div class="alert alert-success">${sessionScope.success}</div>
+                    <c:remove var="success" scope="session"/>
+                </c:if>
 
-                    <!-- Form nhập email -->
-                    <form action="<%= request.getContextPath()%>/users?action=generateOtp" method="post">
-                        <div class="mb-3">
-                            <label class="form-label">Email</label>
-                            <div class="input-group">
-                                <input type="email" id="email" name="email" class="form-control" placeholder="Nhập email của bạn"
-                                       value="${requestScope.email}" required />
-                                <button type="submit" class="btn btn-primary">Lấy mã xác nhận</button>
-                            </div>
-                        </div>
+                <!-- Form lấy mã OTP -->
+                <form action="<%= request.getContextPath()%>/users?action=generateOtp" method="post">
+                    <div class="mb-3 text-center">
+                        <c:choose>
+                            <c:when test="<%= isLoggedIn %>">
+                                <!-- Nếu đã đăng nhập, hiển thị email bị che -->
+                                <p><strong>${sessionScope.maskedEmail}</strong></p>
+                                <input type="hidden" name="email" value="${sessionScope.email}">
+                            </c:when>
+                            <c:otherwise>
+                                <!-- Nếu chưa đăng nhập, cho nhập email -->
+                                <label class="form-label">Nhập email của bạn</label>
+                                <input type="email" name="email" class="form-control" placeholder="Nhập email" required />
+                            </c:otherwise>
+                        </c:choose>
+                    </div>
+                    <button type="submit" id="otpButton" class="btn btn-primary w-100" data-type="forgot-password">Lấy mã xác nhận</button>
+                </form>
 
-                        <!-- Form nhập mã OTP -->
+                <hr>
 
-                    </form>
-                    <form action="<%= request.getContextPath()%>/users?action=verifyOtp" method="post">
-                        <div class="mb-3">
-                            <label class="form-label">Mã xác nhận (OTP)</label>
-                            <input type="text" name="otp" class="form-control" placeholder="Nhập mã OTP" required />
-                        </div>
+                <!-- Form nhập OTP -->
+                <form action="<%= request.getContextPath()%>/users?action=verifyOtp" method="post">
+                    <div class="mb-3">
+                        <label class="form-label">Mã xác nhận (OTP)</label>
+                        <input type="text" name="otp" class="form-control" placeholder="Nhập mã OTP" required />
+                    </div>
+                    <button type="submit" class="btn btn-success w-100">Xác nhận</button>
+                </form>
 
-                        <div class="text-center">
-                            <button type="submit" class="btn btn-success px-4">Xác nhận</button>
-                            <a href="<%= request.getContextPath()%>/login" class="btn btn-secondary px-4">Hủy</a>
-                        </div>
-                    </form>
-
-                </div>
+                <a href="<%= request.getContextPath()%>/login" class="btn btn-secondary w-100 mt-2">Hủy</a>
             </div>
         </div>
     </div>
 </div>
-
-
+<script src="${pageContext.request.contextPath}/js/otp.js"></script>
 </body>
 </html>

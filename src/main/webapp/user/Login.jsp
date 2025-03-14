@@ -1,6 +1,6 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html;charset=UTF-8"%>
 <html>
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -114,6 +114,8 @@
   </style>
 </head>
 <body>
+<%@include file="/templates/header.jsp" %>
+
 <div class="login-container">
   <h2>Đăng nhập</h2>
   <c:if test="${not empty requestScope.error}">

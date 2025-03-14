@@ -27,7 +27,6 @@ public class GenericDAO<T> extends BaseDAO<T> {
         }
     }
 
-
     @Override
     public boolean insert(T t) {
         EntityManager em = emf.createEntityManager();

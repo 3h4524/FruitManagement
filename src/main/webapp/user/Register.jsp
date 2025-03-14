@@ -1,5 +1,6 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
+
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -7,71 +8,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Đăng ký</title>
   <link rel="stylesheet" href="${pageContext.request.contextPath}/css/bootstrap/bootstrap.min.css">
-  <script>
-    let otpCooldown = 60; // Thời gian chờ nhận lại OTP
-    let otpTimer;
-
-    function requestOTP() {
-      let email = document.getElementById("email").value;
-      let otpField = document.getElementById("otpField");
-      let otpButton = document.getElementById("otpButton");
-      let errorMessage = document.getElementById("errorMessage");
-
-      if (!email.trim()) {
-        errorMessage.innerText = "Vui lòng nhập email trước khi nhận mã OTP!";
-        return;
-      }
-
-      // Xóa thông báo lỗi trước đó
-      errorMessage.innerText = "";
-
-      otpButton.disabled = true;
-      otpButton.innerText = "Đang gửi...";
-
-      fetch('${pageContext.request.contextPath}/users?action=generateOtp', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded'
-        },
-        body: 'email=' + encodeURIComponent(email)
-      })
-              .then(response => response.text())
-              .then(data => {
-                if (data.startsWith("success")) {
-                  alert("Mã OTP đã được gửi! Vui lòng kiểm tra email.");
-                  otpField.style.display = "block"; // Hiện ô nhập OTP
-                  startOTPTimer(otpButton);
-                } else if (data.startsWith("error:")) {
-                  errorMessage.innerText = data.substring(6); // Hiển thị lỗi từ server
-                  otpButton.disabled = false;
-                  otpButton.innerText = "Nhận mã";
-                } else {
-                  errorMessage.innerText = "Lỗi không xác định! Vui lòng thử lại.";
-                  otpButton.disabled = false;
-                  otpButton.innerText = "Nhận mã";
-                }
-              })
-              .catch(error => {
-                errorMessage.innerText = "Không thể gửi yêu cầu! Kiểm tra kết nối mạng.";
-                otpButton.disabled = false;
-                otpButton.innerText = "Nhận mã";
-              });
-    }
-
-    function startOTPTimer(button) {
-      button.disabled = true;
-      otpCooldown = 60;
-      otpTimer = setInterval(() => {
-        button.innerText = "Nhận mã (" + otpCooldown + "s)";
-        otpCooldown--;
-        if (otpCooldown < 0) {
-          clearInterval(otpTimer);
-          button.innerText = "Nhận mã";
-          button.disabled = false;
-        }
-      }, 1000);
-    }
-  </script>
 </head>
 <body>
 <div class="container mt-5">
@@ -100,7 +36,7 @@
               <label class="form-label">Email</label>
               <div class="input-group">
                 <input type="email" id="email" name="email" class="form-control" placeholder="Nhập email" required />
-                <button type="button" id="otpButton" class="btn btn-warning" onclick="requestOTP()">Nhận mã</button>
+                <button type="button" id="otpButton" class="btn btn-warning" data-type="register">Nhận mã</button>
               </div>
               <small id="errorMessage" class="text-danger"></small>
             </div>
@@ -128,7 +64,7 @@
 
             <div class="mb-3">
               <label class="form-label">Số điện thoại</label>
-              <input type="text" name="phone" class="form-control" />
+              <input type="text" name="phone" class="form-control" required/>
             </div>
 
             <div class="text-center">
@@ -141,6 +77,10 @@
     </div>
   </div>
 </div>
+<script>
+  var contextPath = "${pageContext.request.contextPath}";
+</script>
 <script src="${pageContext.request.contextPath}/js/bootstrap/bootstrap.bundle.min.js"></script>
+<script src="${pageContext.request.contextPath}/js/otp.js"></script>
 </body>
 </html>
