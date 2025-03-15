@@ -37,30 +37,30 @@ public class  RegisterServlet extends HttpServlet {
         user.setRole("Customer");
         user.setRegistrationDate(Instant.now());
 
-        // Lưu user vào session
+        // Lưu lại user vào session sau khi cập nhật dữ liệu
         session.setAttribute("UserLogin", user);
 
         // Kiểm tra thông tin có đầy đủ không
         if (user.getName().isEmpty() || user.getEmail().isEmpty() || user.getPasswordHash().isEmpty()) {
-            session.setAttribute("error", "Vui lòng nhập đầy đủ thông tin!");
-            response.sendRedirect(request.getContextPath() + "/page?view=user/Register.jsp");
+            request.setAttribute("error", "Vui lòng nhập đầy đủ thông tin!");
+            request.getRequestDispatcher("/user/Register.jsp").forward(request, response);
             return;
         }
 
-        // Kiểm tra email đã tồn tại chưa
+        // Kiểm tra tên đăng nhập đã tồn tại chưa
         if (userService.getUserByEmail(user.getEmail()) != null) {
-            session.setAttribute("error", "Email đã tồn tại!");
-            response.sendRedirect(request.getContextPath() + "/page?view=user/Register.jsp");
+            request.setAttribute("error", "Email đã tồn tại!");
+            request.getRequestDispatcher("/user/Register.jsp").forward(request, response);
             return;
         }
 
         // Lưu vào database
         if (userService.addUser(user)) {
-            session.setAttribute("success", "Đăng ký thành công!");
-            response.sendRedirect(request.getContextPath() + "/page?view=home");
+            request.setAttribute("success", "Đăng ký thành công!");
+            response.sendRedirect(request.getContextPath() + "/index.jsp");
         } else {
-            session.setAttribute("error", "Đăng ký không thành công. Vui lòng thử lại!");
-            response.sendRedirect(request.getContextPath() + "/page?view=user/Register.jsp");
+            request.setAttribute("error", "Đăng ký không thành công. Vui lòng thử lại!");
+            request.getRequestDispatcher("/user/Register.jsp").forward(request, response);
         }
     }
 }

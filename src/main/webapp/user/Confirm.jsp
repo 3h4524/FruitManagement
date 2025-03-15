@@ -1,6 +1,17 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<jsp:useBean id="user" class="model.User" scope="session"/>
-<jsp:setProperty name="user" property="*"/>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+
+
+<c:set var="type" value="${param.type}" />
+
+    <c:if test="${type == 'updateUser'}">
+        <jsp:useBean id="user" class="model.User" scope="session"/>
+        <jsp:setProperty name="user" property="*"/>
+    </c:if>
+    <c:if test="${type == 'updateProfile'}">
+        <jsp:useBean id="UserLogin" class="model.User" scope="session"/>
+        <jsp:setProperty name="UserLogin" property="*"/>
+    </c:if>
 
 <html>
 <head>
@@ -15,25 +26,25 @@
             <tbody>
             <tr>
                 <th class="bg-light">Email:</th>
-                <td>${user.email}</td>
+                <td>${type == 'updateUser' ? user.email : UserLogin.email}</td>
             </tr>
             <tr>
                 <th class="bg-light">Tên tài khoản:</th>
-                <td>${user.name}</td>
+                <td>${type == 'updateUser' ? user.name : UserLogin.name}</td>
             </tr>
             <tr>
                 <th class="bg-light">Số điện thoại:</th>
-                <td>${user.phone}</td>
+                <td>${type == 'updateUser' ? user.phone : UserLogin.phone}</td>
             </tr>
             <tr>
                 <th class="bg-light">Địa chỉ:</th>
-                <td>${user.address}</td>
+                <td>${type == 'updateUser' ? user.address : UserLogin.address}</td>
             </tr>
             </tbody>
         </table>
 
         <div class="d-flex justify-content-center mt-4">
-            <form action="${pageContext.request.contextPath}/users?action=update" method="post">
+            <form action="${pageContext.request.contextPath}/users?action=update&type=${type}" method="post">
                 <button type="submit" class="btn btn-success px-4">Lưu</button>
             </form>
             <a href="javascript:window.history.back();" class="btn btn-secondary px-4 ms-3">Hủy</a>

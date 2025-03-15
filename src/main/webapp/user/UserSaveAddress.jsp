@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="<%= request.getContextPath() %>/css/bootstrap/bootstrap.min.css">
 </head>
 <body>
-<c:set var="user" value="${sessionScope.user}"/>
+<c:set var="user" value="${sessionScope.UserLogin}"/>
 <c:set var="addressParts" value="${Utils.splitAddressDetails(user.address)}" />
 <div class="container-fluid mt-4">
     <h2 class="text-center mb-4">Quản lý địa chỉ</h2>
@@ -26,7 +26,7 @@
                     <c:remove var="success" scope="session"/>
                 </c:if>
 
-                <form action="<%= request.getContextPath()%>/users?action=saveAddress" method="post">
+                <form action="<%= request.getContextPath()%>/users?action=update&type=saveAddress" method="post">
                     <div class="mb-3">
                         <label class="form-label">Số nhà & Đường</label>
                         <input type="text" name="street" class="form-control" placeholder="VD: 123 Nguyễn Văn Linh"

@@ -9,10 +9,12 @@
   <title>Đổi mật khẩu</title>
   <link href="<%= request.getContextPath()%>/css/bootstrap/bootstrap.min.css" rel="stylesheet">
   <style>
-    body {
+  body {
       background-color: #ffffff; /* Nền trắng */
       min-height: 100vh;
-    }
+    flex-direction: column; /* Chỉnh thành column để tránh lỗi hiển thị ngang */
+
+  }
     .card {
       border-radius: 12px;
       box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1); /* Đổ bóng nhẹ */
@@ -51,15 +53,18 @@
         <h3 class="mb-4">Đổi mật khẩu</h3>
 
         <!-- Thông báo lỗi / thành công -->
-        <c:if test="${not empty error}">
-          <div class="alert alert-danger">${error}</div>
+        <c:if test="${not empty sessionScope.error}">
+          <div class="alert alert-danger">${sessionScope.error}</div>
+          <c:remove var="error" scope="session"/>
         </c:if>
-        <c:if test="${not empty success}">
-          <div class="alert alert-success">${success}</div>
+
+        <c:if test="${not empty sessionScope.success}">
+          <div class="alert alert-success">${sessionScope.success}</div>
+          <c:remove var="success" scope="session"/>
         </c:if>
 
         <!-- Form đổi mật khẩu -->
-        <form action="<%= request.getContextPath()%>/users?action=changePassword" method="post">
+        <form action="<%= request.getContextPath()%>/users?action=update&type=changePasswordByOldPassword" method="post">
           <div class="mb-3">
             <label for="oldPassword" class="form-label">Mật khẩu cũ:</label>
             <input type="password" id="oldPassword" name="oldPassword" class="form-control" required>

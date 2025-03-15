@@ -16,10 +16,10 @@ public class LoginServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         HttpSession session = request.getSession();
-        User user = (User) session.getAttribute("user");
+        User user = (User) session.getAttribute("UserLogin");
         if(user == null) {
             user = new User();
-            session.setAttribute("user", user);
+            session.setAttribute("UserLogin", user);
         }
         response.sendRedirect(request.getContextPath() + "/user/Login.jsp");
     }
@@ -27,21 +27,19 @@ public class LoginServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String email = request.getParameter("email");
-        String password = request.getParameter("password");
+        String pasword = request.getParameter("password");
         User user = userService.getUserByEmail(email);
-
-        if(user != null && Utils.checkPassword(password, user.getPasswordHash())) {
+        HttpSession session = request.getSession();
+        if(user != null && Utils.checkPassword(pasword, user.getPasswordHash())) {
             if(user.getStatus().equals("INACTIVE")){
-                request.getSession().setAttribute("error", "Tài khoản này đã bị vô hiệu hóa.");
-                response.sendRedirect(request.getContextPath() + "/page?view=user/Login.jsp");
-                return;
+                session.setAttribute("error", "Tài khoản này đã bị vô hiệu hóa.");
+                response.sendRedirect(request.getContextPath() + "/user/Login.jsp");
             }
-            HttpSession session = request.getSession();
-            session.setAttribute("user", user);
+            session.setAttribute("UserLogin", user);
             response.sendRedirect("index.jsp");
-        } else {
-            request.getSession().setAttribute("error", "Email hoặc mật khẩu không đúng.");
-            response.sendRedirect(request.getContextPath() + "/page?view=user/Login.jsp");
+        }else{
+            session.setAttribute("error", "Email hoặc mật khẩu không đúng");
+            response.sendRedirect(request.getContextPath() + "/user/Login.jsp");
         }
     }
 }

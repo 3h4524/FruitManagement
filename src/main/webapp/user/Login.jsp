@@ -115,6 +115,7 @@
   </style>
 </head>
 <body>
+<jsp:include page="/templates/header.jsp"/>
 <div class="login-container">
   <h2>Đăng nhập</h2>
   <c:if test="${not empty sessionScope.error}">
@@ -149,6 +150,7 @@
     <button type="submit" class="sign-up-btn">Đăng ký</button>
   </form>
 </div>
+<jsp:include page="/templates/footer.jsp"/>
 
 <script>
   function togglePassword() {

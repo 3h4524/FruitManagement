@@ -26,7 +26,7 @@ function requestOTP(type) {
     otpButton.disabled = true;
     otpButton.innerText = "Đang gửi...";
 
-    fetch(contextPath + '/users?action=generateOtp', {
+    fetch(contextPath + '/mails?action=sendOtp', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded'

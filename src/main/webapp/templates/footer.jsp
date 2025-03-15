@@ -20,7 +20,7 @@
   </div>
   <div class="gioithieu">
     <h2>Giới Thiệu</h2>
-    <p>Bett88Fruit là shop Trái cây tươi ngon mỗi ngày! Chúng tôi cung cấp đa dạng các loại trái cây chất lượng cao, đảm bảo an toàn và giàu dinh dưỡng. Hãy đến và trải nghiệm</p>
+    <p>Fruitiverse là shop Trái cây tươi ngon mỗi ngày! Chúng tôi cung cấp đa dạng các loại trái cây chất lượng cao, đảm bảo an toàn và giàu dinh dưỡng. Hãy đến và trải nghiệm</p>
     <div class="Bct">
       <a href="#"><img src="images/chungnhan.png" alt="Chứng nhận Bộ Công Thương"></a>
     </div>
@@ -29,7 +29,7 @@
     <h2>Chăm sóc khách hàng</h2>
     <p>🏠 Đại Học FPT Đà Nẵng</p>
     <p>☎ 0938 706 66 46</p>
-    <p>✉ bett88fruit@gmail.com</p>
+    <p>✉ fruitiverse@gmail.com</p>
   </div>
   <div>
     <h2>Follow US</h2>

@@ -4,17 +4,13 @@
 <%@ page import="java.util.List" %>
 <%@ page import="service.Utils" %>
 <jsp:useBean id="userService" class="service.UserService" scope="page" />
-<%
-    if(session.getAttribute("users") == null){
-        session.setAttribute("users", userService.getAllUser());
-    }
-%>
 <html>
 <head>
     <title>Danh sách người dùng</title>
     <link rel="stylesheet" href="<%= request.getContextPath() %>/css/bootstrap/bootstrap.min.css">
 </head>
 <body>
+<jsp:include page="/templates/header.jsp"/>
 <div class="container mt-4">
     <h2 class="text-center mb-4">Danh sách người dùng</h2>
 
@@ -63,13 +59,13 @@
                     </td>
                     <td>${user.role}</td>
                     <td>
-                        <a href="users?action=update&id=${user.id}" class="btn btn-warning btn-sm">Sửa</a>
+                        <a href="${pageContext.request.contextPath}/users?action=update&id=${user.id}" class="btn btn-warning btn-sm">Sửa</a>
                         <c:choose>
                             <c:when test="${user.status == 'INACTIVE'}">
-                                <a href="users?action=restore&id=${user.id}" class="btn btn-success btn-sm">Khôi phục</a>
+                                <a href="${pageContext.request.contextPath}/users?action=restore&id=${user.id}" class="btn btn-success btn-sm">Khôi phục</a>
                             </c:when>
                             <c:otherwise>
-                                <a href="users?action=delete&id=${user.id}" class="btn btn-danger btn-sm">Xóa</a>
+                                <a href="${pageContext.request.contextPath}/users?action=delete&id=${user.id}" class="btn btn-danger btn-sm">Xóa</a>
                             </c:otherwise>
                         </c:choose>
                     </td>
@@ -102,7 +98,7 @@
         </ul>
     </nav>
 </div>
-
+<jsp:include page="/templates/footer.jsp"/>
 <!-- Bootstrap JS -->
 <script src="<%= request.getContextPath() %>/js/bootstrap.bundle.min.js"></script>
 </body>

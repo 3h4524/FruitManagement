@@ -7,6 +7,7 @@
   <link rel="stylesheet" href="${pageContext.request.contextPath}/css/bootstrap/bootstrap.min.css">
 </head>
 <body>
+<jsp:include page="/templates/header.jsp"/>
 <div class="container mt-5">
   <div class="row justify-content-center">
     <div class="col-md-6">
@@ -74,6 +75,7 @@
     </div>
   </div>
 </div>
+<jsp:include page="/templates/footer.jsp"/>
 <script>
   var contextPath = "${pageContext.request.contextPath}";
 </script>

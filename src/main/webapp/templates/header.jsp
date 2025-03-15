@@ -19,14 +19,14 @@
   </script>
 </head>
 <body>
-<c:set var="user" value="${sessionScope.user}"/>
+<c:set var="user" value="${sessionScope.UserLogin}"/>
 <div class="top-bar">
   <div class="Logo">
-    <a href="${pageContext.request.contextPath}/page?view=home.jsp"><img src="<%= request.getContextPath()%>/images/Logo.PNG"></a>
+    <a href="${pageContext.request.contextPath}/index.jsp"><img src="<%= request.getContextPath()%>/images/Logo.PNG"></a>
   </div>
 
   <div class="navbar_1" id="navbar">
-    <a href="${pageContext.request.contextPath}/page?view=home.jsp">Trang chủ</a>
+    <a href="${pageContext.request.contextPath}/index.jsp">Trang chủ</a>
     <div class="dropdown">
       <a href="#">⌵ Sản Phẩm</a>
       <div class="dropdown-content">
@@ -46,6 +46,13 @@
       </div>
     </div>
     <a href="#">Liên Hệ</a>
+    <div class="dropdown">
+      <a href="#">⌵ Quản lý</a>
+      <div class="dropdown-content">
+        <a href="${pageContext.request.contextPath}/users">Người dùng</a>
+        <a href="${pageContext.request.contextPath}/products">Sản phẩm</a>
+      </div>
+    </div>
   </div>
   <div class="box_search">
     <input class="search_input" type="text" placeholder="Tìm kiếm...">
@@ -61,16 +68,16 @@
       </c:if>
       <div class="dropdown-user">
         <c:if test="${user == null}">
-          <a href="${pageContext.request.contextPath}/page?view=user/Login.jsp">Đăng nhập</a>
-          <a href="${pageContext.request.contextPath}/page?view=user/Register.jsp">Đăng ký</a>
+          <a href="${pageContext.request.contextPath}/login">Đăng nhập</a>
+          <a href="${pageContext.request.contextPath}/registers">Đăng ký</a>
         </c:if>
         <c:if test="${user != null}">
-          <a href="${pageContext.request.contextPath}/page?view=user/UserAccount.jsp">Tài khoản của tôi</a>
+          <a href="${pageContext.request.contextPath}/user/UserAccount.jsp">Tài khoản của tôi</a>
           <a href="${pageContext.request.contextPath}/logout">Đăng xuất</a>
         </c:if>
       </div>
     </div>
-    <span class="cart"><a href="${pageContext.request.contextPath}/page?view=cart.jsp">🛒</a></span>
+    <span class="cart"><a href="${pageContext.request.contextPath}/carts">🛒</a></span>
   </div>
 </div>
 <div class="line"></div>

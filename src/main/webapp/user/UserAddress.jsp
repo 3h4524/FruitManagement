@@ -6,16 +6,17 @@
   <link rel="stylesheet" href="${pageContext.request.contextPath}/css/bootstrap/bootstrap.min.css">
 </head>
 <body>
+<c:set var="user" value="${sessionScope.UserLogin}"/>
 <div class="container mt-4">
   <h4 class="mb-3 d-flex justify-content-between">
     Địa chỉ của tôi
-    <c:if test="${empty sessionScope.user.address}">
+    <c:if test="${empty user.address}">
       <a href="<%= request.getContextPath()%>/user/UserSaveAddress.jsp" class="btn btn-danger btn-sm">➕ Thêm địa chỉ mới</a>
     </c:if>
   </h4>
   <hr>
 
-  <c:set var="user" value="${sessionScope.user}"/>
+
 
   <c:if test="${not empty user.address}">
     <h5>Địa chỉ</h5>
