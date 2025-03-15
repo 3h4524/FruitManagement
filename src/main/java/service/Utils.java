@@ -51,10 +51,7 @@ public class Utils {
 
         return hasUpperCase && hasDigit && hasSpecialChar;
     }
-    public boolean isValidEmail(String email) {
-        String emailPattern = "^[a-zA-Z0-9._%+-]+@gmail\\.com$";
-        return email != null && email.matches(emailPattern);
-    }
+
     public static String dateTimeFormat(Instant dateTime) {
         if (dateTime == null) {
             return "";

@@ -15,14 +15,16 @@
     <div class="col-md-6">
       <div class="card shadow-lg p-4">
         <h3 class="text-center">Đổi mật khẩu</h3>
-        <c:if test="${not empty error}">
-          <div class="alert alert-danger" role="alert">${error}</div>
+        <c:if test="${not empty sessionScope.error}">
+          <div class="alert alert-danger">${sessionScope.error}</div>
+          <c:remove var="error" scope="session"/>
         </c:if>
 
-        <c:if test="${not empty success}">
-          <div class="alert alert-success" role="alert">${success}</div>
+        <c:if test="${not empty sessionScope.success}">
+          <div class="alert alert-success">${sessionScope.success}</div>
+          <c:remove var="success" scope="session"/>
         </c:if>
-        <form action="<%= request.getContextPath()%>/users?action=changePassword" method="post">
+        <form action="<%= request.getContextPath()%>/users?action=update&type=changePassword" method="post">
           <div class="mb-3">
             <label for="newPassword" class="form-label">Mật khẩu mới:</label>
             <input type="password" id="newPassword" name="newPassword" class="form-control" required>

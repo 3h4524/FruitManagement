@@ -41,15 +41,13 @@ public class MailServlet extends HttpServlet {
         String email = request.getParameter("email");
         String type = request.getParameter("type"); // 'register' hoặc 'forgot-password'
         HttpSession session = request.getSession();
-
+        System.out.println(type != null ? type : "null");
         if (email == null || email.isEmpty()) {
             response.getWriter().write("error: Vui lòng nhập email");
             return;
         }
 
         User user = userService.getUserByEmail(email);
-        System.out.println(email != null ? email : "null");
-        System.out.println(type != null ? type : "null");
         if ("register".equals(type)) {
             if (user != null) {
                 response.getWriter().write("error: Email đã được đăng ký");
@@ -82,19 +80,24 @@ public class MailServlet extends HttpServlet {
         String otp = request.getParameter("otp");
         HttpSession session = request.getSession();
         String email = (String) session.getAttribute("email");
+        User user = (User) session.getAttribute("UserLogin");
+        boolean isLoggedIn = user != null;
+        System.out.println("isLoggedIn: " + isLoggedIn);
         if(otp == null || otp.isEmpty()){
             session.setAttribute("error", "Vui lòng nhập OTP");
-            response.sendRedirect(request.getContextPath() + "/user/UserForgotPassword.jsp");
+            response.sendRedirect(request.getContextPath() + "/user/UserTwoStepVerification.jsp");
             return;
         }
         String otpSession = (String) session.getAttribute("otp");
         if((otpSession != null || !otpSession.isEmpty()) && (otp.equals(otpSession))){
-            User user = userService.getUserByEmail(email);
-            session.setAttribute("user", user);
+            if(!isLoggedIn){
+                user = userService.getUserByEmail(email);
+                session.setAttribute("UserIsNotLoggedIn", user);
+            }
             response.sendRedirect(request.getContextPath() + "/user/UserChangePassword.jsp");
         }else{
             session.setAttribute("error", "Mã otp không hợp lệ");
-            response.sendRedirect(request.getContextPath() + "/user/UserForgotPassword.jsp");
+            response.sendRedirect(request.getContextPath() + "/user/UserTwoStepVerification.jsp");
         }
     }
 }

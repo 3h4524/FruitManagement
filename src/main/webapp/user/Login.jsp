@@ -138,7 +138,7 @@
       </span>
     </div>
     <div class="forget-password">
-      <a href="<%= request.getContextPath()%>/user/UserForgotPassword.jsp">Quên mật khẩu?</a>
+      <a href="<%= request.getContextPath()%>/user/UserTwoStepVerification.jsp">Quên mật khẩu?</a>
     </div>
     <div class="remember-me">
       <input type="checkbox" name="remember-me" id="remember-me">

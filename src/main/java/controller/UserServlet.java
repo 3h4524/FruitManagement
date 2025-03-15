@@ -130,7 +130,6 @@ public class UserServlet extends HttpServlet {
         if (type == null) {
             type = "";
         }
-        System.out.println(type != null ? type : "null");
         switch (type){
             case "changePassword":
                 changePassword(request, response);
@@ -203,43 +202,6 @@ public class UserServlet extends HttpServlet {
         response.sendRedirect(contextPath + "/user/UserAccount.jsp?page=user/UserProfile.jsp");
     }
 
-    public void changePasswordByOldPassword(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String oldPassword = request.getParameter("oldPassword");
-        String newPassword = request.getParameter("newPassword");
-        String confirmPassword = request.getParameter("confirmPassword");
-
-        HttpSession session = request.getSession();
-        User user = (User) session.getAttribute("UserLogin");
-
-        // Kiểm tra nếu có trường nào bị bỏ trống
-        if (oldPassword == null || newPassword == null || confirmPassword == null ||
-                oldPassword.isEmpty() || newPassword.isEmpty() || confirmPassword.isEmpty()) {
-
-            session.setAttribute("error", "Vui lòng điền đầy đủ thông tin");
-            response.sendRedirect("user/UserAccount.jsp?page=user/UserChangePasswordByOldPassword.jsp");
-            return; // Kết thúc phương thức ngay sau khi redirect
-        }
-
-        boolean isMatch = Utils.checkPassword(oldPassword, user.getPasswordHash());
-
-        if (isMatch) {
-            if (userService.changePassword(user, newPassword, confirmPassword)) {
-                session.removeAttribute("UserLogin"); // Xóa thuộc tính session trước
-                String successMessage = "Đổi mật khẩu thành công, vui lòng đăng nhập lại!";
-                session.setAttribute("success", successMessage);
-                response.sendRedirect(request.getContextPath() + "/user/Login.jsp");
-                return;
-            } else {
-                session.setAttribute("error", "Mật khẩu nhập lại không đúng");
-            }
-        } else {
-            session.setAttribute("error", "Mật khẩu cũ không đúng");
-        }
-
-        // Chỉ redirect lại nếu không đổi mật khẩu thành công
-        response.sendRedirect("user/UserAccount.jsp?page=user/UserChangePasswordByOldPassword.jsp");
-    }
-
     public void restoreUser(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         int id = Integer.parseInt(request.getParameter("id"));
         userService.restoreUser(id);
@@ -283,17 +245,74 @@ public class UserServlet extends HttpServlet {
         response.sendRedirect(contextPath + "/user/UserAccount.jsp?page=user/UserSaveAddress.jsp");
     }
 
+    public void changePasswordByOldPassword(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String oldPassword = request.getParameter("oldPassword");
+        String newPassword = request.getParameter("newPassword");
+        String confirmPassword = request.getParameter("confirmPassword");
+
+        HttpSession session = request.getSession();
+        User user = (User) session.getAttribute("UserLogin");
+
+        // Kiểm tra nếu có trường nào bị bỏ trống
+        if (oldPassword == null || newPassword == null || confirmPassword == null ||
+                oldPassword.isEmpty() || newPassword.isEmpty() || confirmPassword.isEmpty()) {
+
+            session.setAttribute("error", "Vui lòng điền đầy đủ thông tin");
+            response.sendRedirect("user/UserAccount.jsp?page=user/UserChangePasswordByOldPassword.jsp");
+            return; // Kết thúc phương thức ngay sau khi redirect
+        }
+
+        boolean isMatch = Utils.checkPassword(oldPassword, user.getPasswordHash());
+
+        if (isMatch) {
+            if (userService.changePassword(user, newPassword, confirmPassword)) {
+                session.removeAttribute("UserLogin"); // Xóa thuộc tính session trước
+                String successMessage = "Đổi mật khẩu thành công, vui lòng đăng nhập lại!";
+                session.setAttribute("success", successMessage);
+                response.sendRedirect(request.getContextPath() + "/user/Login.jsp");
+                return;
+            } else {
+                session.setAttribute("error", "Mật khẩu nhập lại không đúng");
+            }
+        }
+        session.setAttribute("error", "Mật khẩu cũ không đúng");
+        // Chỉ redirect lại nếu không đổi mật khẩu thành công
+        response.sendRedirect("user/UserAccount.jsp?page=user/UserChangePasswordByOldPassword.jsp");
+    }
+
     public void changePassword(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String newPassword = request.getParameter("newPassword");
         String confirmPassword = request.getParameter("confirmPassword");
         HttpSession session = request.getSession();
+
+        // Kiểm tra xem người dùng có đăng nhập không
         User user = (User) session.getAttribute("UserLogin");
-        if(user != null && userService.changePassword(user, newPassword, confirmPassword)){
-            session.invalidate();
-            response.sendRedirect(request.getContextPath() + "/user/Login.jsp?success=Đổi mật khẩu thành công, vui lòng đăng nhập lại!");
-        }else{
-            session.setAttribute("error", "Mật khẩu Nhập lại không đúng");
-            response.sendRedirect(request.getContextPath() + "/user/UserChangPassword.jsp");
+        boolean isLoggedIn = (user != null);
+
+        // Nếu chưa đăng nhập, lấy User từ session tạm
+        if (!isLoggedIn) {
+            user = (User) session.getAttribute("UserIsNotLoggedIn");
         }
+
+        // Kiểm tra người dùng hợp lệ và mật khẩu mới hợp lệ
+        if (user != null && userService.changePassword(user, newPassword, confirmPassword)) {
+            String successMessage = "Đổi mật khẩu thành công, vui lòng đăng nhập lại!";
+
+            // Nếu người dùng đã đăng nhập, xóa thông tin đăng nhập
+            if (isLoggedIn) {
+                session.removeAttribute("UserLogin");
+            } else {
+                session.invalidate(); // Xóa toàn bộ session nếu chưa đăng nhập
+                session = request.getSession(true); // Tạo session mới để lưu thông báo
+            }
+
+            session.setAttribute("success", successMessage);
+            response.sendRedirect(request.getContextPath() + "/user/Login.jsp");
+            return;
+        }
+
+        // Nếu mật khẩu xác nhận không hợp lệ
+        session.setAttribute("error", "Mật khẩu nhập lại không đúng hoặc không hợp lệ.");
+        response.sendRedirect(request.getContextPath() + "/user/UserChangePassword.jsp");
     }
 }

@@ -15,7 +15,7 @@
 
 <html>
 <head>
-    <title>Thông tin người dùng</title>
+    <title>Xác nhận</title>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/bootstrap/bootstrap.min.css">
 </head>
 <body>

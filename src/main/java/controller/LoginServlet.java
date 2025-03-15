@@ -15,12 +15,6 @@ public class LoginServlet extends HttpServlet {
     private UserService userService = new UserService();
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        HttpSession session = request.getSession();
-        User user = (User) session.getAttribute("UserLogin");
-        if(user == null) {
-            user = new User();
-            session.setAttribute("UserLogin", user);
-        }
         response.sendRedirect(request.getContextPath() + "/user/Login.jsp");
     }
 
