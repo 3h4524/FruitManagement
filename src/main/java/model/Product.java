@@ -6,6 +6,7 @@ import org.hibernate.annotations.Nationalized;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.List;
 
 @Entity
 @Table(name = "Products")
@@ -15,9 +16,7 @@ import java.time.Instant;
         @NamedQuery(name = "Product.findByName", query = "SELECT p FROM Product p WHERE p.name LIKE :name"),
         @NamedQuery(name = "Product.findByDescription", query = "SELECT p FROM Product p WHERE p.description = :description"),
         @NamedQuery(name = "Product.findByImageURL", query = "SELECT p FROM Product p WHERE p.imageURL = :imageURL"),
-        @NamedQuery(name = "Product.findByImportDate", query = "SELECT p FROM Product p WHERE p.importDate = :importDate"),
-        @NamedQuery(name="Product.listWithOffset",
-                query = "SELECT p FROM Product p ORDER BY p.id")
+        @NamedQuery(name = "Product.findByImportDate", query = "SELECT p FROM Product p WHERE p.importDate = :importDate")
 })
 public class Product {
     @Id
@@ -33,7 +32,6 @@ public class Product {
     @Column(name = "Description")
     private String description;
 
-
     @Nationalized
     @Column(name = "ImageURL")
     private String imageURL;
@@ -41,6 +39,23 @@ public class Product {
     @ColumnDefault("getdate()")
     @Column(name = "ImportDate")
     private Instant importDate;
+    @Transient
+    private BigDecimal price;
+
+    public BigDecimal getPrice() {
+        return price;
+    }
+
+    public void setPrice(BigDecimal price) {
+        this.price = price;
+    }
+    @ManyToMany
+    @JoinTable(
+            name = "ProductsCategories",
+            joinColumns = @JoinColumn(name = "productID"),
+            inverseJoinColumns = @JoinColumn(name = "categoryID")
+    )
+    private List<Category> categories;
 
     public Integer getId() {
         return id;

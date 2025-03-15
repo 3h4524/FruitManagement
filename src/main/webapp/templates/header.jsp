@@ -1,9 +1,9 @@
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <!DOCTYPE html>
 <html>
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
   <title>JSP Page</title>
   <link rel="stylesheet" href="<%= request.getContextPath()%>/css/headercss.css">
   <script>
@@ -19,13 +19,14 @@
   </script>
 </head>
 <body>
+<c:set var="user" value="${sessionScope.user}"/>
 <div class="top-bar">
   <div class="Logo">
-    <a href="#"><img src="<%= request.getContextPath()%>/images/Logo.PNG"></a>
+    <a href="${pageContext.request.contextPath}/page?view=home.jsp"><img src="<%= request.getContextPath()%>/images/Logo.PNG"></a>
   </div>
 
   <div class="navbar_1" id="navbar">
-    <a href="#">Trang chủ</a>
+    <a href="${pageContext.request.contextPath}/page?view=home.jsp">Trang chủ</a>
     <div class="dropdown">
       <a href="#">⌵ Sản Phẩm</a>
       <div class="dropdown-content">
@@ -52,13 +53,24 @@
   </div>
   <div class="auth">
     <div class="dropdown">
-      <a href="#">⌵ AA</a>
+      <c:if test="${user == null}">
+        <a href="#">⌵ AA</a>
+      </c:if>
+      <c:if test="${user != null}">
+        <a href="#">${user.name}</a>
+      </c:if>
       <div class="dropdown-user">
-        <a href="#">Đăng nhập</a>
-        <a href="#">Đăng ký</a>
+        <c:if test="${user == null}">
+          <a href="${pageContext.request.contextPath}/page?view=user/Login.jsp">Đăng nhập</a>
+          <a href="${pageContext.request.contextPath}/page?view=user/Register.jsp">Đăng ký</a>
+        </c:if>
+        <c:if test="${user != null}">
+          <a href="${pageContext.request.contextPath}/page?view=user/UserAccount.jsp">Tài khoản của tôi</a>
+          <a href="${pageContext.request.contextPath}/logout">Đăng xuất</a>
+        </c:if>
       </div>
     </div>
-    <span class="cart">🛒</span>
+    <span class="cart"><a href="${pageContext.request.contextPath}/page?view=cart.jsp">🛒</a></span>
   </div>
 </div>
 <div class="line"></div>

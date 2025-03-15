@@ -27,19 +27,21 @@ public class LoginServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String email = request.getParameter("email");
-        String pasword = request.getParameter("password");
+        String password = request.getParameter("password");
         User user = userService.getUserByEmail(email);
-        if(user != null && Utils.checkPassword(pasword, user.getPasswordHash())) {
+
+        if(user != null && Utils.checkPassword(password, user.getPasswordHash())) {
             if(user.getStatus().equals("INACTIVE")){
-                request.setAttribute("error", "Tài khoản này đã bị vô hiệu hóa.");
-                request.getRequestDispatcher("/user/Login.jsp").forward(request, response);
+                request.getSession().setAttribute("error", "Tài khoản này đã bị vô hiệu hóa.");
+                response.sendRedirect(request.getContextPath() + "/page?view=user/Login.jsp");
+                return;
             }
             HttpSession session = request.getSession();
             session.setAttribute("user", user);
             response.sendRedirect("index.jsp");
-        }else{
-            request.setAttribute("error", "Email hoặc mật khẩu không đúng");
-            request.getRequestDispatcher("/user/Login.jsp").forward(request, response);
+        } else {
+            request.getSession().setAttribute("error", "Email hoặc mật khẩu không đúng.");
+            response.sendRedirect(request.getContextPath() + "/page?view=user/Login.jsp");
         }
     }
 }
