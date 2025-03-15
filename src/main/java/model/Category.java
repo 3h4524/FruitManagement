@@ -3,6 +3,8 @@ package model;
 import jakarta.persistence.*;
 import org.hibernate.annotations.Nationalized;
 
+import java.util.List;
+
 @Entity
 @Table(name = "Categories")
 @NamedQueries({
@@ -18,6 +20,10 @@ public class Category {
     @Nationalized
     @Column(name = "Name", nullable = false, length = 100)
     private String name;
+
+
+    @ManyToMany(mappedBy = "categories")
+    private List<Product> products;
 
     @Nationalized
     @Lob

@@ -1,22 +1,16 @@
 package model;
 
 import java.util.List;
+import java.util.Map;
 
 public class Cart {
-    private List<CartItem> items;
+    private Map<Integer,CartItem> items;
 
-    public Cart(List<CartItem> items) {
-        this.items = items;
-    }
-
-    public Cart() {
-    }
-
-    public List<CartItem> getItems() {
+    public Map<Integer, CartItem> getItems() {
         return items;
     }
 
-    public void setItems(List<CartItem> items) {
+    public void setItems(Map<Integer, CartItem> items) {
         this.items = items;
     }
 

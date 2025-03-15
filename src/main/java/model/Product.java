@@ -6,6 +6,7 @@ import org.hibernate.annotations.Nationalized;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.List;
 
 @Entity
 @Table(name = "Products")
@@ -21,6 +22,7 @@ import java.time.Instant;
 })
 public class Product {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ProductID", nullable = false)
     private Integer id;
 
@@ -32,6 +34,26 @@ public class Product {
     @Lob
     @Column(name = "Description")
     private String description;
+
+    @Transient
+    private BigDecimal price;
+
+    public BigDecimal getPrice() {
+        return price;
+    }
+
+    public void setPrice(BigDecimal price) {
+        this.price = price;
+    }
+    @ManyToMany
+    @JoinTable(
+            name = "ProductsCategories",
+            joinColumns = @JoinColumn(name = "productID"),
+            inverseJoinColumns = @JoinColumn(name = "categoryID")
+    )
+
+    private List<Category> categories;
+
 
 
     @Nationalized

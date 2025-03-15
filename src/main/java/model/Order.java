@@ -24,6 +24,7 @@ import java.time.Instant;
 public class Order {
     @Id
     @Column(name = "OrderID", nullable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)

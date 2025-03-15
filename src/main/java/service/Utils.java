@@ -2,6 +2,12 @@ package service;
 
 import org.mindrot.jbcrypt.BCrypt;
 
+import javax.persistence.criteria.CriteriaBuilder;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+
 public class Utils {
     public static String hashPassword(String password) {
         return BCrypt.hashpw(password, BCrypt.gensalt(12));
@@ -32,7 +38,7 @@ public class Utils {
         String regex = "^(\\d{9}|\\d{10})$";
         return phone.matches(regex);
     }
-    public boolean isValidPassword(String password) {
+    public static boolean isValidPassword(String password) {
         if (password.length() < 8) {
             return false;
         }
@@ -46,9 +52,17 @@ public class Utils {
 
         return hasUpperCase && hasDigit && hasSpecialChar;
     }
-    public boolean isValidEmail(String email) {
+    public static boolean isValidEmail(String email) {
         String emailPattern = "^[a-zA-Z0-9._%+-]+@gmail\\.com$";
         return email != null && email.matches(emailPattern);
     }
+
+    public static String formatTimestamp(Instant instant) {
+        if (instant == null) return "N/A";
+        LocalDateTime dateTime = LocalDateTime.ofInstant(instant, ZoneId.of("UTC"));
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
+        return dateTime.format(formatter);
+    }
+
 
 }

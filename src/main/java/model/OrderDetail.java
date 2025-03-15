@@ -20,6 +20,7 @@ import java.math.BigDecimal;
 public class OrderDetail {
     @Id
     @Column(name = "OrderDetailID", nullable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY) // Tự động tăng ID
     private Integer id;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)

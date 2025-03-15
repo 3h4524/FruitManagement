@@ -3,9 +3,9 @@ package controller;
 import jakarta.servlet.*;
 import jakarta.servlet.http.*;
 import jakarta.servlet.annotation.*;
-import model.Product;
-import model.ProductStock;
-import model.ProductVariant;
+import model.*;
+import org.hibernate.annotations.ColumnDefault;
+import service.InventoryService;
 import service.ProductService;
 import service.ProductStockService;
 import service.ProductVariantService;
@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -23,10 +24,12 @@ public class ProductServlet extends HttpServlet {
 
     ProductService productService;
     ProductVariantService productVariantService;
+    ProductStockService productStockService;
 
     public void init() {
         productService = new ProductService();
         productVariantService = new ProductVariantService();
+        productStockService = new ProductStockService();
     }
 
     @Override
@@ -85,13 +88,33 @@ public class ProductServlet extends HttpServlet {
 
     // Thang bo sung phan search product
     private void searchProduct(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String categoryID = request.getParameter("categoryId");
+        String sort = request.getParameter("sort");
+        String searchName = request.getParameter("searchName");
+
+        // Gọi service để lấy sản phẩm với giá của size "Small"
+        List<Product> products = productService.searchAndFilterProducts(searchName, categoryID, sort);
+        List<Category> categories = productService.getAllCategories();
+
+        request.setAttribute("products", products);
+        request.setAttribute("categories", categories);
+        request.setAttribute("selectedCategory", categoryID);
+        request.setAttribute("selectedSort", sort);
+        request.setAttribute("searchName", searchName);
+        request.getRequestDispatcher("/product/ProductListCart.jsp").forward(request, response);
     }
 
     private void deleteProduct(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         try {
             int id = Integer.parseInt(request.getParameter("productId"));
+            Product product = productService.getProductById(id);
             productService.deleteProduct(id);
-            response.sendRedirect(request.getContextPath()+ "/products");
+
+            List<ProductVariant> productVariants = productVariantService.getAllProductVariants(id);
+            for (ProductVariant productVariant : productVariants) {
+                productVariantService.deleteProductVariant(productVariant.getId());
+            }
+            response.sendRedirect(request.getContextPath() + "/products");
         } catch (NumberFormatException e) {
             throw new NumberFormatException("id must be an integer");
         }
@@ -99,12 +122,21 @@ public class ProductServlet extends HttpServlet {
 
     private void detailProduct(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         try {
-            int id = Integer.parseInt(request.getParameter("id"));
-            Product product = productService.getProductById(id);
-            request.setAttribute("product", product);
+            int id = Integer.parseInt(request.getParameter("productId"));
+            List<Map<String, Object>> productDetails = productService.detailProduct(id);
+
+            if (productDetails.isEmpty()) {
+                response.sendError(HttpServletResponse.SC_NOT_FOUND, "Product not found");
+                return;
+            }
+
+            request.setAttribute("productDetails", productDetails);
+
             request.getRequestDispatcher("/product/ProductDetail.jsp").forward(request, response);
         } catch (NumberFormatException e) {
-            throw new NumberFormatException("id must be an integer");
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "ID must be an integer");
+        } catch (Exception e) {
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "An error occurred");
         }
     }
 
@@ -132,28 +164,34 @@ public class ProductServlet extends HttpServlet {
             Integer stock = Integer.parseInt(request.getParameter("stock"));
             String imageURL = request.getParameter("imageURL");
 
-            String dateStr = request.getParameter("importDate");
-            LocalDate localDate = LocalDate.parse(dateStr, DateTimeFormatter.ISO_DATE);
-            Instant importDate = localDate.atStartOfDay(ZoneId.systemDefault()).toInstant();
+            String importDateStr = request.getParameter("importDate");
+
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
+            LocalDateTime importDate = LocalDateTime.parse(importDateStr, formatter);
+
+            Instant importDateUTC = importDate.atZone(ZoneId.systemDefault()).toInstant();
 
             Product newProduct = new Product();
             newProduct.setName(name);
             newProduct.setDescription(description);
             newProduct.setImageURL(imageURL);
-            newProduct.setImportDate(importDate);
-
+            newProduct.setImportDate(importDateUTC);
             productService.addProduct(newProduct);
 
-            ProductVariant productVariant = new ProductVariant();
-            productVariant.setProductID(newProduct);
-            productVariant.setSize(size);
-            productVariant.setPrice(price);
-            productVariantService.addProductVariant(productVariant);
+
+            ProductVariant newProductVariant = new ProductVariant();
+            newProductVariant.setProductID(newProduct);
+            newProductVariant.setSize(size);
+            newProductVariant.setPrice(price);
+            productVariantService.addProductVariant(newProductVariant);
+
 
             ProductStock productStock = new ProductStock();
-            productStock.setProductVariantID(productVariant);
+            productStock.setProductVariantID(newProductVariant);
             productStock.setAmount(stock);
+            productStock.setInventoryID(new InventoryService().findById(1));
             new ProductStockService().addProductStock(productStock);
+
             message = "add product successfully";
             request.setAttribute("message", message);
         } catch (Exception e) {
@@ -174,7 +212,6 @@ public class ProductServlet extends HttpServlet {
             String[] prices = request.getParameterValues("prices");
             String[] quantities = request.getParameterValues("quantities");
 
-            ProductStockService productStockService = new ProductStockService();
 
             Product product = productService.getProductById(productId);
             if (product != null) {
@@ -183,6 +220,7 @@ public class ProductServlet extends HttpServlet {
                 product.setImageURL(imageURL);
                 productService.updateProduct(product);
             }
+
             List<ProductVariant> existingVariants = productVariantService.getAllProductVariants(productId);
             Set<String> newSizeSet = null;
             if (sizes != null) {
@@ -191,7 +229,6 @@ public class ProductServlet extends HttpServlet {
 
             for (ProductVariant variant : existingVariants) {
                 if (!newSizeSet.contains(variant.getSize())) {
-                    productStockService.deleteByVariantId(variant.getId());
                     productVariantService.deleteProductVariant(variant.getId());
                 }
             }
@@ -204,31 +241,34 @@ public class ProductServlet extends HttpServlet {
                         BigDecimal price = new BigDecimal(prices[i]);
                         Integer quantity = Integer.parseInt(quantities[i]);
 
+                        // Kiểm tra xem ProductVariant có tồn tại không
                         ProductVariant productVariant = productVariantService.getVariantByProductAndSize(productId, size);
+
                         if (productVariant != null) {
-                            // Nếu size đã có thì cập nhật giá
+                            // ✅ Nếu size đã tồn tại → Cập nhật giá và số lượng
                             productVariant.setPrice(price);
                             productVariantService.updateVariant(productVariant);
-                        } else {
-                            // Nếu size chưa có, tạo mới
-                            productVariant = new ProductVariant();
-                            productVariant.setProductID(product); // Sửa lỗi ở đây
-                            productVariant.setSize(size);
-                            productVariant.setPrice(price);
-                            productVariantService.updateVariant(productVariant); // Thêm mới variant vào DB
-                        }
 
-
-                        // Cập nhật hoặc thêm mới ProductStock
-                        ProductStock productStock = productStockService.getProductStock(productVariant.getId());
-                        if (productStock != null) {
+                            ProductStock productStock = productStockService.getProductStock(productVariant.getId());
                             productStock.setAmount(quantity);
                             productStockService.updateProductStock(productStock);
                         } else {
+                            // 🔥 Nếu size chưa tồn tại → Thêm mới vào database
+                            productVariant = new ProductVariant();
+                            productVariant.setProductID(product);
+                            productVariant.setSize(size);
+                            productVariant.setPrice(price);
+                            productVariantService.addProductVariant(productVariant);
+
+                            // Lấy lại productVariant vừa thêm để có ID chính xác
+                            productVariant = productVariantService.getVariantByProductAndSize(productId, size);
+
+                            // Tạo stock mới cho size mới
                             ProductStock newStock = new ProductStock();
-                            newStock.setAmount(quantity);
                             newStock.setProductVariantID(productVariant);
-                            productStockService.updateProductStock(newStock);
+                            newStock.setAmount(quantity);
+                            newStock.setInventoryID(new InventoryService().findById(1));
+                            productStockService.addProductStock(newStock);
                         }
                     } catch (NumberFormatException e) {
                         e.printStackTrace();

@@ -3,7 +3,6 @@ package service;
 import dao.GenericDAO;
 import model.Order;
 import model.OrderDetail;
-import model.Product;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,8 +22,8 @@ public class OrderService {
     public boolean deleteOrder(int id) {
         return orderDao.delete(id);
     }
-    public boolean createOrder(Order order) {
-        return orderDao.insert(order);
+    public void createOrder(Order order) {
+        orderDao.insert(order);
     }
     public void addOrderDetails(List<OrderDetail> orderDetails) {
         for(OrderDetail orderDetail : orderDetails) {
