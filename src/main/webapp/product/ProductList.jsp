@@ -111,6 +111,7 @@
     <div class="links">
         <a href="${pageContext.request.contextPath}/users">Go to Users Page</a>
         <a href="${pageContext.request.contextPath}/products?action=create">Add New Product</a>
+        <a href="${pageContext.request.contextPath}/inventory">InventoryLog</a>
     </div>
 
     <c:set var="products" value="${requestScope.products}"/>
