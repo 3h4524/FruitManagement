@@ -29,15 +29,16 @@ public class AuthenFilter implements Filter {
     private boolean isPublicPage(String path, String queryString) {
         return path.startsWith("/login") || path.startsWith("/register")
                 || path.endsWith("ProductListCart.jsp") || path.startsWith("/index.jsp")
-                || (path.equals("/products") && queryString != null && queryString.startsWith("action=find"))
                 || path.endsWith("/header.jsp") || path.endsWith("/footer.jsp")
-                || path.equals("/user/Login.jsp")
-                || path.equals("/user/Register.jsp");
+                || path.equals("/user/Login.jsp") || path.equals("/user/Register.jsp")
+                || path.equals("/product/ProductDetail.jsp")
+                || (path.equals("/products") && queryString != null
+                && (queryString.startsWith("action=find") || queryString.startsWith("action=productDetail")));
     }
 
     private boolean isUserAuthorized(String role, String path, String queryString) {
         return "User".equalsIgnoreCase(role) && (FUNC_FOR_USER.contains(path) ||
-                (path.equals("/products") && queryString != null &&
+                (path.equals("/products") && queryString != null &  &
                         (queryString.startsWith("action=find") || queryString.startsWith("action=productDetail"))
                 )
         );
