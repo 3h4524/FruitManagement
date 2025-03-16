@@ -38,7 +38,7 @@
 
                 <!-- Form nhập OTP -->
                 <form action="<%= request.getContextPath()%>/mails?action=verifyOtp" method="post">
-                    <div class="mb-3" id="otpField" style="display: none;">
+                    <div class="mb-3" id="otpField">
                         <label class="form-label">Mã xác nhận (OTP)</label>
                         <input type="text" name="otp" class="form-control" placeholder="Nhập mã OTP" required />
                     </div>

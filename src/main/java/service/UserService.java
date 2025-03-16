@@ -48,10 +48,14 @@ public class UserService {
         return userDao.findByName(name);
     }
 
-
     public User getUserByEmail(String email) {
         List<User> users = userDao.findByAttribute("email", email);
         return users.isEmpty() ? null : users.get(0);
+    }
+
+    public List<User> getUserByPhone(String phone){
+        List<User> users = userDao.findByAttribute("phone", phone);
+        return users;
     }
     public boolean changePassword(User user, String newPassword, String confirmPassword) {
         if(confirmPassword.equals(newPassword)) {

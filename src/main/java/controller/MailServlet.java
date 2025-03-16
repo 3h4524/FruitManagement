@@ -41,25 +41,18 @@ public class MailServlet extends HttpServlet {
         String email = request.getParameter("email");
         String type = request.getParameter("type"); // 'register' hoặc 'forgot-password'
         HttpSession session = request.getSession();
-        System.out.println(type != null ? type : "null");
+
         if (email == null || email.isEmpty()) {
             response.getWriter().write("error: Vui lòng nhập email");
             return;
         }
 
         User user = userService.getUserByEmail(email);
-        if ("register".equals(type)) {
-            if (user != null) {
-                response.getWriter().write("error: Email đã được đăng ký");
-                return;
-            }
-        } else if ("forgot-password".equals(type)) {
-            if (user == null) {
-                response.getWriter().write("error: Không tìm thấy người dùng với email đã nhập");
-                return;
-            }
-        } else {
-            response.getWriter().write("error: Loại yêu cầu không hợp lệ");
+        if ("register".equals(type) && user != null) {
+            response.getWriter().write("error: Email đã được đăng ký");
+            return;
+        } else if ("forgot-password".equals(type) && user == null) {
+            response.getWriter().write("error: Không tìm thấy người dùng với email đã nhập");
             return;
         }
 
@@ -69,12 +62,12 @@ public class MailServlet extends HttpServlet {
         if (success) {
             session.setAttribute("otp", otp);
             session.setAttribute("email", email);
+            session.setAttribute("otpExpiryTime", System.currentTimeMillis() + 5 * 60 * 1000); // OTP hết hạn sau 5 phút
             response.getWriter().write("success");
         } else {
             response.getWriter().write("error: Gửi OTP thất bại");
         }
     }
-
 
     public void verifyOtp(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String otp = request.getParameter("otp");
@@ -82,22 +75,52 @@ public class MailServlet extends HttpServlet {
         String email = (String) session.getAttribute("email");
         User user = (User) session.getAttribute("UserLogin");
         boolean isLoggedIn = user != null;
+
         System.out.println("isLoggedIn: " + isLoggedIn);
-        if(otp == null || otp.isEmpty()){
+
+        if (otp == null || otp.isEmpty()) {
             session.setAttribute("error", "Vui lòng nhập OTP");
             response.sendRedirect(request.getContextPath() + "/user/UserTwoStepVerification.jsp");
             return;
         }
+
         String otpSession = (String) session.getAttribute("otp");
-        if((otpSession != null || !otpSession.isEmpty()) && (otp.equals(otpSession))){
-            if(!isLoggedIn){
-                user = userService.getUserByEmail(email);
-                session.setAttribute("UserIsNotLoggedIn", user);
-            }
-            response.sendRedirect(request.getContextPath() + "/user/UserChangePassword.jsp");
-        }else{
-            session.setAttribute("error", "Mã otp không hợp lệ");
+        Long otpExpiryTime = (Long) session.getAttribute("otpExpiryTime");
+
+        // Kiểm tra OTP có tồn tại trong session không
+        if (otpSession == null || otpExpiryTime == null) {
+            session.setAttribute("error", "Không tìm thấy OTP. Vui lòng yêu cầu lại.");
             response.sendRedirect(request.getContextPath() + "/user/UserTwoStepVerification.jsp");
+            return;
         }
+
+        // Kiểm tra OTP có hết hạn chưa
+        if (System.currentTimeMillis() > otpExpiryTime) {
+            session.removeAttribute("otp");
+            session.removeAttribute("otpExpiryTime");
+            session.setAttribute("error", "Mã OTP đã hết hạn. Vui lòng yêu cầu mã mới.");
+            response.sendRedirect(request.getContextPath() + "/user/UserTwoStepVerification.jsp");
+            return;
+        }
+
+        // Kiểm tra OTP có khớp không
+        if (!otp.equals(otpSession)) {
+            session.setAttribute("error", "Mã OTP không hợp lệ");
+            response.sendRedirect(request.getContextPath() + "/user/UserTwoStepVerification.jsp");
+            return;
+        }
+
+        // Nếu người dùng chưa đăng nhập, lấy thông tin người dùng từ email
+        if (!isLoggedIn) {
+            user = userService.getUserByEmail(email);
+            session.setAttribute("UserIsNotLoggedIn", user);
+        }
+
+        // Xóa OTP khỏi session sau khi sử dụng
+        session.removeAttribute("otp");
+        session.removeAttribute("otpExpiryTime");
+
+        // Chuyển hướng đến trang đổi mật khẩu
+        response.sendRedirect(request.getContextPath() + "/user/UserChangePassword.jsp");
     }
 }

@@ -62,7 +62,7 @@ function requestOTP(type) {
 
 function startOTPTimer(button) {
     button.disabled = true;
-    otpCooldown = 60;
+    otpCooldown = 10;
     otpTimer = setInterval(() => {
         button.innerText = "Nhận mã (" + otpCooldown + "s)";
         otpCooldown--;

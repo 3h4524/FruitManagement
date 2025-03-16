@@ -11,11 +11,13 @@ import java.time.Instant;
 @NamedQueries({
         @NamedQuery(name = "User.findAll", query = "SELECT u FROM User u"),
         @NamedQuery(name = "User.findById", query = "SELECT u FROM User u WHERE u.id = :id"),
-        @NamedQuery(name = "User.findByEmail", query = "SELECT u FROM User u WHERE u.email = :email"),
+        @NamedQuery(name = "User.findByEmail", query = "SELECT u FROM User u WHERE u.email LIKE :email"),
         @NamedQuery(name = "User.findByStatus", query = "SELECT u FROM User u WHERE u.status = :status"),
         @NamedQuery(name = "User.findByRole", query = "SELECT u FROM User u WHERE u.role = :role"),
         @NamedQuery(name = "User.findByRegistrationDateRange",
-                query = "SELECT u FROM User u WHERE u.registrationDate BETWEEN :startDate AND :endDate")
+                query = "SELECT u FROM User u WHERE u.registrationDate BETWEEN :startDate AND :endDate"),
+        @NamedQuery(name = "User.findByName", query = "SELECT u FROM User u WHERE u.name LIKE :name"),
+        @NamedQuery(name = "User.findByPhone", query = "SELECT u FROM User u WHERE u.phone = :phone")
 })
 public class User {
     @Id
