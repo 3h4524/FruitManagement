@@ -5,12 +5,13 @@
   Time: 2:31 CH
   To change this template use File | Settings | File Templates.
 --%>
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
+
 <html>
 <head>
-    <title>Title</title>
+    <title>Fruitiverse | Shop bán trái cây hàng đầu Việt Nam</title>
 </head>
 <body>
-hello world
+<jsp:forward page="products?action=find"/>
 </body>
 </html>

@@ -1,3 +1,4 @@
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
@@ -14,11 +15,16 @@
     <div class="col-md-6">
       <div class="card shadow-lg p-4">
         <h3 class="text-center">Đổi mật khẩu</h3>
-        <form action="users?update" method="post">
-          <div class="mb-3">
-            <label for="oldPassword" class="form-label">Mật khẩu cũ:</label>
-            <input type="password" id="oldPassword" name="oldPassword" class="form-control" required>
-          </div>
+        <c:if test="${not empty sessionScope.error}">
+          <div class="alert alert-danger">${sessionScope.error}</div>
+          <c:remove var="error" scope="session"/>
+        </c:if>
+
+        <c:if test="${not empty sessionScope.success}">
+          <div class="alert alert-success">${sessionScope.success}</div>
+          <c:remove var="success" scope="session"/>
+        </c:if>
+        <form action="<%= request.getContextPath()%>/users?action=update&type=changePassword" method="post">
           <div class="mb-3">
             <label for="newPassword" class="form-label">Mật khẩu mới:</label>
             <input type="password" id="newPassword" name="newPassword" class="form-control" required>

@@ -81,6 +81,8 @@
     </style>
 </head>
 <body>
+<jsp:include page="/templates/header.jsp"/>
+
 <h2>Update Product - ${product.name}</h2>
 
 <form action="products" method="post">
@@ -137,5 +139,7 @@
         button.parentElement.parentElement.remove();
     }
 </script>
+<jsp:include page="/templates/footer.jsp"/>
+
 </body>
 </html>

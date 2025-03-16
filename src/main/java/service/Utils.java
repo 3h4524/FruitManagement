@@ -1,8 +1,7 @@
 package service;
 
 import org.mindrot.jbcrypt.BCrypt;
-
-import javax.persistence.criteria.CriteriaBuilder;
+import java.security.SecureRandom;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -52,9 +51,53 @@ public class Utils {
 
         return hasUpperCase && hasDigit && hasSpecialChar;
     }
-    public static boolean isValidEmail(String email) {
-        String emailPattern = "^[a-zA-Z0-9._%+-]+@gmail\\.com$";
-        return email != null && email.matches(emailPattern);
+
+    public static String dateTimeFormat(Instant dateTime) {
+        if (dateTime == null) {
+            return "";
+        }
+        // Chuyển Instant sang LocalDateTime với múi giờ Việt Nam
+        LocalDateTime localDateTime = LocalDateTime.ofInstant(dateTime, ZoneId.of("Asia/Ho_Chi_Minh"));
+
+        // Định dạng ngày giờ
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
+
+        return localDateTime.format(formatter);
+    }
+    public static String[] splitAddressDetails(String address){
+        return address.split(",");
+    }
+    public static String generateOTP(int length) {
+        SecureRandom random = new SecureRandom();
+        StringBuilder otp = new StringBuilder();
+        for (int i = 0; i < length; i++) {
+            otp.append(random.nextInt(10)); // Chỉ lấy số từ 0-9
+        }
+        return otp.toString();
+    }
+    public static String getCorrectRedirect(String referer, String targetURL){
+        if (referer != null && referer.contains("page=")) {
+            return "/user/UserAccount.jsp?page=" + targetURL; // Giữ nguyên URL của referer nếu có tham số "page"
+        }
+        return "/" + targetURL;
+    }
+    public static String maskEmail(String email) {
+        if (email == null || !email.contains("@")) {
+            return "Invalid Email";
+        }
+
+        String[] parts = email.split("@");
+        String namePart = parts[0];
+        String domainPart = parts[1];
+
+        // Hiển thị 2 ký tự đầu và che phần còn lại bằng "*"
+        if (namePart.length() > 2) {
+            namePart = namePart.substring(0, 2) + "****";
+        } else {
+            namePart = namePart.charAt(0) + "****"; // Nếu tên quá ngắn
+        }
+
+        return namePart + "@" + domainPart;
     }
 
     public static String formatTimestamp(Instant instant) {

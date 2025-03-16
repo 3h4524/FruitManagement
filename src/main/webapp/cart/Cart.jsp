@@ -5,6 +5,7 @@
 <head>
     <title>Giỏ Hàng</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
     <style>
         body {
@@ -86,10 +87,12 @@
     </style>
 </head>
 <body>
+<jsp:include page="/templates/header.jsp"/>
 
 <div class="cart-container">
     <h2>🛒 Giỏ Hàng Của Bạn</h2>
-    <a href="${pageContext.request.contextPath}/products?action=find" class="btn btn-outline-dark">← Quay lại cửa hàng</a>
+    <a href="${pageContext.request.contextPath}/products?action=find" class="btn btn-outline-dark">← Quay lại cửa
+        hàng</a>
 
     <c:set var="cart" value="${sessionScope.cart}"/>
     <c:choose>
@@ -107,13 +110,16 @@
                     <p>🛒 ${product.name} - ${productVariant.size}</p>
 
                     <div class="quantity-control">
-                        <form id="cartForm-${productVariant.id}" action="${pageContext.request.contextPath}/carts" method="post">
-                            <button type="button" onclick="changeQuantity(-1, ${productVariant.id})" class="btn btn-light">-</button>
-                            <input type="number" id="quantity-${productVariant.id}" name="quantity" value="${cartItem.quantity}" min="1" readonly>
-                            <button type="button" onclick="changeQuantity(1, ${productVariant.id})" class="btn btn-light">+</button>
-                            <input type="hidden" name="action" value="update">
-                            <input type="hidden" name="productVariantId" value="${productVariant.id}">
-                        </form>
+                        <button type="button"
+                                onclick="changeQuantity(-1, ${productVariant.id}, ${productVariant.price})"
+                                class="btn btn-light">-
+                        </button>
+                        <input type="number" id="quantity-${productVariant.id}" name="quantity"
+                               value="${cartItem.quantity}" min="1"
+                               oninput="validateQuantity(${productVariant.id}, ${productVariant.price})">
+                        <button type="button" onclick="changeQuantity(1, ${productVariant.id}, ${productVariant.price})"
+                                class="btn btn-light">+
+                        </button>
                     </div>
 
 
@@ -140,33 +146,108 @@
     </c:choose>
 </div>
 
-<script>
-    let timeoutMap = {}; // Lưu timeout riêng cho từng sản phẩm
+<script>let timeoutMap = {}; // Store timeout for each product to prevent multiple AJAX calls
 
-    function changeQuantity(amount, productVariantId) {
-        let quantityInput = document.getElementById("quantity-" + productVariantId);
-        if (!quantityInput) {
-            console.error("❌ Không tìm thấy input số lượng: quantity-" + productVariantId);
-            return;
-        }
+// Function to change quantity of a product
+function changeQuantity(amount, productVariantId, price) {
+    let quantityInput = document.getElementById("quantity-" + productVariantId);
 
-        let currentQuantity = parseInt(quantityInput.value) || 1;
-        let newQuantity = Math.max(1, currentQuantity + amount);
-        quantityInput.value = newQuantity;
+    let currentQuantity = parseInt(quantityInput.value) || 1;
+    let newQuantity = Math.max(1, currentQuantity + amount); // Ensure quantity doesn't go below 1
+    quantityInput.value = newQuantity;
 
-        if (timeoutMap[productVariantId]) clearTimeout(timeoutMap[productVariantId]);
+    if (timeoutMap[productVariantId]) clearTimeout(timeoutMap[productVariantId]);
 
-        timeoutMap[productVariantId] = setTimeout(function () {
-            let form = document.getElementById("cartForm-" + productVariantId);
-            if (form) {
-                console.log("📤 Gửi form (" + productVariantId + ") với số lượng: " + quantityInput.value);
-                form.submit();
-            } else {
-                console.error("❌ Không tìm thấy form: cartForm-" + productVariantId);
+    timeoutMap[productVariantId] = setTimeout(function () {
+        // Send AJAX request to update the cart
+        $.ajax({
+            url: "${pageContext.request.contextPath}/carts",
+            type: "POST",
+            data: {
+                action: "update",
+                quantity: newQuantity,
+                productVariantId: productVariantId
+            },
+            success: function (response) {
+                // On success, update the item's subtotal and total price
+                let subtotal = newQuantity * price;
+
+                // Update the subtotal in the cart item
+                $(quantityInput).closest('.cart-item').find('p:last-of-type').text(
+                    newQuantity + ' x ' + price + ' VND = ' + subtotal + ' VND'
+                );
+                let newCartCount = response.cartCount || 0;
+                $("#cartCount").text(newCartCount);
+
+                // Recalculate total price
+                updateTotalPrice();
+            },
+            error: function () {
+                alert("Lỗi không thể cập nhật giỏ hàng!");
             }
-        }, 2000);
+        });
+    }, 500); // Delay AJAX request by 500ms to prevent rapid calls
+}
+
+function validateQuantity(productVariantId, price) {
+    let quantityInput = document.getElementById("quantity-" + productVariantId);
+    let newQuantity = parseInt(quantityInput.value) || 1;
+
+    // Ensure the quantity is at least 1
+    if (newQuantity < 1) {
+        quantityInput.value = 1;
+        newQuantity = 1;
     }
+
+    if (timeoutMap[productVariantId]) clearTimeout(timeoutMap[productVariantId]);
+
+    timeoutMap[productVariantId] = setTimeout(function () {
+        // Send AJAX request to update the cart
+        $.ajax({
+            url: "${pageContext.request.contextPath}/carts",
+            type: "POST",
+            data: {
+                action: "update",
+                quantity: newQuantity,
+                productVariantId: productVariantId
+            },
+            success: function (response) {
+                // On success, update the item's subtotal and total price
+                let subtotal = newQuantity * price;
+
+                // Update the subtotal in the cart item
+                $(quantityInput).closest('.cart-item').find('p:last-of-type').text(
+                    newQuantity + ' x ' + price + ' VND = ' + subtotal + ' VND'
+                );
+
+                let newCartCount = response.cartCount || 0;
+                $("#cartCount").text(newCartCount);
+                // Recalculate total price
+                updateTotalPrice();
+            },
+            error: function () {
+                alert("Lỗi không thể cập nhật giỏ hàng!");
+            }
+        });
+    }, 500); // Delay AJAX request by 500ms to prevent rapid calls
+}
+
+// Function to calculate and update the total price of all items in the cart
+function updateTotalPrice() {
+    let total = 0;
+
+    // Loop through each cart item and add its subtotal to the total
+    $('.cart-item').each(function () {
+        let priceText = $(this).find('p:last-of-type').text();
+        let price = parseInt(priceText.split('=')[1].trim().split(' ')[0]); // Extract subtotal value
+        total += price; // Add subtotal to total
+    });
+
+    // Update the displayed total price
+    $('.total-price').text('💰 Tổng tiền: ' + total + ' VND');
+}
 </script>
+<jsp:include page="/templates/footer.jsp"/>
 
 </body>
 </html>

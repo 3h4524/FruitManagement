@@ -18,7 +18,7 @@
     ></df-messenger>
 </head>
 <body>
-
+<jsp:include page="/templates/header.jsp"/>
 <div class="container mt-4">
     <h2 class="text-center text-primary mb-4">Danh sách sản phẩm</h2>
 
@@ -81,6 +81,7 @@
         </c:otherwise>
     </c:choose>
 </div>
+<jsp:include page="/templates/footer.jsp"/>
 
 </body>
 </html>

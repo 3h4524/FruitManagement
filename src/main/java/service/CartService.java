@@ -54,4 +54,14 @@ public class CartService {
             cart.getItems().clear();
         }
     }
+
+    public int getTotalQuantity(Cart cart){
+        int totalQuantity  = 0;
+        if(cart != null && cart.getItems() != null){
+            for(CartItem item : cart.getItems().values()){
+                totalQuantity += item.getQuantity();
+            }
+        }
+        return totalQuantity;
+    }
 }

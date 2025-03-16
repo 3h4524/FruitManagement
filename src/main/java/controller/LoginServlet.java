@@ -23,17 +23,17 @@ public class LoginServlet extends HttpServlet {
         String email = request.getParameter("email");
         String pasword = request.getParameter("password");
         User user = userService.getUserByEmail(email);
+        HttpSession session = request.getSession();
         if(user != null && Utils.checkPassword(pasword, user.getPasswordHash())) {
             if(user.getStatus().equals("INACTIVE")){
-                request.setAttribute("message", "Tài khoản này đã bị vô hiệu hóa.");
-                request.getRequestDispatcher("login.jsp").forward(request, response);
+                session.setAttribute("error", "Tài khoản này đã bị vô hiệu hóa.");
+                response.sendRedirect(request.getContextPath() + "/user/Login.jsp");
             }
-            HttpSession session = request.getSession();
             session.setAttribute("UserLogin", user);
             response.sendRedirect("index.jsp");
         }else{
-            request.setAttribute("error", "Tên đăng nhập hoặc mật khẩu không đúng");
-            request.getRequestDispatcher("login.jsp").forward(request, response);
+            session.setAttribute("error", "Email hoặc mật khẩu không đúng");
+            response.sendRedirect(request.getContextPath() + "/user/Login.jsp");
         }
     }
 }

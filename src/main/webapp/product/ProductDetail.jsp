@@ -10,35 +10,52 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <style>
-        .size-btn { margin: 5px; padding: 10px 15px; border: 1px solid #ddd; cursor: pointer; border-radius: 5px; }
-        .size-btn.active { background-color: #6f42c1; color: white; }
-        .product-image { max-height: 400px; object-fit: contain; }
-        .size-container { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
-        .quantity-controls { display: flex; align-items: center; justify-content: center; }
-        .btn-light { border: 1px solid #ccc; }
-        .cart-icon { position: relative; cursor: pointer; }
-        .cart-count {
-            position: absolute;
-            top: -5px; right: -5px;
-            background-color: purple;
-            color: white;
-            border-radius: 50%;
-            width: 20px; height: 20px;
-            text-align: center;
-            font-size: 14px;
-            line-height: 20px;
+        .size-btn {
+            margin: 5px;
+            padding: 10px 15px;
+            border: 1px solid #ddd;
+            cursor: pointer;
+            border-radius: 5px;
         }
+
+        .size-btn.active {
+            background-color: #6f42c1;
+            color: white;
+        }
+
+        .product-image {
+            max-height: 400px;
+            object-fit: contain;
+        }
+
+        .size-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .quantity-controls {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-light {
+            border: 1px solid #ccc;
+        }
+
+        .cart-icon {
+            position: relative;
+            cursor: pointer;
+        }
+
     </style>
 </head>
 <body>
-
+<jsp:include page="/templates/header.jsp"/>
 <div class="container mt-4">
     <!-- Biểu tượng giỏ hàng -->
-    <div class="text-end">
-        <a href="${pageContext.request.contextPath}/cart/Cart.jsp" class="cart-icon">
-            🛍 <span id="cartCount" class="cart-count">${sessionScope.cartCount}</span>
-        </a>
-    </div>
 
     <div class="row mt-3">
         <!-- Hình ảnh sản phẩm -->
@@ -65,7 +82,8 @@
                     <label class="fw-bold">Chọn kích thước:</label>
                     <div class="size-container" id="sizeOptions">
                         <c:forEach var="entry" items="${productDetails}">
-                            <button type="button" class="size-btn" data-size="${entry.size}" data-price="${entry.price}" data-stock="${entry.stock}" data-productid="${entry.productId}">
+                            <button type="button" class="size-btn" data-size="${entry.size}" data-price="${entry.price}"
+                                    data-stock="${entry.stock}" data-productid="${entry.productId}">
                                     ${entry.size}
                             </button>
                         </c:forEach>
@@ -76,13 +94,15 @@
                 <div class="quantity-controls mb-3">
                     <label class="fw-bold me-2">Số lượng:</label>
                     <button type="button" id="decreaseQty" class="btn btn-light">-</button>
-                    <input type="number" id="quantity" name="quantity" value="1" min="1" max="${productDetails[0].stock}" class="form-control text-center mx-2" style="width: 60px;">
+                    <input type="number" id="quantity" name="quantity" value="1" min="1"
+                           max="${productDetails[0].stock}" class="form-control text-center mx-2" style="width: 60px;">
                     <button type="button" id="increaseQty" class="btn btn-light">+</button>
                 </div>
 
                 <!-- Nút thêm vào giỏ -->
+                <!-- Nút thêm vào giỏ -->
                 <div class="text-center">
-                    <button type="submit" id="addToCartBtn" class="btn btn-outline-primary px-4 me-2">THÊM VÀO GIỎ</button>
+                    <button type="button" id="addToCartBtn" class="btn btn-outline-primary px-4 me-2">THÊM VÀO GIỎ</button>
                     <button type="submit" name="action" value="buyNow" class="btn btn-danger px-4">MUA NGAY</button>
                 </div>
             </form>
@@ -91,11 +111,11 @@
 </div>
 
 <script>
-    $(document).ready(function() {
+    $(document).ready(function () {
         let selectedSize = "";
 
         // Chọn kích thước và cập nhật giá + số lượng
-        $(".size-btn").click(function() {
+        $(".size-btn").click(function () {
             $(".size-btn").removeClass("active");
             $(this).addClass("active");
 
@@ -110,25 +130,51 @@
         });
 
         // Nút tăng giảm số lượng
-        $("#increaseQty").click(function() {
+        $("#increaseQty").click(function () {
             let maxQty = parseInt($("#quantity").attr("max"));
             let currentQty = parseInt($("#quantity").val());
             if (currentQty < maxQty) $("#quantity").val(currentQty + 1);
         });
-        $("#decreaseQty").click(function() {
+        $("#decreaseQty").click(function () {
             let currentQty = parseInt($("#quantity").val());
             if (currentQty > 1) $("#quantity").val(currentQty - 1);
         });
 
         // Kiểm tra trước khi submit form
-        $("#addToCartBtn").click(function(event) {
-            if ($("#size").val() === "") {
+        $("#addToCartBtn").click(function (event) {
+            event.preventDefault();
+            let productId = $("#productId").val();
+            let size = $("#size").val();
+            let quantity = $("#quantity").val();
+
+            if (size === "") {
                 alert("Vui lòng chọn kích thước!");
-                event.preventDefault();
+                return;
             }
+
+            $.ajax({
+                type: "POST",
+                url: "carts",
+                data: {
+                    action: "addToCart",
+                    productId: productId,
+                    size: size,
+                    quantity: quantity
+                },
+                success: function (response) {
+                    let newCartCount = response.cartCount || 0;
+                    $("#cartCount").text(newCartCount);
+                    alert("Đã thêm giỏ hàng thành công");
+                }
+                ,
+                error: function () {
+                    alert("Có lỗi xảy ra, vui lòng thử lại");
+                }
+            })
         });
     });
 </script>
+<jsp:include page="/templates/footer.jsp"/>
 
 </body>
 </html>

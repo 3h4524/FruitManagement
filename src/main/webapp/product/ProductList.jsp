@@ -104,6 +104,7 @@
     </style>
 </head>
 <body>
+<jsp:include page="/templates/header.jsp"/>
 <div class="container">
     <h2>Welcome, ${user.name}</h2>
     <h2>Product List</h2>
@@ -172,5 +173,6 @@
         </c:if>
     </div>
 </div>
+<jsp:include page="/templates/footer.jsp"/>
 </body>
 </html>

@@ -9,6 +9,7 @@ import service.OrderService;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -43,6 +44,7 @@ public class CheckoutServlet extends HttpServlet {
         // Tạo đơn hàng
         Order order = new Order();
         order.setUserID(user);
+        order.setOrderDate(Instant.now());
         order.setStatus("Pending");
         order.setTotalAmount(totalPrice);
         orderService.createOrder(order);

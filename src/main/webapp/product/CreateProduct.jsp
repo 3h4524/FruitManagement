@@ -134,6 +134,7 @@
     </style>
 </head>
 <body>
+<jsp:include page="/templates/header.jsp"/>
 <h1>Product Management</h1>
 
 <c:if test="${not empty message}">
@@ -201,5 +202,6 @@
         </div>
     </div>
 </div>
+<jsp:include page="/templates/footer.jsp"/>
 </body>
 </html>

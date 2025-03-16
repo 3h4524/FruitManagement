@@ -1,19 +1,22 @@
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <link href="<%= request.getContextPath()%>/css/bootstrap/bootstrap.min.css" rel="stylesheet">
   <title>Đăng nhập</title>
   <style>
     body {
       font-family: Arial, sans-serif;
       background-color: #f8f9fa;
       display: flex;
-      justify-content: center;
+      flex-direction: column; /* Chỉnh thành column để tránh lỗi hiển thị ngang */
       align-items: center;
-      height: 100vh;
+      min-height: 100vh;
       margin: 0;
+      justify-content: center;
     }
+
 
     .login-container {
       display: flex;
@@ -112,20 +115,30 @@
   </style>
 </head>
 <body>
+<jsp:include page="/templates/header.jsp"/>
 <div class="login-container">
   <h2>Đăng nhập</h2>
-  <form action="login" method="POST">
+  <c:if test="${not empty sessionScope.error}">
+    <div class="alert alert-danger">${sessionScope.error}</div>
+    <c:remove var="error" scope="session"/>
+  </c:if>
+
+  <c:if test="${not empty sessionScope.success}">
+    <div class="alert alert-success">${sessionScope.success}</div>
+    <c:remove var="success" scope="session"/>
+  </c:if>
+  <form action="<%= request.getContextPath()%>/login" method="POST">
     <div class="input-group">
-      <input type="text" id="username" name="userName" placeholder="Nhập email hoặc số điện thoại" required>
+      <input type="text" id="email" name="email" placeholder="Email"required>
     </div>
     <div class="input-group">
-      <input type="password" id="password" name="password" placeholder="Mật khẩu" required>
+      <input type="password" id="password" name="password" placeholder="Mật khẩu"  required>
       <span class="toggle-password" onclick="togglePassword()">
         <i class="bi bi-eye"></i>
       </span>
     </div>
     <div class="forget-password">
-      <a href="#">Quên mật khẩu?</a>
+      <a href="<%= request.getContextPath()%>/user/UserTwoStepVerification.jsp">Quên mật khẩu?</a>
     </div>
     <div class="remember-me">
       <input type="checkbox" name="remember-me" id="remember-me">
@@ -137,6 +150,7 @@
     <button type="submit" class="sign-up-btn">Đăng ký</button>
   </form>
 </div>
+<jsp:include page="/templates/footer.jsp"/>
 
 <script>
   function togglePassword() {

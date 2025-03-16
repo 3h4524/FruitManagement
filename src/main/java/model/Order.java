@@ -11,25 +11,15 @@ import java.time.Instant;
 
 @Entity
 @Table(name = "Orders")
-@NamedQueries({
-        @NamedQuery(name = "Orders.findAll", query = "SELECT o FROM Order o"),
-        @NamedQuery(name = "Orders.findByOrderID", query = "SELECT o FROM Order o WHERE o.id = :orderID"),
-        @NamedQuery(name = "Orders.findByOrderDate", query = "SELECT o FROM Order o WHERE o.orderDate = :orderDate"),
-        @NamedQuery(name = "Orders.findByTotalAmount", query = "SELECT o FROM Order o WHERE o.totalAmount = :totalAmount"),
-        @NamedQuery(name = "Orders.findByStatus", query = "SELECT o FROM Order o WHERE o.status = :status"),
-        @NamedQuery(name = "Orders.findByUserID", query = "SELECT o FROM Order o WHERE o.userID.id = :UserID"),
-        @NamedQuery(name="Orders.listWithOffset",
-                query = "SELECT o FROM Order o ORDER BY o.id")
-})
 public class Order {
     @Id
-    @Column(name = "OrderID", nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "OrderID", nullable = false)
     private Integer id;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    @JoinColumn(name = "CustomerID", nullable = false)
+    @JoinColumn(name = "UserID", nullable = false, referencedColumnName = "UserID")
     private User userID;
 
     @ColumnDefault("getdate()")
