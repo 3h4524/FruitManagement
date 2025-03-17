@@ -7,17 +7,7 @@
     <link rel="stylesheet" href="<%= request.getContextPath() %>/css/bootstrap/bootstrap.min.css">
     <script src="https://cdn.jsdelivr.net/npm/@goongmaps/goong-geocoder/dist/goong-geocoder.min.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/@goongmaps/goong-geocoder/dist/goong-geocoder.css" rel="stylesheet" type="text/css" />
-
-    <style>
-        #geocoder {
-            width: 100%;
-            max-width: 600px;
-            margin: 0 auto 20px;
-        }
-        .goongjs-ctrl-geocoder {
-            width: 100% !important;
-        }
-    </style>
+    <link rel="stylesheet" href="<%= request.getContextPath()%>/css/geocoder.css">
 </head>
 <body>
 <c:set var="user" value="${sessionScope.UserLogin}"/>
@@ -40,6 +30,7 @@
                     <div class="mb-3">
                         <label class="form-label">Nhập địa chỉ</label>
                         <div id="geocoder"></div>
+                        <input type="hidden" id="userAddress" value="${user.address}">
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Số nhà & Đường</label>

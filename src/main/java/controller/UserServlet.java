@@ -272,13 +272,18 @@ public class UserServlet extends HttpServlet {
 
         if (user != null) {
             user.setAddress(address);
-            session.setAttribute("UserLogin", user);
+            boolean success = userService.updateUser(user);
+            if(success) {
+                session.setAttribute("UserLogin", user);
+                session.setAttribute("success", "Thay đổi thành công");
+            }else{
+                session.setAttribute("error", "Thay đổi thất bại");
+            }
         } else {
             session.setAttribute("error", "Không tìm thấy thông tin người dùng.");
         }
 
         // 6️⃣ Kiểm tra tham số "page" trong URL của referer
-        session.setAttribute("success", "Thay đổi thành công");
         response.sendRedirect(contextPath + "/user/UserAccount.jsp?page=user/UserSaveAddress.jsp");
     }
 
