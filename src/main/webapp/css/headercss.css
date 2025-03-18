@@ -223,3 +223,21 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/CascadeStyleSheet.css
     z-index: 1000;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
+<<<<<<< HEAD
+=======
+
+
+.cart-count {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background-color: purple;
+    color: white;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    text-align: center;
+    font-size: 14px;
+    line-height: 20px;
+}
+>>>>>>> 069d613a163b8f6ce38a3c52e78a8203adc46308

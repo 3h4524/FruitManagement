@@ -16,6 +16,9 @@ public class ProductVariantService {
     private final GenericDAO<ProductVariant> productVariantDao = new GenericDAO<>(ProductVariant.class);
     static final EntityManagerFactory emf = Persistence.createEntityManagerFactory("FruitManagementPU");
 
+    public ProductVariant getProductVariantById(int id) {
+        return productVariantDao.findById(id);
+    }
     public List<ProductVariant> getAllProductVariants(int productID) {
         return productVariantDao.findByAttribute("productID", productID);
     }
@@ -30,7 +33,7 @@ public class ProductVariantService {
 
         try {
             TypedQuery<ProductVariant> query = em.createQuery(
-                    "SELECT pv FROM ProductVariant pv WHERE pv.productID.id = :productId AND pv.size = :size",
+                    "SELECT pv FROM ProductVariant pv JOIN FETCH pv.productID WHERE pv.productID.id = :productId AND pv.size = :size",
                     ProductVariant.class);
             query.setParameter("productId", productId);
             query.setParameter("size", size);

@@ -104,6 +104,7 @@
     </style>
 </head>
 <body>
+<jsp:include page="/templates/header.jsp"/>
 <div class="container">
     <h2>Welcome, ${user.name}</h2>
     <h2>Product List</h2>
@@ -111,6 +112,7 @@
     <div class="links">
         <a href="${pageContext.request.contextPath}/users">Go to Users Page</a>
         <a href="${pageContext.request.contextPath}/products?action=create">Add New Product</a>
+        <a href="${pageContext.request.contextPath}/inventory">InventoryLog</a>
     </div>
 
     <c:set var="products" value="${requestScope.products}"/>
@@ -171,5 +173,6 @@
         </c:if>
     </div>
 </div>
+<jsp:include page="/templates/footer.jsp"/>
 </body>
 </html>

@@ -37,10 +37,11 @@ public class ProductStock {
     @JoinColumn(name = "ProductVariantID", nullable = false)
     private model.ProductVariant productVariantID;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.LAZY)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    @JoinColumn(name = "InventoryID", nullable = false)
+    @JoinColumn(name = "InventoryID", nullable = true)
     private Inventory inventoryID;
+
 
     @ColumnDefault("0")
     @Column(name = "Amount", nullable = false)

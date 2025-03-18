@@ -1,4 +1,5 @@
 
+
 package controller;
 
 import jakarta.servlet.*;
@@ -38,7 +39,7 @@ public class UserServlet extends HttpServlet {
             case "restore":
                 restoreUser(request, response);
                 break;
-                default:
+            default:
                 userList(request, response);
         }
     }

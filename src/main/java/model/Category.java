@@ -21,14 +21,14 @@ public class Category {
     @Column(name = "Name", nullable = false, length = 100)
     private String name;
 
+
+    @ManyToMany(mappedBy = "categories")
+    private List<Product> products;
+
     @Nationalized
     @Lob
     @Column(name = "Description")
     private String description;
-
-
-    @ManyToMany(mappedBy = "categories")
-    private List<Product> products;
 
     public Integer getId() {
         return id;

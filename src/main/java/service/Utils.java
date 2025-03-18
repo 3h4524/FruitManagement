@@ -100,4 +100,12 @@ public class Utils {
         return namePart + "@" + domainPart;
     }
 
+    public static String formatTimestamp(Instant instant) {
+        if (instant == null) return "N/A";
+        LocalDateTime dateTime = LocalDateTime.ofInstant(instant, ZoneId.of("UTC"));
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
+        return dateTime.format(formatter);
+    }
+
+
 }

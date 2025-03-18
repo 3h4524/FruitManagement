@@ -134,6 +134,7 @@
     </style>
 </head>
 <body>
+<jsp:include page="/templates/header.jsp"/>
 <h1>Product Management</h1>
 
 <c:if test="${not empty message}">
@@ -158,7 +159,7 @@
                 </tr>
                 <tr>
                     <th>Size:</th>
-                    <td><input type="text" id="size" name="size"required/></td>
+                    <td><input type="text" id="size" name="size" required/></td>
                 </tr>
                 <tr>
                     <th>Description:</th>
@@ -174,7 +175,7 @@
                 </tr>
                 <tr>
                     <th>Import Date:</th>
-                    <td><input type="date" id="importDate" name="importDate" required/></td>
+                    <td><input type="datetime-local" id="importDate" name="importDate" required/></td>
                 </tr>
             </table>
             <button type="button" class="btn" onclick="showConfirmation()">Create Product</button>
@@ -201,5 +202,6 @@
         </div>
     </div>
 </div>
+<jsp:include page="/templates/footer.jsp"/>
 </body>
 </html>
