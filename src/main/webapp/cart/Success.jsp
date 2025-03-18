@@ -44,8 +44,8 @@
     <p>Cảm ơn bạn đã mua hàng. Đơn hàng của bạn đã được xử lý.</p>
 
     <c:if test="${not empty orderId}">
-        <p><strong>Mã đơn hàng:</strong> ${orderId}</p>
-        <p><strong>Tổng tiền:</strong> ${totalPrice} VNĐ</p>
+        <p><strong>Mã đơn hàng:</strong> ${param.orderId}</p>
+        <p><strong>Tổng tiền:</strong> ${param.totalPrice} VNĐ</p>
     </c:if>
 
     <form action="${pageContext.request.contextPath}/products" method="get">

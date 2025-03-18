@@ -3,8 +3,10 @@ package service;
 import jakarta.mail.*;
 import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
+import model.OrderDetail;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Properties;
 
 public class MailService {
@@ -38,7 +40,7 @@ public class MailService {
         }
     }
 
-    public static boolean sendOrderConfirmation(String recipientEmail, String orderId, String name, BigDecimal totalAmount) {
+    public static boolean sendOrderConfirmation(String recipientEmail, String orderId, String name, List<OrderDetail> orderDetails, BigDecimal totalAmount) {
         try {
             Properties props = new Properties();
             props.put("mail.smtp.host", "smtp.gmail.com");
@@ -58,15 +60,31 @@ public class MailService {
             message.setSubject("Xác nhận đơn hàng #" + orderId);
 
             // Nội dung email
-            String emailContent = "<h2>Chào " + name + ",</h2>"
-                    + "<p>Cảm ơn bạn đã đặt hàng tại cửa hàng của chúng tôi!</p>"
-                    + "<p><b>Mã đơn hàng:</b> " + orderId + "</p>"
-                    + "<p><b>Tổng tiền:</b> " + totalAmount + " VND</p>"
-                    + "<p>Chúng tôi sẽ xử lý đơn hàng của bạn sớm nhất có thể.</p>"
-                    + "<p>Trân trọng,</p>"
-                    + "<p><b>Đội ngũ hỗ trợ</b></p>";
+            StringBuilder emailContent = new StringBuilder();
+            emailContent.append("<h2>Chào ").append(name).append(",</h2>")
+                    .append("<p>Cảm ơn bạn đã đặt hàng tại cửa hàng của chúng tôi!</p>")
+                    .append("<p><b>Mã đơn hàng:</b> ").append(orderId).append("</p>")
+                    .append("<p><b>Tổng tiền:</b> ").append(totalAmount).append(" VND</p>")
+                    .append("<h3>Chi tiết đơn hàng:</h3>")
+                    .append("<table border='1' cellpadding='8' cellspacing='0' style='border-collapse: collapse; width: 100%;'>")
+                    .append("<tr style='background-color: #f2f2f2;'>")
+                    .append("<th>Tên sản phẩm</th><th>Số lượng</th><th>Giá</th><th>Tổng</th></tr>");
 
-            message.setContent(emailContent, "text/html; charset=UTF-8");
+            for(OrderDetail item : orderDetails) {
+                emailContent.append("<tr>")
+                        .append("<td>").append(item.getProductVariantID().getProductID().getName()).append("</td>")
+                        .append("<td>").append(item.getQuantity()).append("</td>")
+                        .append("<td>").append(item.getProductVariantID().getPrice()).append(" VND</td>")
+                        .append("<td>").append(item.getPrice()).append(" VND</td>")
+                        .append("<tr>");
+            }
+
+            emailContent.append("</table>")
+                    .append("<p>Chúng tôi sẽ xử lý đơn hàng của bạn sớm nhất có thể.</p>")
+                    .append("<p>Trân trọng,</p>")
+                    .append("<p><b>Đội ngũ hỗ trợ</b></p>");
+
+            message.setContent(emailContent.toString(), "text/html; charset=UTF-8");
 
             Transport.send(message);
             return true;  // ✅ Gửi thành công

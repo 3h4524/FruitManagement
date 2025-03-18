@@ -1,6 +1,7 @@
 package service;
 
 import dao.GenericDAO;
+import jakarta.mail.Session;
 import model.Cart;
 import model.CartItem;
 
