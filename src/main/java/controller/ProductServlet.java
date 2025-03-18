@@ -3,7 +3,6 @@ package controller;
 import jakarta.servlet.*;
 import jakarta.servlet.http.*;
 import jakarta.servlet.annotation.*;
-import model.Category;
 import model.Product;
 import model.ProductStock;
 import model.ProductVariant;
@@ -86,20 +85,6 @@ public class ProductServlet extends HttpServlet {
 
     // Thang bo sung phan search product
     private void searchProduct(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String categoryID = request.getParameter("categoryId");
-        String sort = request.getParameter("sort");
-        String searchName = request.getParameter("searchName");
-
-        // Gọi service để lấy sản phẩm với giá của size "Small"
-        List<Product> products = productService.searchAndFilterProducts(searchName, categoryID, sort);
-        List<Category> categories = productService.getAllCategories();
-
-        request.setAttribute("products", products);
-        request.setAttribute("categories", categories);
-        request.setAttribute("selectedCategory", categoryID);
-        request.setAttribute("selectedSort", sort);
-        request.setAttribute("searchName", searchName);
-        request.getRequestDispatcher("/product/ProductListCart.jsp").forward(request, response);
     }
 
     private void deleteProduct(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -117,7 +102,7 @@ public class ProductServlet extends HttpServlet {
             int id = Integer.parseInt(request.getParameter("id"));
             Product product = productService.getProductById(id);
             request.setAttribute("product", product);
-            request.getRequestDispatcher("/page?view=product/Productdetail.jsp").forward(request, response);
+            request.getRequestDispatcher("/product/ProductDetail.jsp").forward(request, response);
         } catch (NumberFormatException e) {
             throw new NumberFormatException("id must be an integer");
         }

@@ -41,7 +41,7 @@ public class CheckoutServlet extends HttpServlet {
         // Tạo đơn hàng
         Order order = new Order();
         order.setUserID(user);
-        order.setStatus("Processing");
+        order.setStatus("Pending");
         orderService.createOrder(order);
 
         // Tạo danh sách OrderDetail

@@ -7,7 +7,7 @@
 <html>
 <head>
     <title>Danh sách người dùng</title>
-    <link rel="stylesheet" href="<%= request.getContextPath() %>/css/bootstrap/bootstrap.min.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/bootstrap/bootstrap.min.css">
 </head>
 <body>
 <jsp:include page="/templates/header.jsp"/>
@@ -156,6 +156,6 @@
         return true; // Cho phép gửi form nếu dữ liệu hợp lệ
     }
 </script>
-<script src="<%= request.getContextPath() %>/js/bootstrap.bundle.min.js"></script>
+<script src="${pageContext.request.contextPath}/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

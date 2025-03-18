@@ -6,14 +6,14 @@
   To change this template use File | Settings | File Templates.
 --%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
-
 <html>
 <head>
-    <title>Fruitiverse | Shop bán trái cây hàng đầu Việt Nam</title>
+    <title>Title</title>
 </head>
 <body>
-<jsp:include page="templates/header.jsp"/>
-<jsp:include page="product/ProductListCart.jsp"/>
-<jsp:include page="templates/footer.jsp"/>
+<%@ include file="templates/header.jsp" %>
+<%@ include file="user/Register.jsp"%>
+<%@ include file="templates/footer.jsp" %>
+
 </body>
 </html>

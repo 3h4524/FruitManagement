@@ -7,7 +7,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Đổi mật khẩu</title>
-  <link href="<%= request.getContextPath()%>/css/bootstrap/bootstrap.min.css" rel="stylesheet">
+  <link href="${pageContext.request.contextPath}/css/bootstrap/bootstrap.min.css" rel="stylesheet">
   <style>
   body {
       background-color: #ffffff; /* Nền trắng */
@@ -64,7 +64,7 @@
         </c:if>
 
         <!-- Form đổi mật khẩu -->
-        <form action="<%= request.getContextPath()%>/users?action=update&type=changePasswordByOldPassword" method="post">
+        <form action="${pageContext.request.contextPath}/users?action=update&type=changePasswordByOldPassword" method="post">
           <div class="mb-3">
             <label for="oldPassword" class="form-label">Mật khẩu cũ:</label>
             <input type="password" id="oldPassword" name="oldPassword" class="form-control" required>
@@ -93,6 +93,6 @@
   </div>
 </div>
 
-<script src="<%= request.getContextPath()%>/js/bootstrap.bundle.min.js"></script>
+<script src="${pageContext.request.contextPath}/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

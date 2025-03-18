@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="<%= request.getContextPath() %>/css/bootstrap/bootstrap.min.css">
     <script src="https://cdn.jsdelivr.net/npm/@goongmaps/goong-geocoder/dist/goong-geocoder.min.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/@goongmaps/goong-geocoder/dist/goong-geocoder.css" rel="stylesheet" type="text/css" />
-    <link rel="stylesheet" href="<%= request.getContextPath()%>/css/geocoder.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/geocoder.css">
 </head>
 <body>
 <c:set var="user" value="${sessionScope.UserLogin}"/>
@@ -26,7 +26,7 @@
                     <c:remove var="success" scope="session"/>
                 </c:if>
 
-                <form action="<%= request.getContextPath()%>/users?action=update&type=saveAddress" method="post">
+                <form action="${pageContext.request.contextPath}/users?action=update&type=saveAddress" method="post">
                     <div class="mb-3">
                         <label class="form-label">Nhập địa chỉ</label>
                         <div id="geocoder"></div>

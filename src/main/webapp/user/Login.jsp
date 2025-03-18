@@ -3,7 +3,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
-  <link href="<%= request.getContextPath()%>/css/bootstrap/bootstrap.min.css" rel="stylesheet">
+  <link href="${pageContext.request.contextPath}/css/bootstrap/bootstrap.min.css" rel="stylesheet">
   <title>Đăng nhập</title>
   <style>
     body {
@@ -127,7 +127,7 @@
     <div class="alert alert-success">${sessionScope.success}</div>
     <c:remove var="success" scope="session"/>
   </c:if>
-  <form action="<%= request.getContextPath()%>/login" method="POST">
+  <form action="${pageContext.request.contextPath}/login" method="POST">
     <div class="input-group">
       <input type="text" id="email" name="email" placeholder="Email"required>
     </div>
@@ -138,7 +138,7 @@
       </span>
     </div>
     <div class="forget-password">
-      <a href="<%= request.getContextPath()%>/user/UserTwoStepVerification.jsp">Quên mật khẩu?</a>
+      <a href="${pageContext.request.contextPath}/user/UserTwoStepVerification.jsp">Quên mật khẩu?</a>
     </div>
     <div class="remember-me">
       <input type="checkbox" name="remember-me" id="remember-me">
@@ -146,7 +146,7 @@
     </div>
     <button type="submit" class="login-btn">Đăng nhập</button>
   </form>
-  <form action="<%= request.getContextPath()%>/registers">
+  <form action="${pageContext.request.contextPath}/registers">
     <button type="submit" class="sign-up-btn">Đăng ký</button>
   </form>
 </div>
