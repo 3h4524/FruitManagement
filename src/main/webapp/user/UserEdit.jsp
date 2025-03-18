@@ -4,6 +4,9 @@
 <head>
   <title>Chỉnh sửa thông tin người dùng</title>
   <link rel="stylesheet" href="${pageContext.request.contextPath}/css/bootstrap/bootstrap.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/@goongmaps/goong-geocoder/dist/goong-geocoder.min.js"></script>
+  <link href="https://cdn.jsdelivr.net/npm/@goongmaps/goong-geocoder/dist/goong-geocoder.css" rel="stylesheet" type="text/css" />
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/css/geocoder.css">
 </head>
 <body>
 <jsp:include page="/templates/header.jsp"/>
@@ -67,6 +70,11 @@
       <div class="modal-body">
         <form id="addressForm">
           <div class="mb-3">
+            <label class="form-label">Nhập địa chỉ</label>
+            <div id="geocoder"></div>
+            <input type="hidden" id="userAddress" class="form-control" value="${user.address}">
+          </div>
+          <div class="mb-3">
             <label class="form-label">Số nhà & Đường</label>
             <input type="text" id="street" class="form-control" required/>
           </div>
@@ -93,6 +101,7 @@
 </div>
 <jsp:include page="/templates/footer.jsp"/>
 <script src="${pageContext.request.contextPath}/js/bootstrap/bootstrap.bundle.min.js"></script>
+<script src="${pageContext.request.contextPath}/js/geocoder.js"></script>
 <script>
   document.addEventListener("DOMContentLoaded", function () {
     let addressModal = new bootstrap.Modal(document.getElementById("addressModal"));
@@ -126,6 +135,23 @@
       addressHidden.value = fullAddress;
       addressModal.hide();
     });
+  });
+  document.addEventListener("addressSelected", function (e) {
+    console.log("Địa chỉ đã chọn:", e.detail);
+
+    document.getElementById("street").value = e.detail.street || "";
+    document.getElementById("ward").value = e.detail.ward || "";
+    document.getElementById("district").value = e.detail.district || "";
+    document.getElementById("city").value = e.detail.city || "";
+  });
+
+
+  // Khi xóa địa chỉ
+  document.addEventListener("addressCleared", function () {
+    document.getElementById("street").value = "";
+    document.getElementById("ward").value = "";
+    document.getElementById("district").value = "";
+    document.getElementById("city").value = "";
   });
 </script>
 

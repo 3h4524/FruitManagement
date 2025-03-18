@@ -11,7 +11,7 @@
   <h4 class="mb-3 d-flex justify-content-between">
     Địa chỉ của tôi
     <c:if test="${empty user.address}">
-      <a href="<%= request.getContextPath()%>/user/UserSaveAddress.jsp" class="btn btn-danger btn-sm">➕ Thêm địa chỉ mới</a>
+      <a href="${pageContext.request.contextPath}/user/UserSaveAddress.jsp" class="btn btn-danger btn-sm">➕ Thêm địa chỉ mới</a>
     </c:if>
   </h4>
   <hr>

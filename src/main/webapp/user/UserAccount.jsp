@@ -11,7 +11,7 @@
 <html>
 <head>
   <title>Tài khoản của tôi</title>
-  <link rel="stylesheet" href="<%= request.getContextPath()%>/css/bootstrap/bootstrap.min.css">
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/css/bootstrap/bootstrap.min.css">
 </head>
 <body>
 <jsp:include page="/templates/header.jsp"/>
@@ -22,10 +22,10 @@
     <!-- Menu bên trái -->
     <div class="col-md-3">
       <div class="list-group">
-        <a href="<%= request.getContextPath()%>/user/UserAccount.jsp?page=user/UserProfile.jsp" class="list-group-item list-group-item-action">Chỉnh sửa hồ sơ</a>
-        <a href="<%= request.getContextPath()%>/user/UserAccount.jsp?page=user/UserAddress.jsp" class="list-group-item list-group-item-action">Địa chỉ</a>
-        <a href="<%= request.getContextPath()%>/user/UserAccount.jsp?page=user/UserChangePasswordByOldPassword.jsp" class="list-group-item list-group-item-action">Đổi mật khẩu</a>
-        <a href="<%= request.getContextPath()%>/logout" class="list-group-item list-group-item-action text-danger">Đăng xuất</a>
+        <a href="${pageContext.request.contextPath}/user/UserAccount.jsp?page=user/UserProfile.jsp" class="list-group-item list-group-item-action">Chỉnh sửa hồ sơ</a>
+        <a href="${pageContext.request.contextPath}/user/UserAccount.jsp?page=user/UserAddress.jsp" class="list-group-item list-group-item-action">Địa chỉ</a>
+        <a href="${pageContext.request.contextPath}/user/UserAccount.jsp?page=user/UserChangePasswordByOldPassword.jsp" class="list-group-item list-group-item-action">Đổi mật khẩu</a>
+        <a href="${pageContext.request.contextPath}/logout" class="list-group-item list-group-item-action text-danger">Đăng xuất</a>
       </div>
 
     </div>

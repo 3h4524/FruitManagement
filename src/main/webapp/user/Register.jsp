@@ -67,7 +67,7 @@
 
             <div class="text-center">
               <button type="submit" class="btn btn-success px-4">Đăng ký</button>
-              <a href="<%= request.getContextPath()%>/login" class="btn btn-secondary px-4">Đăng nhập</a>
+              <a href="${pageContext.request.contextPath}/login" class="btn btn-secondary px-4">Đăng nhập</a>
             </div>
           </form>
         </div>

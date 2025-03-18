@@ -37,7 +37,7 @@
                 <hr>
 
                 <!-- Form nhập OTP -->
-                <form action="<%= request.getContextPath()%>/mails?action=verifyOtp" method="post">
+                <form action="${pageContext.request.contextPath}/mails?action=verifyOtp" method="post">
                     <div class="mb-3" id="otpField">
                         <label class="form-label">Mã xác nhận (OTP)</label>
                         <input type="text" name="otp" class="form-control" placeholder="Nhập mã OTP" required />
@@ -45,7 +45,7 @@
                     <button type="submit" class="btn btn-success w-100">Xác nhận</button>
                 </form>
                 <c:if test="${!sessionScope.isLoggedIn}">
-                    <a href="<%= request.getContextPath()%>/login" class="btn btn-secondary w-100 mt-2">Hủy</a>
+                    <a href="${pageContext.request.contextPath}/login" class="btn btn-secondary w-100 mt-2">Hủy</a>
                 </c:if>
             </div>
         </div>
