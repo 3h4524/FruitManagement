@@ -1,232 +1,233 @@
 /*
-Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
-Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/CascadeStyleSheet.css to edit this template
-*/
-/*
     Created on : Feb 15, 2025, 6:30:59 PM
     Author     : LEGION
 */
-.top-bar {
+.fs-top-bar {
     display: flex;
-    max-width:1440px;
-    width:100%;
-    margin : 0 auto;
     justify-content: space-between;
     align-items: center;
-    /*padding: 10px;*/
+    padding: 15px 5%;
     background-color: white;
-    height: 70px;
+    height: 90px;
+    box-sizing: border-box;
 }
 
-.Logo {
-    /* Logo chiếm 1 phần không gian */
+.fs-logo {
+    flex: 0 0 auto;
     display: flex;
-    justify-content: flex-start; /* Logo nằm bên trái */
+    align-items: center;
 }
 
-.Logo img {
-    width: auto;
-    height:70px;
+.fs-logo img {
+    width: 70px;
+    height: auto;
 }
 
-.box_search {
-    height: 20px; !important;
+.fs-search-container {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
 
+.fs-search-box {
+    max-width: 350px;
+    margin: 0;
+}
+
+.fs-search-wrapper {
     display: flex;
     align-items: center;
     background: #f5f5f5;
-    padding: 8px 0 8px 8px;
-    border-radius:10px;
     border: 1px solid #ddd;
-    box-sizing: content-box;
-    width: 300px; /* Điều chỉnh độ rộng theo ý muốn */ !important;
-}
-.box_search:hover{
-    box-shadow: 1px 0.5px 2px 2px orange;
+    border-radius: 25px;
+    padding: 5px 10px;
+    height: 40px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    transition: box-shadow 0.3s ease;
 }
 
-.search_input {
+.fs-search-wrapper:hover {
+    box-shadow: 0 2px 6px rgba(255, 165, 0, 0.3);
+}
+
+.fs-search-icon {
+    font-size: 16px;
+    color: #666;
+    margin-right: 8px;
+}
+
+.fs-search-box input {
     border: none;
     outline: none;
-    padding: 8px;
-    font-size: 14px;
     background: transparent;
     flex: 1;
-
+    font-size: 14px;
+    padding: 5px;
+    color: #333;
 }
 
+.fs-search-box input::placeholder {
+    color: #999;
+}
 
-.box_search button {
-    background: orange;
+.fs-search-box .fs-search-button {
+    background: #FFA500;
     border: none;
     color: white;
-    padding: 9px 11px;
+    padding: 6px 15px;
+    border-radius: 20px;
+    font-size: 14px;
     cursor: pointer;
-    border-radius:10px;
-}
-.box_search button:hover {
-    background-color: #e09400; /* Màu khi hover */
+    transition: background-color 0.3s ease;
 }
 
-.auth {
+.fs-search-box .fs-search-button:hover {
+    background-color: #e09400;
+}
+
+.fs-auth {
+    flex: 0 0 auto;
     display: flex;
-    justify-content: flex-end; /* Phần auth nằm bên phải */
     align-items: center;
+    gap: 10px;
 }
 
-.auth a {
+.fs-auth a {
     text-decoration: none;
     color: black;
-    position: relative;
+    font-size: 14px;
     transition: color 0.3s ease-in-out;
     display: flex;
     align-items: center;
 }
 
-.auth a:hover {
-    color: orange;
+.fs-auth .fs-auth-user {
+    display: flex;
+    align-items: center;
 }
 
-.auth a::after {
-    content: '';
-    position: absolute;
-    left: 50%;
-    bottom: -2px;
-    width: 0;
-    height: 2px;
-    background-color: orange;
-    transition: all 0.3s ease-in-out;
-}
-
-.auth a:hover::after {
-    width: 100%;
-    left: 0;
-}
-
-.auth img {
-    width: 20px;
-    height: 20px;
+.fs-auth .fs-auth-user i {
+    font-size: 18px; /* Kích thước biểu tượng người dùng */
     margin-right: 5px;
+    color: #666; /* Màu xám nhẹ cho biểu tượng */
 }
 
-.cart {
-    margin-left: 15px;
+.fs-auth .fs-auth-register {
+    margin-left: 5px;
+}
+
+.fs-auth .fs-auth-separator {
+    color: #ccc;
+}
+
+.fs-auth .fs-auth-cart {
     font-size: 20px;
     cursor: pointer;
     transition: transform 0.3s ease-in-out;
 }
 
-.cart:hover {
+.fs-auth a:hover {
+    color: #FFA500;
+}
+
+.fs-auth a:hover i {
+    color: #FFA500; /* Biểu tượng đổi màu khi hover */
+}
+
+.fs-auth .fs-auth-cart:hover {
     transform: scale(1.1);
 }
-.line{
-    height: 1px;
-    background-color: #FFA520;
+
+.fs-line {
+    height: 2px;
+    background-color: #FFA500;
     margin: 0;
-    z-index: 999;
 }
 
 /* Thanh menu chính */
-.navbar_1 {
-
-    background-color: white;
+.fs-navbar {
+    background-color: rgba(255, 99, 71, 0);
+    padding: 15px;
     display: flex;
     justify-content: center;
-    gap:30px;
     align-items: center;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
-.navbar_1 a {
+
+.fs-navbar a {
     color: black;
     text-decoration: none;
+    padding: 14px 20px;
     font-size: 18px;
     position: relative;
     display: flex;
     align-items: center;
 }
-.navbar_1 a::after {
+
+.fs-navbar a::after {
     content: "";
     position: absolute;
     left: 50%;
-    top:45px ;
+    bottom: -2px;
     width: 0;
     height: 2px;
-    background-color: orange;
+    background-color: #FFA500;
     transition: all 0.3s ease-in-out;
 }
-.navbar_1 a:hover::after {
+
+.fs-navbar a:hover::after {
     width: 100%;
     left: 0;
 }
-.navbar_1 a:hover{
-    color: orange;
+
+.fs-navbar a:hover {
+    color: #FFA500;
 }
 
 /* Menu cha */
-.dropdown {
+.fs-dropdown {
     position: relative;
     display: flex;
     align-items: center;
-    height:70px;
 }
+
 /* Menu con */
-.dropdown-content {
+.fs-dropdown-content {
     display: none;
     position: absolute;
-    top: 70px;
+    top: 100%;
     left: 0;
     background-color: white;
     min-width: 200px;
     box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
     z-index: 1;
 }
-.dropdown-user {
-    display: none;
-    position: absolute;
-    top: 70px;
-    right: -70px;
-    background-color: white;
-    min-width: 200px;
-    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
-    z-index: 1;
-}
-.dropdown-user a {
+
+.fs-dropdown-content a {
     color: black;
     padding: 12px 16px;
     display: block;
 }
-.dropdown-user a:hover {
-    background-color: #f1f1f1;
-}
-.dropdown:hover .dropdown-user {
-    display: block;
-    animation: fadeIn 0.3s ease-in-out;
-}
-.dropdown-content a {
-    color: black;
-    padding: 12px 16px;
-    display: block;
-}
-.dropdown-content a:hover {
+
+.fs-dropdown-content a:hover {
     background-color: #f1f1f1;
 }
 
 /* Hiệu ứng dropdown */
-.dropdown:hover .dropdown-content {
+.fs-dropdown:hover .fs-dropdown-content {
     display: block;
     animation: fadeIn 0.3s ease-in-out;
 }
-.fixed-navbar {
+
+.fs-fixed-navbar {
     position: fixed;
     top: 0;
     width: 100%;
-    background-color:rgba(255, 255, 255, 0.9);
+    background-color: rgba(255, 255, 255, 0.9);
     z-index: 1000;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
-<<<<<<< HEAD
-=======
-
-
 .cart-count {
     position: absolute;
     top: -5px;
@@ -240,4 +241,3 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/CascadeStyleSheet.css
     font-size: 14px;
     line-height: 20px;
 }
->>>>>>> 069d613a163b8f6ce38a3c52e78a8203adc46308

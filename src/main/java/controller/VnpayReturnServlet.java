@@ -15,7 +15,7 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 
-@WebServlet(name = "VnpayReturnServlet", value = "/vnpayreturn")
+@WebServlet(name = "VnpayReturnServlet", value = "/vnpayReturn")
 public class VnpayReturnServlet extends HttpServlet {
     private OrderService orderService;
 
@@ -26,10 +26,6 @@ public class VnpayReturnServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-    }
-
-    @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         HttpSession session = request.getSession();
         try (PrintWriter out = response.getWriter()) {
@@ -73,5 +69,10 @@ public class VnpayReturnServlet extends HttpServlet {
                 System.out.println("GD KO HOP LE (invalid signature)");
             }
         }
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
     }
 }

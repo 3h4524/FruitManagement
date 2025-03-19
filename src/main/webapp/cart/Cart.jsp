@@ -297,7 +297,7 @@
                     } else {
 
                         // Redirect to success page
-                        window.location.href = response.redirectURL + "?orderId=" + response.orderId + "&totalPrice=" + response.totalPrice;
+                        window.location.href = response.redirectURL;
                     }
                 },
                 error: function(xhr, status, error) {
