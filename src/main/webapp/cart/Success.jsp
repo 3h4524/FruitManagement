@@ -4,54 +4,62 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <%@ page contentType="text/html; charset=UTF-8" %>
+    <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
     <title>Đặt hàng thành công</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            text-align: center;
-            padding: 50px;
+        /* Orange-White Theme */
+        .bg-orange {
+            background-color: #FFA520; /* Orange background */
         }
-        .container {
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            display: inline-block;
-            max-width: 400px;
+        .text-orange {
+            color: #FFA520; /* Orange text */
         }
-        h2 {
-            color: #28a745;
+        .btn-orange {
+            background-color: #FFA520;
+            border-color: #FFA520;
+            color: #FFFFFF; /* White text */
+            transition: background-color 0.3s ease;
         }
-        .btn {
-            display: inline-block;
-            margin-top: 20px;
-            padding: 10px 20px;
-            color: white;
-            background-color: #007bff;
-            text-decoration: none;
-            border-radius: 5px;
-            transition: background 0.3s;
+        .btn-orange:hover {
+            background-color: #e59400; /* Darker orange on hover */
+            border-color: #e59400;
+            color: #FFFFFF;
         }
-        .btn:hover {
-            background-color: #0056b3;
+        .card-header {
+            background-color: #FFF3E0; /* Light orange header */
+            border-bottom: 2px solid #FFA520;
+        }
+        .card {
+            border: 1px solid #FFA520; /* Orange border */
+            background: linear-gradient(135deg, #FFFFFF 0%, #FFF8E1 100%); /* Subtle gradient */
         }
     </style>
 </head>
 <body>
-<div class="container">
-    <h2>🎉 Đặt hàng thành công!</h2>
-    <p>Cảm ơn bạn đã mua hàng. Đơn hàng của bạn đã được xử lý.</p>
+<div class="container mt-5 py-5 min-vh-100">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow rounded">
+                <div class="card-header text-center text-orange">
+                    <h2 class="mb-0">🎉 Đặt hàng thành công!</h2>
+                </div>
+                <div class="card-body text-center p-4">
+                    <p>Cảm ơn bạn đã mua hàng. Đơn hàng của bạn đã được xử lý.</p>
 
-    <c:if test="${not empty orderId}">
-        <p><strong>Mã đơn hàng:</strong> ${orderId}</p>
-        <p><strong>Tổng tiền:</strong> ${totalPrice} VNĐ</p>
-    </c:if>
+                    <c:if test="${not empty orderId}">
+                        <p><strong>Mã đơn hàng:</strong> ${orderId}</p>
+                        <p><strong>Tổng tiền:</strong> ${totalPrice} VNĐ</p>
+                    </c:if>
 
-    <form action="${pageContext.request.contextPath}/products" method="get">
-        <input type="hidden" name="action" value="find">
-        <button class="btn" type="submit">🛒 Tiếp tục mua sắm</button>
-    </form>
+                    <form action="${pageContext.request.contextPath}/products" method="get">
+                        <input type="hidden" name="action" value="find">
+                        <button class="btn btn-orange px-4" type="submit">🛒 Tiếp tục mua sắm</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 </body>
 </html>

@@ -10,53 +10,47 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <style>
+        .btn-orange {
+            background-color: #FFA520; /* Orange */
+            border-color: #FFA520;
+            color: #FFFFFF; /* White text */
+        }
+        .btn-orange:hover {
+            background-color: #e59400; /* Darker orange on hover */
+            border-color: #e59400;
+            color: #FFFFFF;
+        }
+        .btn-outline-orange {
+            border-color: #FFA520;
+            color: #FFA520;
+        }
+        .btn-outline-orange:hover {
+            background-color: #FFA520;
+            color: #FFFFFF;
+        }
         .size-btn {
-            margin: 5px;
-            padding: 10px 15px;
-            border: 1px solid #ddd;
-            cursor: pointer;
+            padding: 8px 12px;
+            border: 1px solid #FFA520; /* Orange border */
             border-radius: 5px;
+            background-color: #FFFFFF; /* White background */
+            color: #FFA520; /* Orange text */
         }
-
         .size-btn.active {
-            background-color: #6f42c1;
-            color: white;
+            background-color: #FFA520; /* Orange when active */
+            color: #FFFFFF; /* White text */
         }
-
         .product-image {
             max-height: 400px;
             object-fit: contain;
         }
-
-        .size-container {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 10px;
+        .text-orange {
+            color: #FFA520; /* Orange text */
         }
-
-        .quantity-controls {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .btn-light {
-            border: 1px solid #ccc;
-        }
-
-        .cart-icon {
-            position: relative;
-            cursor: pointer;
-        }
-
     </style>
 </head>
 <body>
 <jsp:include page="/templates/header.jsp"/>
-<div class="container mt-4">
-    <!-- Biểu tượng giỏ hàng -->
-
+<div class="container mt-4 py-5 min-vh-100"> <!-- Increased height with min-vh-100 and padding -->
     <div class="row mt-3">
         <!-- Hình ảnh sản phẩm -->
         <div class="col-md-5 text-center">
@@ -64,12 +58,12 @@
         </div>
 
         <!-- Thông tin sản phẩm -->
-        <div class="col-md-7">
-            <h3>${productDetails[0].productName}</h3>
+        <div class="col-md-7 d-flex flex-column justify-content-center">
+            <h3 class="text-orange">${productDetails[0].productName}</h3>
             <p>${productDetails[0].description}</p>
 
             <h4 class="text-danger">Giá: <span id="productPrice">${productDetails[0].price} VND</span></h4>
-            <p class="text-secondary" id="stockCount">Còn lại: ${productDetails[0].stock}</p>
+            <p class="text-muted" id="stockCount">Còn lại: ${productDetails[0].stock}</p>
 
             <!-- Form thêm vào giỏ hàng -->
             <form action="carts" method="post">
@@ -78,12 +72,13 @@
                 <input type="hidden" id="size" name="size" value="">
 
                 <!-- Chọn kích thước -->
-                <div class="mb-3">
-                    <label class="fw-bold">Chọn kích thước:</label>
-                    <div class="size-container" id="sizeOptions">
+                <div class="mb-4 text-center">
+                    <label class="fw-bold text-orange mb-2">Chọn kích thước:</label>
+                    <div class="d-flex flex-wrap justify-content-center gap-2" id="sizeOptions">
                         <c:forEach var="entry" items="${productDetails}">
-                            <button type="button" class="size-btn" data-size="${entry.size}" data-price="${entry.price}"
-                                    data-stock="${entry.stock}" data-productid="${entry.productId}">
+                            <button type="button" class="size-btn btn btn-sm" data-size="${entry.size}"
+                                    data-price="${entry.price}" data-stock="${entry.stock}"
+                                    data-productid="${entry.productId}">
                                     ${entry.size}
                             </button>
                         </c:forEach>
@@ -91,19 +86,20 @@
                 </div>
 
                 <!-- Chọn số lượng -->
-                <div class="quantity-controls mb-3">
-                    <label class="fw-bold me-2">Số lượng:</label>
-                    <button type="button" id="decreaseQty" class="btn btn-light">-</button>
-                    <input type="number" id="quantity" name="quantity" value="1" min="1"
-                           max="${productDetails[0].stock}" class="form-control text-center mx-2" style="width: 60px;">
-                    <button type="button" id="increaseQty" class="btn btn-light">+</button>
+                <div class="mb-4 d-flex justify-content-center align-items-center">
+                    <label class="fw-bold me-3 text-orange">Số lượng:</label>
+                    <div class="input-group" style="width: 150px;">
+                        <button type="button" id="decreaseQty" class="btn btn-outline-orange">-</button>
+                        <input type="number" id="quantity" name="quantity" value="1" min="1"
+                               max="${productDetails[0].stock}" class="form-control text-center">
+                        <button type="button" id="increaseQty" class="btn btn-outline-orange">+</button>
+                    </div>
                 </div>
 
-                <!-- Nút thêm vào giỏ -->
-                <!-- Nút thêm vào giỏ -->
-                <div class="text-center">
-                    <button type="button" id="addToCartBtn" class="btn btn-outline-primary px-4 me-2">THÊM VÀO GIỎ</button>
-                    <button type="submit" name="action" value="buyNow" class="btn btn-danger px-4">MUA NGAY</button>
+                <!-- Nút thêm vào giỏ và mua ngay -->
+                <div class="d-flex justify-content-center gap-3">
+                    <button type="button" id="addToCartBtn" class="btn btn-outline-orange px-4">THÊM VÀO GIỎ</button>
+                    <button type="submit" name="action" value="buyNow" class="btn btn-orange px-4">MUA NGAY</button>
                 </div>
             </form>
         </div>
@@ -165,12 +161,11 @@
                     let newCartCount = response.cartCount || 0;
                     $("#cartCount").text(newCartCount);
                     alert("Đã thêm giỏ hàng thành công");
-                }
-                ,
+                },
                 error: function () {
                     alert("Có lỗi xảy ra, vui lòng thử lại");
                 }
-            })
+            });
         });
     });
 </script>
