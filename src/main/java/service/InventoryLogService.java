@@ -1,4 +1,4 @@
-package service;
+package service;    
 
 import dao.GenericDAO;
 import jakarta.persistence.EntityManager;

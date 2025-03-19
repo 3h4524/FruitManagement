@@ -149,6 +149,21 @@
                 <h3 class="total-price">💰 Tổng tiền: 0 VND</h3>
                 <form action="${pageContext.request.contextPath}/checkout" method="post" onsubmit="return prepareCheckout()">
                     <input type="hidden" name="selectedItems" id="selectedItems" value="">
+                    <div class="payment-options" style="margin: 20px 0;">
+                        <h4>Phương thức thanh toán:</h4>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="paymentMethod" id="cod" value="cod" checked>
+                            <label class="form-check-label" for="cod">
+                                💵 Thanh toán khi nhận hàng (COD)
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="paymentMethod" id="vnpay" value="vnpay">
+                            <label class="form-check-label" for="vnpay">
+                                💳 Thanh toán qua VNPay
+                            </label>
+                        </div>
+                    </div>
                     <button type="submit" class="btn-checkout" id="checkout-button" disabled>✅ Thanh Toán</button>
                 </form>
             </c:otherwise>
@@ -280,9 +295,12 @@
                 return false;
             }
 
+            let paymentMethod = $('input[name="paymentMethod"]:checked').val();
+
             // Prepare the data to send
             let data = {
-                selectedItems: selectedItems
+                selectedItems: selectedItems,
+                paymentMethod: paymentMethod
             };
 
             // Send the AJAX request
@@ -294,9 +312,10 @@
                 success: function(response) {
                     if (response.error) {
                         alert(response.error);
+                    } else if (response.paymentUrl) {
+                        window.location.href = response.paymentUrl;
                     } else {
 
-                        // Redirect to success page
                         window.location.href = response.redirectURL + "?orderId=" + response.orderId + "&totalPrice=" + response.totalPrice;
                     }
                 },

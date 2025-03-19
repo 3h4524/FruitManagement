@@ -34,24 +34,51 @@ public class CartServlet extends HttpServlet {
         Cart cart = (Cart) session.getAttribute("cart");
         if (cart == null) {
             cart = new Cart();
-            session.setAttribute("cart", cart);        }
+            session.setAttribute("cart", cart);
+        }
 
         String action = request.getParameter("action");
-        if(action == null) {
+        if (action == null) {
             action = "";
         }
 
-        if("getCartCount".equalsIgnoreCase(action)){
-            Map<Integer, CartItem> cartItem = cart.getItems();
-            int totalQuantity = 0;
-            if(cartItem != null){
-                for(CartItem item : cartItem.values()){
-                    totalQuantity += item.getQuantity();
+        if (action.equalsIgnoreCase("buyNow")) {
+            try {
+                int productId = Integer.parseInt(request.getParameter("productId"));
+                int quantity = Integer.parseInt(request.getParameter("quantity"));
+                String size = request.getParameter("size");
+
+                // Kiểm tra nếu size bị null
+                if (size == null || size.isEmpty()) {
+                    request.setAttribute("error", "Bạn chưa chọn kích thước!");
+                    request.getRequestDispatcher("productDetail.jsp").forward(request, response);
+                    return;
                 }
+
+                ProductVariant productVariant = productVariantService.getVariantByProductAndSize(productId, size);
+
+                // Kiểm tra nếu sản phẩm tồn tại
+                if (productVariant == null) {
+                    request.setAttribute("error", "Sản phẩm không tồn tại hoặc hết hàng!");
+                    request.getRequestDispatcher("productDetail.jsp").forward(request, response);
+                    return;
+                }
+
+                // Thêm vào giỏ hàng
+                CartItem cartItem = new CartItem(quantity, productVariant);
+                cartService.addCartItem(cart, cartItem);
+
+                // Cập nhật session
+                session.setAttribute("cart", cart);
+                session.setAttribute("cartCount", cartService.getTotalQuantity(cart));
+
+                // Chuyển hướng đến trang giỏ hàng
+                response.sendRedirect("cart/Cart.jsp");
+            } catch (NumberFormatException e) {
+                request.setAttribute("error", "Dữ liệu không hợp lệ!");
+                request.getRequestDispatcher("productDetail.jsp").forward(request, response);
             }
         }
-        request.getRequestDispatcher("cart/Cart.jsp").forward(request, response);
-
     }
 
     @Override
