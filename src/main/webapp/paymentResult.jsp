@@ -6,6 +6,7 @@
   To change this template use File | Settings | File Templates.
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <html>
 <head>
     <title>Kết quả thanh toán</title>
@@ -22,7 +23,7 @@
     </div>
 
     <!-- Giao dịch thành công -->
-    <c:if test="${transResult}">
+    <c:if test="${transResult eq true}">
         <div>
             <h3 style="font-weight: bold; color: #28a745;">
                 Bạn đã giao dịch thành công!
@@ -34,7 +35,7 @@
     </c:if>
 
     <!-- Giao dịch thất bại -->
-    <c:if test="${transResult == false}">
+    <c:if test="${transResult eq false}">
         <div>
             <h3 style="font-weight: bold; color: #dc3545;">
                 Đơn hàng giao dịch thất bại!
@@ -56,5 +57,6 @@
         </div>
     </c:if>
 </section>
+<a href="${pageContext.request.contextPath}/index.jsp">Quay về trang chủ</a>
 </body>
 </html>

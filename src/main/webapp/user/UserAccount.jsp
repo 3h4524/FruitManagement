@@ -3,7 +3,7 @@
 
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page import="model.User" %>
-<c:set var="user" value="${sessionScope.user}"/>
+<c:set var="user" value="${sessionScope.UserLogin}"/>
 <c:set var="page" value="${param.page}" />
 <c:if test="${empty page}">
   <c:set var="page" value="/user/UserProfile.jsp" />
@@ -25,6 +25,7 @@
         <a href="${pageContext.request.contextPath}/user/UserAccount.jsp?page=user/UserProfile.jsp" class="list-group-item list-group-item-action">Chỉnh sửa hồ sơ</a>
         <a href="${pageContext.request.contextPath}/user/UserAccount.jsp?page=user/UserAddress.jsp" class="list-group-item list-group-item-action">Địa chỉ</a>
         <a href="${pageContext.request.contextPath}/user/UserAccount.jsp?page=user/UserChangePasswordByOldPassword.jsp" class="list-group-item list-group-item-action">Đổi mật khẩu</a>
+        <a href="${pageContext.request.contextPath}/user/UserAccount.jsp?page=user/UserOrder.jsp}" class="list-group-item list-group-item-action">Đơn mua</a>
         <a href="${pageContext.request.contextPath}/logout" class="list-group-item list-group-item-action text-danger">Đăng xuất</a>
       </div>
 

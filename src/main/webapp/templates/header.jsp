@@ -12,7 +12,7 @@
 <c:set var="user" value="${sessionScope.UserLogin}"/>
 <div class="fs-top-bar">
     <div class="fs-logo">
-        <a href="#"><img src="images/Logo.PNG" alt="Logo"></a>
+        <a href="${pageContext.request.contextPath}/index.jsp"><img src="images/Logo.PNG" alt="Logo"></a>
     </div>
     <div class="fs-search-container">
         <div class="fs-search-box">
@@ -28,12 +28,13 @@
     </div>
     <div class="fs-auth">
         <c:if test="${user == null}">
-            <a href="#" class="fs-auth-user"><i class="fa-solid fa-user"></i> Đăng nhập</a>
+            <a href="${pageContext.request.contextPath}/login" class="fs-auth-user"><i class="fa-solid fa-user"></i> Đăng nhập</a>
             <span class="fs-auth-separator">|</span>
-            <a href="#" class="fs-auth-register">Đăng ký</a>
+            <a href="${pageContext.request.contextPath}/registers" class="fs-auth-register">Đăng ký</a>
         </c:if>
-        <c:if test="${user == null}">
+        <c:if test="${user != null}">
             <div class="fs-dropdown">
+                <a href="#">${user.name}</a>
                 <div class="fs-dropdown-content">
                     <a href="${pageContext.request.contextPath}/user/UserAccount.jsp">Tài khoản của tôi</a>
                     <a href="${pageContext.request.contextPath}/logout">Đăng xuất</a>
@@ -47,7 +48,7 @@
 </div>
 <div class="fs-line"></div>
 <div class="fs-navbar" id="navbar_1">
-    <a href="#">Trang chủ</a>
+    <a href="${pageContext.request.contextPath}/index.jsp">Trang chủ</a>
     <div class="fs-dropdown">
         <a href="products?action=find">Sản Phẩm</a>
         <div class="fs-dropdown-content">
@@ -71,7 +72,7 @@
         </div>
     </div>
     <a href="#">Liên Hệ</a>
-    <c:if test="${user != null}">
+<%--    <c:if test="${user != null && user.role == 'admin'}">--%>
         <div class="fs-dropdown">
             <a href="#">Quản lý</a>
             <div class="fs-dropdown-content">
@@ -81,7 +82,7 @@
                 <a href="${pageContext.request.contextPath}/inventory">Kho hàng</a>
             </div>
         </div>
-    </c:if>
+<%--    </c:if>--%>
 </div>
 <script>
     window.addEventListener('scroll', function () {

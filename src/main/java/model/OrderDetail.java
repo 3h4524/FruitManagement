@@ -10,7 +10,7 @@ import java.math.BigDecimal;
 @Table(name = "OrderDetails")
 @NamedQueries({
         @NamedQuery(name = "OrderDetails.findAll", query = "SELECT o FROM OrderDetail o"),
-        @NamedQuery(name = "OrderDetails.findByOrderDetailID", query = "SELECT o FROM OrderDetail o WHERE o.id = :orderDetailID"),
+        @NamedQuery(name = "OrderDetails.findByOrderID", query = "SELECT o FROM OrderDetail o WHERE o.orderID.id = :orderDetailID"),
         @NamedQuery(name = "OrderDetails.findByQuantity", query = "SELECT o FROM OrderDetail o WHERE o.quantity = :quantity"),
         @NamedQuery(name = "OrderDetails.findByPrice", query = "SELECT o FROM OrderDetail o WHERE o.price = :price"),
         @NamedQuery(name = "OrderDetails.findByProductVariantID", query = "SELECT o FROM OrderDetail o WHERE o.productVariantID.id = :productVariantID"),

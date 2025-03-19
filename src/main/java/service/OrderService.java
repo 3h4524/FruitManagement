@@ -1,6 +1,8 @@
 package service;
 
 import dao.GenericDAO;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.TypedQuery;
 import model.Order;
 import model.OrderDetail;
 
@@ -43,4 +45,18 @@ public class OrderService {
     public List<OrderDetail> listWithOffset(int page, int pageSize) {
         return orderDetailDao.listWithOffset(page, pageSize);
     }
+
+    public List<Order> getOrderByUserId(int userId) {
+        List<Order> orders = orderDao.findByAttribute("userId", userId);
+        return orders;
+    }
+
+    public List<OrderDetail> getOrderDetailsByUserId(int userId) {
+        EntityManager em = GenericDAO.emf.createEntityManager();
+        TypedQuery<OrderDetail> query = em.createQuery(
+                "SELECT od FROM OrderDetail od JOIN od.orderID o WHERE o.userID.id = :userId", OrderDetail.class);
+        query.setParameter("userId", userId);
+        return query.getResultList();
+    }
+
 }

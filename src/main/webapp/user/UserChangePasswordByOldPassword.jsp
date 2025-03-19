@@ -83,7 +83,7 @@
 
         <!-- Link đổi mật khẩu bằng email -->
         <div class="text-center mt-3">
-          <a href="<%= request.getContextPath()%>/user/UserTwoStepVerification.jsp?" class="forgot-password">
+          <a href="${pageContext.request.contextPath}/user/UserTwoStepVerification.jsp?" class="forgot-password">
             🔑 Quên mật khẩu? Đổi bằng email
           </a>
         </div>
@@ -92,7 +92,6 @@
     </div>
   </div>
 </div>
-
 <script src="${pageContext.request.contextPath}/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

@@ -11,6 +11,20 @@ import java.time.Instant;
 
 @Entity
 @Table(name = "Orders")
+@NamedQueries({
+        @NamedQuery(name = "Order.findAll",
+                query = "SELECT o FROM Order o"),
+        @NamedQuery(name = "Order.findByUserId",
+                query = "SELECT o FROM Order o WHERE o.userID.id = :userId"),
+        @NamedQuery(name = "Order.findByStatus",
+                query = "SELECT o FROM Order o WHERE o.status = :status"),
+        @NamedQuery(name = "Order.findByOrderDate",
+                query = "SELECT o FROM Order o WHERE o.orderDate = :orderDate"),
+        @NamedQuery(name = "Order.findByTotalAmountGreaterThan",
+                query = "SELECT o FROM Order o WHERE o.totalAmount > :amount"),
+        @NamedQuery(name = "Order.findAllSortedByDate",
+                query = "SELECT o FROM Order o ORDER BY o.orderDate DESC")
+})
 public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
