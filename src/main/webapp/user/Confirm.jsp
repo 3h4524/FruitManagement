@@ -19,7 +19,6 @@
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/bootstrap/bootstrap.min.css">
 </head>
 <body>
-<jsp:include page="/templates/header.jsp"/>
 <div class="container mt-5">
     <div class="card shadow-lg p-4">
         <h2 class="text-center text-primary">Thông tin người dùng</h2>
@@ -54,6 +53,5 @@
 </div>
 
 <script src="${pageContext.request.contextPath}/js/bootstrap.bundle.min.js"></script>
-<jsp:include page="/templates/header.jsp"/>
 </body>
 </html>

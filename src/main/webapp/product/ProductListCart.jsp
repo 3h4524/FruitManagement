@@ -2,9 +2,15 @@
 <%@ page import="java.util.List, model.Product, model.Category" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
-<jsp:useBean id="products" scope="request" type="java.util.List" />
-<jsp:useBean id="categories" scope="request" type="java.util.List" />
-
+<jsp:useBean id="productService" scope="page" class="service.ProductService"/>
+<%
+    if (request.getAttribute("products") == null) {
+        request.setAttribute("products", productService.getAllProducts());
+    }
+    if(request.getAttribute("categories") == null){
+        request.setAttribute("categories", productService.getAllCategories());
+    }
+%>
 <html>
 <head>
     <title>Danh sách sản phẩm</title>
@@ -16,6 +22,86 @@
             agent-id="17a68f67-ccc6-4fe8-ab13-0d52e4591475"
             language-code="vi"
     ></df-messenger>
+    <!-- Custom CSS for Orange and White Theme -->
+    <style>
+        /* General body styling */
+        body {
+            background-color: #ffffff;
+            color: #333;
+        }
+
+        /* Orange header */
+        h2.text-primary {
+            color: #ff6200 !important; /* Orange tone */
+            font-weight: bold;
+        }
+
+        /* Card styling */
+        .card {
+            border: 1px solid #ff6200;
+            border-radius: 10px;
+            background-color: #fff;
+            transition: transform 0.2s;
+        }
+
+        .card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 8px rgba(255, 98, 0, 0.3);
+        }
+
+        .card-img-top {
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+        }
+
+        .card-title {
+            color: #ff6200;
+            font-weight: 600;
+        }
+
+        .card-text {
+            color: #555;
+        }
+
+        /* Buttons */
+        .btn-primary {
+            background-color: #ff6200;
+            border-color: #ff6200;
+            color: #fff;
+        }
+
+        .btn-primary:hover {
+            background-color: #e55a00;
+            border-color: #e55a00;
+            color: #fff;
+        }
+
+        /* Form controls */
+        .form-select, .form-control {
+            border: 1px solid #ff6200;
+            color: #333;
+        }
+
+        .form-select:focus, .form-control:focus {
+            border-color: #ff6200;
+            box-shadow: 0 0 0 0.2rem rgba(255, 98, 0, 0.25);
+        }
+
+        /* Alert */
+        .alert-warning {
+            background-color: #fff3e0;
+            border-color: #ff6200;
+            color: #ff6200;
+        }
+
+        /* Container */
+        .container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+    </style>
 </head>
 <body>
 <jsp:include page="/templates/header.jsp"/>
@@ -23,7 +109,7 @@
     <h2 class="text-center text-primary mb-4">Danh sách sản phẩm</h2>
 
     <!-- Bộ lọc & Tìm kiếm -->
-    <form method="GET" action="products">
+    <form method="GET" action="products" class="row g-3 mb-4">
         <input type="hidden" name="action" value="find">
         <div class="col-md-3">
             <select name="categoryId" class="form-select">

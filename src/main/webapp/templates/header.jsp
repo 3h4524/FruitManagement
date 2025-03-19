@@ -77,9 +77,8 @@
         </c:if>
       </div>
     </div>
-    <a href="${pageContext.request.contextPath}/cart/Cart.jsp" class="cart-icon">
-      🛍 <span id="cartCount" class="cart-count">${sessionScope.cartCount}</span>
-    </a>  </div>
+    <span class="cart"><a href="${pageContext.request.contextPath}/carts">🛒</a></span>
+  </div>
 </div>
 <div class="line"></div>
 
