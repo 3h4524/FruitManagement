@@ -3,155 +3,140 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
-  <link href="<%= request.getContextPath()%>/css/bootstrap/bootstrap.min.css" rel="stylesheet">
   <title>Đăng nhập</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #f8f9fa;
-      display: flex;
-      flex-direction: column; /* Chỉnh thành column để tránh lỗi hiển thị ngang */
-      align-items: center;
-      min-height: 100vh;
-      margin: 0;
-      justify-content: center;
+    /* Orange-White Theme */
+    .bg-orange {
+      background-color: #FFA520; /* Orange background */
     }
-
-
-    .login-container {
-      display: flex;
-      flex-direction: column;
-      background: white;
-      padding: 30px;
-      width: 500px;
-      text-align: center;
-      border-radius: 10px;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    .text-orange {
+      color: #FFA520; /* Orange text */
     }
-
-    .login-container h2 {
-      margin-bottom: 20px;
+    .btn-orange {
+      background-color: #FFA520;
+      border-color: #FFA520;
+      color: #FFFFFF; /* White text */
+      transition: background-color 0.3s ease;
     }
-
-    .input-group {
-      margin-bottom: 15px;
-      text-align: center;
-      position: relative;
+    .btn-orange:hover {
+      background-color: #e59400; /* Darker orange on hover */
+      border-color: #e59400;
+      color: #FFFFFF;
     }
-
-    .input-group input {
-      padding: 10px;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-      width: 96%;
-      margin: auto;
-      display: block;
+    .card-header {
+      background-color: #FFF3E0; /* Light orange header */
+      border-bottom: 2px solid #FFA520;
     }
-
-    .input-group .toggle-password {
+    .card {
+      border: 1px solid #FFA520; /* Orange border */
+      background: linear-gradient(135deg, #FFFFFF 0%, #FFF8E1 100%); /* Subtle gradient */
+    }
+    .form-floating > label {
+      color: #FFA520; /* Orange labels */
+    }
+    .form-control:focus {
+      border-color: #FFA520;
+      box-shadow: 0 0 0 0.25rem rgba(255, 165, 32, 0.25); /* Orange focus ring */
+    }
+    .alert-success {
+      background-color: #FFF3E0; /* Light orange for success */
+      border-color: #FFA520;
+      color: #e59400;
+    }
+    .alert-danger {
+      background-color: #FFE6E6; /* Light red for error */
+      border-color: #DC3545;
+      color: #DC3545;
+    }
+    a.text-orange:hover {
+      color: #e59400; /* Darker orange on hover */
+    }
+    .toggle-password {
       position: absolute;
       right: 10px;
       top: 50%;
       transform: translateY(-50%);
       cursor: pointer;
+      color: #FFA520;
     }
-
-    .remember-me {
-      display: flex;
-      align-items: center;
-      justify-content: flex-start;
-      width: 90%;
-      margin: auto;
-      font-size: 14px;
+    .form-check-label {
+      color: #FFA520;
     }
-
-    .remember-me input {
-      margin-right: 5px;
-    }
-
-    button {
-      width: 100%;
-      padding: 10px;
-      border-radius: 5px;
-      cursor: pointer;
-      font-size: 16px;
-      margin: 10px auto;
-      display: block;
-    }
-
-    .login-btn {
-      background-color: #007bff;
-      border: none;
-      color: white;
-    }
-
-    .login-btn:hover {
-      background-color: #0056b3;
-      box-shadow: 0 0 3px #007bff;
-    }
-
-    .sign-up-btn {
-      background-color: white;
-      border: 1px solid #6c757d;
-      color: #6c757d;
-    }
-
-    .sign-up-btn:hover {
-      color: #007bff;
-      border-color: #007bff;
-      box-shadow: 0 0 3px #007bff;
-    }
-
-    .forget-password {
-      display: block;
-      font-size: 14px;
-      color: #007bff;
-      text-decoration: none;
-      text-align: right;
-      width: 90%;
-      margin: 0 0 30px auto;
-    }
-
   </style>
 </head>
 <body>
 <jsp:include page="/templates/header.jsp"/>
-<div class="login-container">
-  <h2>Đăng nhập</h2>
-  <c:if test="${not empty sessionScope.error}">
-    <div class="alert alert-danger">${sessionScope.error}</div>
-    <c:remove var="error" scope="session"/>
-  </c:if>
+<div class="container mt-5 py-5 min-vh-100">
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <div class="card shadow rounded">
+        <div class="card-header text-center text-orange">
+          <h3 class="mb-0">Đăng nhập</h3>
+        </div>
+        <div class="card-body p-4">
+          <!-- Thông báo lỗi -->
+          <c:if test="${not empty sessionScope.error}">
+            <div class="alert alert-danger">${sessionScope.error}</div>
+            <c:remove var="error" scope="session"/>
+          </c:if>
 
-  <c:if test="${not empty sessionScope.success}">
-    <div class="alert alert-success">${sessionScope.success}</div>
-    <c:remove var="success" scope="session"/>
-  </c:if>
-  <form action="<%= request.getContextPath()%>/login" method="POST">
-    <div class="input-group">
-      <input type="text" id="email" name="email" placeholder="Email"required>
+          <!-- Thông báo thành công -->
+          <c:if test="${not empty sessionScope.success}">
+            <div class="alert alert-success">${sessionScope.success}</div>
+            <c:remove var="success" scope="session"/>
+          </c:if>
+
+          <form action="<%= request.getContextPath()%>/login" method="POST">
+            <!-- Email -->
+            <div class="form-floating mb-3 position-relative">
+              <input type="text" id="email" name="email" class="form-control" placeholder="Email" required />
+              <label for="email">Email</label>
+            </div>
+
+            <!-- Mật khẩu -->
+            <div class="form-floating mb-3 position-relative">
+              <input type="password" id="password" name="password" class="form-control" placeholder="Mật khẩu" required />
+              <label for="password">Mật khẩu</label>
+              <span class="toggle-password" onclick="togglePassword()">
+                <i class="bi bi-eye"></i>
+              </span>
+            </div>
+
+            <!-- Quên mật khẩu -->
+            <div class="text-end mb-3">
+              <a href="<%= request.getContextPath()%>/user/UserTwoStepVerification.jsp" class="text-orange">
+                Quên mật khẩu?
+              </a>
+            </div>
+
+            <!-- Remember me -->
+            <div class="form-check mb-3">
+              <input type="checkbox" name="remember-me" id="remember-me" class="form-check-input" />
+              <label for="remember-me" class="form-check-label">Ghi nhớ tôi</label>
+            </div>
+
+            <!-- Nút Đăng nhập -->
+            <div class="text-center mb-3">
+              <button type="submit" class="btn btn-orange px-5">Đăng nhập</button>
+            </div>
+
+            <!-- Link Đăng ký -->
+            <div class="text-center">
+              <small>Chưa có tài khoản?
+                <a href="<%= request.getContextPath()%>/registers" class="text-orange">Đăng ký</a>
+              </small>
+            </div>
+          </form>
+        </div>
+      </div>
     </div>
-    <div class="input-group">
-      <input type="password" id="password" name="password" placeholder="Mật khẩu"  required>
-      <span class="toggle-password" onclick="togglePassword()">
-        <i class="bi bi-eye"></i>
-      </span>
-    </div>
-    <div class="forget-password">
-      <a href="<%= request.getContextPath()%>/user/UserTwoStepVerification.jsp">Quên mật khẩu?</a>
-    </div>
-    <div class="remember-me">
-      <input type="checkbox" name="remember-me" id="remember-me">
-      <label for="remember-me">Remember me</label>
-    </div>
-    <button type="submit" class="login-btn">Đăng nhập</button>
-  </form>
-  <form action="<%= request.getContextPath()%>/registers">
-    <button type="submit" class="sign-up-btn">Đăng ký</button>
-  </form>
+  </div>
 </div>
 <jsp:include page="/templates/footer.jsp"/>
 
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
   function togglePassword() {
     var passwordInput = document.getElementById("password");

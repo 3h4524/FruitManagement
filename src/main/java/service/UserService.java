@@ -1,13 +1,20 @@
 package service;
 
 import dao.GenericDAO;
-import model.Product;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.Persistence;
+import jakarta.persistence.TypedQuery;
 import model.User;
+import org.hibernate.internal.SessionFactoryImpl;
 
+import java.sql.PreparedStatement;
 import java.util.List;
 
 public class UserService {
     private GenericDAO<User> userDao = new GenericDAO<>(User.class);
+    static final EntityManagerFactory emf = Persistence.createEntityManagerFactory("FruitManagementPU");
+
     public List<User> getAllUser() {
         return userDao.getAll();
     }
@@ -63,4 +70,26 @@ public class UserService {
         }
         return false;
     }
+
+    public void saveRememberToken(int userId, String token) {
+        EntityManager em = emf.createEntityManager();
+        User user = em.find(User.class, userId);
+        if (user != null) {
+            user.setRememberToken(token);
+            em.merge(user);
+        }
+    }
+
+    public boolean isValidToken(int userId, String token) {
+        EntityManager em = emf.createEntityManager();
+        String jpql = "SELECT u FROM User u WHERE u.id = :userId AND u.rememberToken = :token";
+        TypedQuery<User> query = em.createQuery(jpql, User.class);
+        query.setParameter("userId", userId);
+        query.setParameter("token", token);
+        return !query.getResultList().isEmpty();
+    }
+
+
+
+
 }

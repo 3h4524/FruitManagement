@@ -4,12 +4,9 @@ package controller;
 import jakarta.servlet.*;
 import jakarta.servlet.http.*;
 import jakarta.servlet.annotation.*;
-import model.User;
-import service.MailService;
 import service.UserService;
 import service.Utils;
 import java.io.IOException;
-import java.net.URLEncoder;
 import java.util.List;
 
 @WebServlet(name = "userServlet", value = "/users")

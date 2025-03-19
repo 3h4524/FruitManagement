@@ -1,9 +1,8 @@
 package service;    
 
 import dao.GenericDAO;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityManagerFactory;
-import jakarta.persistence.Persistence;
+import jakarta.persistence.*;
+import jakarta.transaction.Transactional;
 import model.Inventory;
 import model.InventoryLog;
 
@@ -19,6 +18,30 @@ public class InventoryLogService {
     }
     public InventoryLog getInventoryById(int id) {
         return inventoryLogDAO.findById(id);
+    }
+
+    @Transactional
+    public void deleteInventoryByProductVariantId(int productVariantId) {
+        EntityManager em = emf.createEntityManager();
+        EntityTransaction tx = em.getTransaction();
+
+        try {
+            tx.begin(); // Begin transaction
+
+            String sql = "DELETE FROM InventoryLog i WHERE i.productVariantID.id = :productVariantId";
+            Query query = em.createQuery(sql);
+            query.setParameter("productVariantId", productVariantId);
+            query.executeUpdate();
+
+            tx.commit(); // Commit transaction
+        } catch (Exception e) {
+            if (tx.isActive()) {
+                tx.rollback(); // Rollback transaction in case of error
+            }
+            throw e;
+        } finally {
+            em.close(); // Ensure EntityManager is closed
+        }
     }
 
     public List<Map<String, Object>> listWithOffset(int page, int pageSize) {

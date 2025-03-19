@@ -212,70 +212,7 @@ public class ProductServlet extends HttpServlet {
             String[] prices = request.getParameterValues("prices");
             String[] quantities = request.getParameterValues("quantities");
 
-
-            Product product = productService.getProductById(productId);
-            if (product != null) {
-                product.setName(name);
-                product.setDescription(description);
-                product.setImageURL(imageURL);
-                productService.updateProduct(product);
-            }
-
-            List<ProductVariant> existingVariants = productVariantService.getAllProductVariants(productId);
-            Set<String> newSizeSet = null;
-            if (sizes != null) {
-                newSizeSet = new HashSet<>(Arrays.asList(sizes));
-            }
-
-            for (ProductVariant variant : existingVariants) {
-                if (!newSizeSet.contains(variant.getSize())) {
-                    productVariantService.deleteProductVariant(variant.getId());
-                }
-            }
-
-
-            if (sizes != null && prices != null && quantities != null) {
-                for (int i = 0; i < sizes.length; i++) {
-                    try {
-                        String size = sizes[i];
-                        BigDecimal price = new BigDecimal(prices[i]);
-                        Integer quantity = Integer.parseInt(quantities[i]);
-
-                        // Kiểm tra xem ProductVariant có tồn tại không
-                        ProductVariant productVariant = productVariantService.getVariantByProductAndSize(productId, size);
-
-                        if (productVariant != null) {
-                            // ✅ Nếu size đã tồn tại → Cập nhật giá và số lượng
-                            productVariant.setPrice(price);
-                            productVariantService.updateVariant(productVariant);
-
-                            ProductStock productStock = productStockService.getProductStock(productVariant.getId());
-                            productStock.setAmount(quantity);
-                            productStockService.updateProductStock(productStock);
-                        } else {
-                            // 🔥 Nếu size chưa tồn tại → Thêm mới vào database
-                            productVariant = new ProductVariant();
-                            productVariant.setProductID(product);
-                            productVariant.setSize(size);
-                            productVariant.setPrice(price);
-                            productVariantService.addProductVariant(productVariant);
-
-                            // Lấy lại productVariant vừa thêm để có ID chính xác
-                            productVariant = productVariantService.getVariantByProductAndSize(productId, size);
-
-                            // Tạo stock mới cho size mới
-                            ProductStock newStock = new ProductStock();
-                            newStock.setProductVariantID(productVariant);
-                            newStock.setAmount(quantity);
-                            newStock.setInventoryID(new InventoryService().findById(1));
-                            productStockService.addProductStock(newStock);
-                        }
-                    } catch (NumberFormatException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-
+            productService.updateProductDetails(productId, name, description, imageURL, sizes, prices, quantities);
             response.sendRedirect(request.getContextPath() + "/products");
         } catch (NumberFormatException e) {
             request.setAttribute("error", e.getMessage());
