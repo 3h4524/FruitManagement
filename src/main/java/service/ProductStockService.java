@@ -6,9 +6,6 @@ import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.EntityTransaction;
 import jakarta.persistence.Persistence;
 import model.ProductStock;
-import model.ProductVariant;
-
-import java.util.List;
 
 public class ProductStockService {
     private static final GenericDAO<ProductStock> productStockDAO = new GenericDAO<>(ProductStock.class);

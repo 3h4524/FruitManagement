@@ -7,10 +7,7 @@ import jakarta.persistence.Persistence;
 import jakarta.persistence.TypedQuery;
 import model.ProductVariant;
 
-import java.math.BigDecimal;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class ProductVariantService {
     private final GenericDAO<ProductVariant> productVariantDao = new GenericDAO<>(ProductVariant.class);
@@ -53,6 +50,17 @@ public class ProductVariantService {
     }
 
     public void deleteProductVariant(Integer variantId) {
-        productVariantDao.delete(variantId);
+        EntityManager em = emf.createEntityManager();
+        try{
+            em.getTransaction().begin();
+            ProductVariant productVariant = productVariantDao.findById(variantId);
+            if(productVariant != null) {
+                productVariant.setIsDeleted(!productVariant.getIsDeleted());
+                em.merge(productVariant);
+            }
+            em.getTransaction().commit();
+        } finally {
+            em.close();
+        }
     }
 }

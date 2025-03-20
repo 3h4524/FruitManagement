@@ -16,35 +16,20 @@ import java.util.List;
         @NamedQuery(name = "Product.findByName", query = "SELECT p FROM Product p WHERE p.name LIKE :name"),
         @NamedQuery(name = "Product.findByDescription", query = "SELECT p FROM Product p WHERE p.description = :description"),
         @NamedQuery(name = "Product.findByImageURL", query = "SELECT p FROM Product p WHERE p.imageURL = :imageURL"),
-        @NamedQuery(name = "Product.findByImportDate", query = "SELECT p FROM Product p WHERE p.importDate = :importDate"),
-        @NamedQuery(name="Product.listWithOffset",
-                query = "SELECT p FROM Product p ORDER BY p.id")
+        @NamedQuery(name = "Product.findByImportDate", query = "SELECT p FROM Product p WHERE p.importDate = :importDate")
 })
+
 public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ProductID", nullable = false)
     private Integer id;
 
+
     @Nationalized
     @Column(name = "Name", nullable = false, length = 100)
     private String name;
 
-    @Nationalized
-    @Lob
-    @Column(name = "Description")
-    private String description;
-
-    @Transient
-    private BigDecimal price;
-
-    public BigDecimal getPrice() {
-        return price;
-    }
-
-    public void setPrice(BigDecimal price) {
-        this.price = price;
-    }
     @ManyToMany
     @JoinTable(
             name = "ProductsCategories",
@@ -54,15 +39,30 @@ public class Product {
 
     private List<Category> categories;
 
-
+    @Nationalized
+    @Lob
+    @Column(name = "Description")
+    private String description;
 
     @Nationalized
     @Column(name = "ImageURL")
     private String imageURL;
 
+
     @ColumnDefault("getdate()")
     @Column(name = "ImportDate")
     private Instant importDate;
+
+
+    @Transient
+    private BigDecimal price;
+
+
+    @ColumnDefault("0")
+    @Column(name = "IsDeleted")
+    private Boolean isDeleted;
+
+
 
     public Integer getId() {
         return id;
@@ -102,6 +102,22 @@ public class Product {
 
     public void setImportDate(Instant importDate) {
         this.importDate = importDate;
+    }
+
+    public Boolean getIsDeleted() {
+        return isDeleted;
+    }
+
+    public void setIsDeleted(Boolean isDeleted) {
+        this.isDeleted = isDeleted;
+    }
+
+    public BigDecimal getPrice() {
+        return price;
+    }
+
+    public void setPrice(BigDecimal price) {
+        this.price = price;
     }
 
 }

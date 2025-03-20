@@ -107,13 +107,8 @@ public class ProductServlet extends HttpServlet {
     private void deleteProduct(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         try {
             int id = Integer.parseInt(request.getParameter("productId"));
-            Product product = productService.getProductById(id);
             productService.deleteProduct(id);
 
-            List<ProductVariant> productVariants = productVariantService.getAllProductVariants(id);
-            for (ProductVariant productVariant : productVariants) {
-                productVariantService.deleteProductVariant(productVariant.getId());
-            }
             response.sendRedirect(request.getContextPath() + "/products");
         } catch (NumberFormatException e) {
             throw new NumberFormatException("id must be an integer");

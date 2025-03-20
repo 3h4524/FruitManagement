@@ -5,6 +5,7 @@ import jakarta.servlet.annotation.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import model.User;
 
 import java.io.IOException;
 import java.util.Set;
@@ -13,11 +14,11 @@ import java.util.Set;
 public class AuthenFilter implements Filter {
     private static final Set<String> FUNC_FOR_USER = Set.of(
             "/carts", "/cart/Cart.jsp", "/products?action=find", "/product/ProductListCart.jsp",
-            "/product/ProductDetail.jsp", "/checkout", "/cart/Success.jsp"
+            "/product/ProductDetail.jsp", "/checkout", "/cart/Success.jsp", "/PaymentResult.jsp", "/vnpayReturn"
     );
     private static final Set<String> FUNC_FOR_ADMIN = Set.of(
             "/products", "/users", "/product/CreateProduct.jsp",
-            "/product/ProductList.jsp", "/product/UpdateProduct.jsp"
+            "/product/ProductList.jsp", "/product/UpdateProduct.jsp", "/inventory", "/order"
     );
 
     private boolean isStaticResource(String path) {
@@ -32,7 +33,10 @@ public class AuthenFilter implements Filter {
                 || path.endsWith("/header.jsp") || path.endsWith("/footer.jsp")
                 || path.equals("/user/Login.jsp")
                 || path.equals("/user/Register.jsp")
-                || (path.equals("/products") && queryString != null && queryString.startsWith("action=productDetail"));
+                || (path.equals("/products") && queryString != null && queryString.startsWith("action=productDetail"))
+                || path.equals("/mails")
+                || path.equals("/accessDenied/AccessDenied.jsp")
+                || path.equals("/logout");
     }
 
     private boolean isUserAuthorized(String role, String path, String queryString) {

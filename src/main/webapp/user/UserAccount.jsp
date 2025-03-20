@@ -1,111 +1,199 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page import="model.User" %>
-
-<c:set var="user" value="${sessionScope.user}"/>
-<c:set var="page" value="${param.page}" />
+<c:set var="user" value="${sessionScope.UserLogin}"/>
+<c:set var="page" value="${param.page}"/>
 <c:if test="${empty page}">
-  <c:set var="page" value="/user/UserProfile.jsp" />
+    <c:set var="page" value="/user/UserProfile.jsp"/>
 </c:if>
-
-<html>
+<html lang="vi">
 <head>
-  <title>Tài khoản của tôi</title>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-  <style>
-    /* Orange-White Theme */
-    .nav-tabs .nav-link {
-      color: #FFA520; /* Orange text */
-      border: none;
-      padding: 10px 20px;
-    }
-    .nav-tabs .nav-link:hover {
-      background-color: #FFF3E0; /* Light orange hover */
-      color: #e59400; /* Darker orange */
-    }
-    .nav-tabs .nav-link.active {
-      background-color: #FFA520; /* Orange background for active tab */
-      color: #FFFFFF; /* White text */
-      border: none;
-      border-bottom: 3px solid #e59400; /* Darker orange underline */
-    }
-    .nav-tabs .nav-link.text-danger {
-      color: #DC3545; /* Red for logout */
-    }
-    .nav-tabs .nav-link.text-danger:hover {
-      background-color: #FFE6E6; /* Light red hover */
-      color: #DC3545;
-    }
-    .bg-orange {
-      background-color: #FFA520;
-    }
-    .text-orange {
-      color: #FFA520;
-    }
-    .btn-orange {
-      background-color: #FFA520;
-      border-color: #FFA520;
-      color: #FFFFFF;
-    }
-    .btn-orange:hover {
-      background-color: #e59400;
-      border-color: #e59400;
-      color: #FFFFFF;
-    }
-    .card-header {
-      background-color: #FFF3E0; /* Light orange header */
-      border-bottom: 1px solid #FFA520;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Tài khoản của tôi</title>
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/bootstrap/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <style>
+        :root {
+            --primary-color: #2e8b57;
+            --primary-light: #3c9d74;
+            --primary-dark: #247048;
+            --accent-color: #FFA500;
+            --text-color: #333;
+            --light-gray: #f5f5f5;
+            --white: #fff;
+            --border-color: #e0e0e0;
+        }
+
+        body {
+            background-color: var(--light-gray);
+            min-height: 100vh;
+            color: var(--text-color);
+        }
+
+        .account-container {
+            padding: 40px 0;
+        }
+
+        .account-title {
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 1.5rem;
+        }
+
+        .account-sidebar {
+            background-color: var(--white);
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+
+        .account-sidebar .list-group-item {
+            border-left: none;
+            border-right: none;
+            padding: 12px 20px;
+            transition: all 0.2s ease;
+            color: var(--text-color);
+        }
+
+        .account-sidebar .list-group-item:first-child {
+            border-top: none;
+        }
+
+        .account-sidebar .list-group-item:last-child {
+            border-bottom: none;
+        }
+
+        .account-sidebar .list-group-item:hover {
+            background-color: var(--light-gray);
+            color: var(--primary-color);
+        }
+
+        .account-sidebar .list-group-item.active {
+            background-color: var(--primary-color);
+            color: var(--white);
+            border-color: var(--primary-color);
+        }
+
+        .account-content {
+            background-color: var(--white);
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            padding: 20px;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+            border-color: var(--primary-dark);
+        }
+
+        .btn-success {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+
+        .btn-success:hover {
+            background-color: var(--primary-dark);
+            border-color: var(--primary-dark);
+        }
+
+        .btn-outline-primary {
+            color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+
+        .btn-outline-primary:hover {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            color: var(--white);
+        }
+
+        .form-control:focus {
+            border-color: var(--primary-light);
+            box-shadow: 0 0 0 0.25rem rgba(46, 139, 87, 0.25);
+        }
+
+        .forgot-password-link {
+            color: var(--primary-color);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .forgot-password-link:hover {
+            color: var(--primary-dark);
+            text-decoration: underline;
+        }
+
+        h4 {
+            color: var(--primary-color);
+        }
+
+        .input-group-text {
+            background-color: var(--light-gray);
+            border-color: var(--border-color);
+        }
+
+        .alert-success {
+            background-color: rgba(46, 139, 87, 0.1);
+            border-color: rgba(46, 139, 87, 0.2);
+            color: var(--primary-dark);
+        }
+    </style>
 </head>
 <body>
 <jsp:include page="/templates/header.jsp"/>
-<div class="container mt-4 py-5 min-vh-100">
-  <h2 class="text-center mb-4 text-orange">Tài khoản của bạn</h2>
 
-  <!-- Tabbed Navigation -->
-  <ul class="nav nav-tabs justify-content-center mb-4" role="tablist">
-    <li class="nav-item">
-      <a class="nav-link ${page == 'user/UserProfile.jsp' ? 'active' : ''}"
-         href="<%= request.getContextPath()%>/user/UserAccount.jsp?page=user/UserProfile.jsp">
-        Chỉnh sửa hồ sơ
-      </a>
-    </li>
-    <li class="nav-item">
-      <a class="nav-link ${page == 'user/UserAddress.jsp' ? 'active' : ''}"
-         href="<%= request.getContextPath()%>/user/UserAccount.jsp?page=user/UserAddress.jsp">
-        Địa chỉ
-      </a>
-    </li>
-    <li class="nav-item">
-      <a class="nav-link ${page == 'user/UserChangePasswordByOldPassword.jsp' ? 'active' : ''}"
-         href="<%= request.getContextPath()%>/user/UserAccount.jsp?page=user/UserChangePasswordByOldPassword.jsp">
-        Đổi mật khẩu
-      </a>
-    </li>
-    <li class="nav-item">
-      <a class="nav-link text-danger" href="<%= request.getContextPath()%>/logout">
-        Đăng xuất
-      </a>
-    </li>
-  </ul>
+<div class="container account-container">
+    <h2 class="text-center account-title">Tài khoản của bạn</h2>
 
-  <!-- Content Area -->
-  <div class="row justify-content-center">
-    <div class="col-md-8">
-      <div class="card shadow-sm rounded">
-        <div class="card-header text-center text-orange">
-          <h5 class="mb-0 text-orange">Thông tin tài khoản</h5>
+    <div class="row g-4">
+        <!-- Menu bên trái -->
+        <div class="col-lg-3 col-md-4">
+            <div class="account-sidebar">
+                <div class="list-group">
+                    <a href="${pageContext.request.contextPath}/user/UserAccount.jsp?page=user/UserProfile.jsp"
+                       class="list-group-item list-group-item-action ${fn:endsWith(page, 'UserProfile.jsp') ? 'active' : ''}">
+                        <i class="bi bi-person-fill me-2"></i>Chỉnh sửa hồ sơ
+                    </a>
+                    <a href="${pageContext.request.contextPath}/user/UserAccount.jsp?page=user/UserAddress.jsp"
+                       class="list-group-item list-group-item-action ${fn:endsWith(page, 'UserAddress.jsp') ? 'active' : ''}">
+                        <i class="bi bi-geo-alt-fill me-2"></i>Địa chỉ
+                    </a>
+                    <a href="${pageContext.request.contextPath}/user/UserAccount.jsp?page=user/UserChangePasswordByOldPassword.jsp"
+                       class="list-group-item list-group-item-action ${fn:endsWith(page, 'UserChangePasswordByOldPassword.jsp') ? 'active' : ''}">
+                        <i class="bi bi-lock-fill me-2"></i>Đổi mật khẩu
+                    </a>
+                    <a href="${pageContext.request.contextPath}/user/UserAccount.jsp?page=user/UserOrders.jsp"
+                       class="list-group-item list-group-item-action ${fn:endsWith(page, 'UserOrders.jsp') ? 'active' : ''}">
+                        <i class="bi bi-bag-check-fill me-2"></i>Đơn mua
+                    </a>
+                    <a href="${pageContext.request.contextPath}/logout"
+                       class="list-group-item list-group-item-action text-danger">
+                        <i class="bi bi-box-arrow-right me-2"></i>Đăng xuất
+                    </a>
+                </div>
+            </div>
         </div>
-        <div class="card-body p-4">
-          <jsp:include page="/${page}" flush="true"/>
+
+        <!-- Nội dung hiển thị -->
+        <div class="col-lg-9 col-md-8">
+            <div class="account-content">
+                <jsp:include page="/${page}" flush="true"/>
+            </div>
         </div>
-      </div>
     </div>
-  </div>
-  <% System.out.println("Current Page: " + request.getParameter("page")); %>
 </div>
+
 <jsp:include page="/templates/footer.jsp"/>
+
+<!-- Bootstrap JS -->
+<script src="${pageContext.request.contextPath}/js/bootstrap/bootstrap.bundle.min.js"></script>
 </body>
 </html>

@@ -84,23 +84,23 @@
       <a href="products?action=find&categoryId=8&searchName=&sort=price_asc">Trái cây địa phương</a>
     </div>
   </div>
-  <a href="${pageContext.request.contextPath}/promotions">
+  <a>
     <i class="fa-solid fa-tag"></i> Khuyến Mãi
   </a>
   <div class="fs-dropdown">
-    <a href="#">
+    <a>
       <i class="fa-solid fa-seedling"></i> Khám Phá
     </a>
     <div class="fs-dropdown-content">
-      <a href="${pageContext.request.contextPath}/about/history">Lịch Sử Phát triển</a>
-      <a href="${pageContext.request.contextPath}/about/project">Giới Thiệu về dự án</a>
-      <a href="${pageContext.request.contextPath}/about/nutrition">Dinh dưỡng trái cây</a>
+      <a>Lịch Sử Phát triển</a>
+      <a>Giới Thiệu về dự án</a>
+      <a>Dinh dưỡng trái cây</a>
     </div>
   </div>
-  <a href="${pageContext.request.contextPath}/contact">
+  <a href="https://www.facebook.com/nextmorningiwillforgether">
     <i class="fa-solid fa-envelope"></i> Liên Hệ
   </a>
-  <c:if test="${user != null && user.role == 'admin'}">
+  <c:if test="${user != null && user.role == 'Admin'}">
     <div class="fs-dropdown">
       <a href="#">
         <i class="fa-solid fa-user-shield"></i> Quản lý
@@ -110,7 +110,6 @@
         <a href="${pageContext.request.contextPath}/products"><i class="fa-solid fa-boxes-stacked"></i> Sản phẩm</a>
         <a href="${pageContext.request.contextPath}/order?action=listOrder"><i class="fa-solid fa-file-invoice"></i> Đơn hàng</a>
         <a href="${pageContext.request.contextPath}/inventory"><i class="fa-solid fa-warehouse"></i> Kho hàng</a>
-        <a href="${pageContext.request.contextPath}/stats"><i class="fa-solid fa-chart-line"></i> Thống kê</a>
       </div>
     </div>
   </c:if>

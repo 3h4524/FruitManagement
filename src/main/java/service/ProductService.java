@@ -1,10 +1,12 @@
 package service;
 
 import dao.GenericDAO;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.Persistence;
 import model.Category;
-import model.Product;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
+import model.Product;
 import model.ProductStock;
 import model.ProductVariant;
 
@@ -15,6 +17,7 @@ import java.util.stream.Collectors;
 
 public class ProductService {
     private final GenericDAO<Product> productDAO = new GenericDAO<>(Product.class);
+    static final EntityManagerFactory emf = Persistence.createEntityManagerFactory("FruitManagementPU");
 
     public List<Product> getAllProducts() {
         return productDAO.getAll();
@@ -33,7 +36,18 @@ public class ProductService {
     }
 
     public void deleteProduct(int id) {
-        productDAO.delete(id);
+        EntityManager em = emf.createEntityManager();
+        try {
+            em.getTransaction().begin();
+            Product product = productDAO.findById(id);
+            if(product != null){
+                product.setIsDeleted(!product.getIsDeleted());
+                em.merge(product);
+            }
+            em.getTransaction().commit();
+        } finally {
+            em.close();
+        }
     }
 
     public List<Product> listWithOffset(int page, int pageSize) {
@@ -152,7 +166,7 @@ public class ProductService {
     }
 
 
-    public boolean updateProductDetails(int productId, String name, String description, String imageURL,
+    public void updateProductDetails(int productId, String name, String description, String imageURL,
                                         String[] sizes, String[] prices, String[] quantities) {
         ProductStockService productStockService = new ProductStockService();
         InventoryLogService inventoryLogService = new InventoryLogService();
@@ -161,13 +175,21 @@ public class ProductService {
         Product product = productService.getProductById(productId);
 
         if (product == null) {
-            return false;
+            return;
         }
 
         product.setName(name);
         product.setDescription(description);
         product.setImageURL(imageURL);
         productService.updateProduct(product);
+
+        List<ProductVariant> existingVariant = productVariantService.getAllProductVariants(productId);
+        Set<String> newSize = new HashSet<>(Arrays.asList(sizes));
+        for(ProductVariant productVariant : existingVariant) {
+            if(!newSize.contains(productVariant.getSize())) {
+                productVariantService.deleteProductVariant(productVariant.getId());
+            }
+        }
 
         if (sizes != null && prices != null && quantities != null) {
             for (int i = 0; i < sizes.length; i++) {
@@ -205,7 +227,6 @@ public class ProductService {
                 }
             }
         }
-        return true;
     }
 
 }
