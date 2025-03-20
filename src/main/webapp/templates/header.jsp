@@ -14,7 +14,7 @@
 <div class="fs-top-bar">
   <div class="fs-logo">
     <a href="${pageContext.request.contextPath}/products?action=find">
-      <img src="${pageContext.request.contextPath}/images/Logo.PNG" alt="Fruit Shop Logo">
+      <img src="${pageContext.request.contextPath}/images/Logo.png" alt="Fruit Shop Logo">
     </a>
   </div>
   <div class="fs-search-container">
@@ -48,7 +48,7 @@
           <a href="${pageContext.request.contextPath}/user/UserAccount.jsp">
             <i class="fa-solid fa-id-card"></i> Tài khoản của tôi
           </a>
-          <a href="${pageContext.request.contextPath}/orders?action=myOrders">
+          <a href="${pageContext.request.contextPath}/user/UserOrders.jsp">
             <i class="fa-solid fa-clipboard-list"></i> Đơn hàng của tôi
           </a>
           <a href="${pageContext.request.contextPath}/logout">

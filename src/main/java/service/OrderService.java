@@ -4,6 +4,7 @@ import dao.GenericDAO;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
+import jakarta.persistence.TypedQuery;
 import model.Order;
 import model.OrderDetail;
 
@@ -92,4 +93,13 @@ public class OrderService {
     public boolean hasNextPage(int page, int pageSize){
         return orderDao.hasNextPage(page, pageSize);
     }
+
+    public List<OrderDetail> getOrderDetailsByUserId(int userId) {
+        EntityManager em = GenericDAO.emf.createEntityManager();
+        TypedQuery<OrderDetail> query = em.createQuery(
+                "SELECT od FROM OrderDetail od JOIN od.orderID o WHERE o.userID.id = :userId", OrderDetail.class);
+        query.setParameter("userId", userId);
+        return query.getResultList();
+    }
+
 }

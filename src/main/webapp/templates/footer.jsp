@@ -128,7 +128,7 @@
 <div class="footer">
   <div class="footer-container">
     <div class="Logo-footer">
-      <a href="#"><img src="images/Logo.PNG" alt="Fruitiverse Logo"></a>
+      <a href="#"><img src="images/Logo.png" alt="Fruitiverse Logo"></a>
       <p>Trái cây tươi ngon mỗi ngày</p>
     </div>
 

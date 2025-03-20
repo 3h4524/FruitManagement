@@ -14,11 +14,11 @@ import java.util.Set;
 public class AuthenFilter implements Filter {
     private static final Set<String> FUNC_FOR_USER = Set.of(
             "/carts", "/cart/Cart.jsp", "/products?action=find", "/product/ProductListCart.jsp",
-            "/product/ProductDetail.jsp", "/checkout", "/cart/Success.jsp", "/PaymentResult.jsp", "/vnpayReturn"
+            "/product/ProductDetail.jsp", "/checkout", "/cart/Success.jsp", "/PaymentResult.jsp", "/vnpayReturn", "/user/UserAccount.jsp", "/user/UserOrders.jsp"
     );
     private static final Set<String> FUNC_FOR_ADMIN = Set.of(
             "/products", "/users", "/product/CreateProduct.jsp",
-            "/product/ProductList.jsp", "/product/UpdateProduct.jsp", "/inventory", "/order"
+            "/product/ProductList.jsp", "/product/UpdateProduct.jsp", "/inventory", "/order", "/user/UserAccount.jsp"
     );
 
     private boolean isStaticResource(String path) {

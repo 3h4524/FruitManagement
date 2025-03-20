@@ -197,9 +197,6 @@
                             Tổng số tiền (${orderItemCount} sản phẩm):
                             <span class="order-total-value">₫<fmt:formatNumber value="${orderTotal}" pattern="#,###"/></span>
                         </div>
-                        <div>
-                            <button class="btn btn-success">Mua lại</button>
-                        </div>
                     </div>
                     </div>
                 </c:if>
@@ -248,9 +245,6 @@
                     <div class="order-total">
                         Tổng số tiền (${orderItemCount} sản phẩm):
                         <span class="order-total-value">₫<fmt:formatNumber value="${orderTotal}" pattern="#,###"/></span>
-                    </div>
-                    <div>
-                        <button class="btn btn-success">Mua lại</button>
                     </div>
                 </div>
                 </div>
