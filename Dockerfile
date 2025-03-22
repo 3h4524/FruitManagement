@@ -8,4 +8,4 @@ COPY target/E-CommerceProject-1.0-SNAPSHOT.war /usr/local/tomcat/webapps/ROOT.wa
 EXPOSE 8080
 
 # Chạy Tomcat
-CMD ["catalina.sh", "run"]
+CMD ["catalina.sh", "run", "-Dserver.port=8080"]

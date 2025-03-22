@@ -12,5 +12,9 @@ public abstract class BaseDAO<T> {
     public abstract boolean insert(T t) ;
     public abstract boolean update(T t) ;
     public abstract boolean delete(int id) ;
-
+    public static void close() {
+        if (emf != null && emf.isOpen()) {
+            emf.close();
+        }
+    }
 }
