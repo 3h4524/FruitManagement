@@ -2,16 +2,20 @@ package filter;
 
 import jakarta.servlet.*;
 import jakarta.servlet.annotation.*;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import model.User;
+import service.UserService;
+import service.Utils;
 
 import java.io.IOException;
 import java.util.Set;
 
 @WebFilter("/*")
 public class AuthenFilter implements Filter {
+    private UserService userService = new UserService();
     private static final Set<String> FUNC_FOR_USER = Set.of(
             "/carts", "/cart/Cart.jsp", "/products?action=find", "/product/ProductListCart.jsp",
             "/product/ProductDetail.jsp", "/checkout", "/cart/Success.jsp", "/PaymentResult.jsp", "/vnpayReturn", "/user/UserAccount.jsp", "/user/UserOrders.jsp"
@@ -56,7 +60,26 @@ public class AuthenFilter implements Filter {
         HttpServletRequest req = (HttpServletRequest) request;
         HttpServletResponse res = (HttpServletResponse) response;
         HttpSession session = req.getSession(false);
-
+        User userLogin = (session != null) ? (User) session.getAttribute("UserLogin") : null;
+        if (userLogin == null) {
+            Cookie[] cookies = req.getCookies();
+            if(cookies != null) {
+                for(Cookie cookie : cookies) {
+                    if(cookie.getName().equals("accessToken")) {
+                        String token = cookie.getValue();
+                        if (token != null && !token.isEmpty()) { // Kiểm tra token không rỗng
+                            String hashToken = Utils.hashToken(token);
+                            userLogin = userService.getUserByToken(hashToken);
+                            if (userLogin != null) {
+                                session = req.getSession(true); // Tạo session mới nếu chưa có
+                                session.setAttribute("UserLogin", userLogin);
+                            }
+                        }
+                        break;
+                    }
+                }
+            }
+        }
         String path = req.getServletPath();
         String queryString = req.getQueryString();
 
@@ -70,8 +93,8 @@ public class AuthenFilter implements Filter {
             return;
         }
 
-        User userLogin = (User) session.getAttribute("UserLogin");
-        if (userLogin == null) {
+
+        if(userLogin == null) {
             res.sendRedirect(req.getContextPath() + "/login");
             return;
         }

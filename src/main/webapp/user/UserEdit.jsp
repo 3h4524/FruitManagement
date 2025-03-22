@@ -8,6 +8,13 @@
   <script src="https://cdn.jsdelivr.net/npm/@goongmaps/goong-geocoder/dist/goong-geocoder.min.js"></script>
   <link href="https://cdn.jsdelivr.net/npm/@goongmaps/goong-geocoder/dist/goong-geocoder.css" rel="stylesheet" type="text/css" />
   <link rel="stylesheet" href="${pageContext.request.contextPath}/css/geocoder.css">
+  <script src="https://www.gstatic.com/dialogflow-console/fast/messenger/bootstrap.js?v=1"></script>
+  <df-messenger
+          intent="WELCOME"
+          chat-title="FruitShopBot"
+          agent-id="17a68f67-ccc6-4fe8-ab13-0d52e4591475"
+          language-code="vi"
+  ></df-messenger>
   <style>
     :root {
       --primary-color: #2e8b57;

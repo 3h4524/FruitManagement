@@ -352,6 +352,70 @@
         quantityInput.value = "";
         quantityInput.focus();
     }
+    document.querySelector("form").addEventListener("submit", function (event) {
+        if (!validateForm()) {
+            event.preventDefault(); // Ngăn gửi form nếu dữ liệu không hợp lệ
+        }
+    });
+
+    function validateForm() {
+        let isValid = true;
+
+        // Kiểm tra tên sản phẩm
+        let name = document.getElementById("name").value.trim();
+        if (name === "") {
+            alert("Tên sản phẩm không được để trống!");
+            return false;
+        }
+
+        // Kiểm tra mô tả sản phẩm
+        let description = document.getElementById("description").value.trim();
+        if (description.length < 10) {
+            alert("Mô tả sản phẩm phải có ít nhất 10 ký tự!");
+            return false;
+        }
+
+        // Kiểm tra URL ảnh
+        let imageURL = document.getElementById("imageURL").value.trim();
+        let urlPattern = /^(https?:\/\/.*\.(?:png|jpg|jpeg|gif|webp))$/i;
+        if (!urlPattern.test(imageURL)) {
+            alert("URL hình ảnh không hợp lệ! (Chỉ chấp nhận PNG, JPG, JPEG, GIF, WEBP)");
+            return false;
+        }
+
+        // Kiểm tra ngày nhập không vượt quá ngày hiện tại
+        let importDate = document.getElementById("importDate").value;
+        let today = new Date().toISOString().split("T")[0];
+        if (importDate > today) {
+            alert("Ngày nhập không thể lớn hơn ngày hiện tại!");
+            return false;
+        }
+
+        // Kiểm tra bảng size, giá, số lượng
+        let rows = document.querySelectorAll("table tr");
+        for (let i = 1; i < rows.length; i++) {
+            let size = rows[i].querySelector('input[name="sizes"]').value.trim();
+            let price = rows[i].querySelector('input[name="prices"]').value.trim();
+            let quantity = rows[i].querySelector('input[name="quantities"]').value.trim();
+
+            if (size === "") {
+                alert(`Size ở dòng ${i} không được để trống!`);
+                return false;
+            }
+
+            if (!/^\d+(\.\d{1,2})?$/.test(price) || parseFloat(price) <= 0) {
+                alert(`Giá ở dòng ${i} phải là số dương hợp lệ!`);
+                return false;
+            }
+
+            if (!/^\d+$/.test(quantity) || parseInt(quantity) < 0) {
+                alert(`Số lượng ở dòng ${i} phải là số nguyên không âm!`);
+                return false;
+            }
+        }
+
+        return isValid;
+    }
 
 </script>
 <jsp:include page="/templates/footer.jsp"/>

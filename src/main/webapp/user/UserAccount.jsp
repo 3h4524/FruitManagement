@@ -15,6 +15,13 @@
     <title>Tài khoản của tôi</title>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/bootstrap/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <script src="https://www.gstatic.com/dialogflow-console/fast/messenger/bootstrap.js?v=1"></script>
+    <df-messenger
+            intent="WELCOME"
+            chat-title="FruitShopBot"
+            agent-id="17a68f67-ccc6-4fe8-ab13-0d52e4591475"
+            language-code="vi"
+    ></df-messenger>
     <style>
         :root {
             --primary-color: #2e8b57;

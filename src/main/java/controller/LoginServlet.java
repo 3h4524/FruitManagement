@@ -24,19 +24,32 @@ public class LoginServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String email = request.getParameter("email");
-        String pasword = request.getParameter("password");
+        String password = request.getParameter("password");
+        String rememberMe = request.getParameter("rememberMe");
         User user = userService.getUserByEmail(email);
         HttpSession session = request.getSession();
-        if(user != null && Utils.checkPassword(pasword, user.getPasswordHash())) {
-            if(user.getStatus().equals("INACTIVE")){
-                session.setAttribute("error", "Tài khoản này đã bị vô hiệu hóa.");
-                response.sendRedirect(request.getContextPath() + "/user/Login.jsp");
-            }
-            session.setAttribute("UserLogin", user);
-            response.sendRedirect("index.jsp");
-        }else{
+        if(user == null || !Utils.checkPassword(password, user.getPasswordHash())) {
             session.setAttribute("error", "Email hoặc mật khẩu không đúng");
             response.sendRedirect(request.getContextPath() + "/user/Login.jsp");
+            return;
         }
+        if(user.getStatus().equals("INACTIVE")){
+            session.setAttribute("error", "Tài khoản này đã bị vô hiệu hóa.");
+            response.sendRedirect(request.getContextPath() + "/user/Login.jsp");
+            return;
+        }
+        if(rememberMe != null && rememberMe.equals("on")){
+            String token = Utils.generateSecureToken();
+            String hashToken = Utils.hashToken(token);
+            Cookie cookie = new Cookie("accessToken", token); // Lưu token vào cookie
+            cookie.setMaxAge(7 * 24 * 60 * 60); // 7 ngày
+            cookie.setHttpOnly(true); // Bảo mật chống XSS
+            cookie.setSecure(true); // Chỉ gửi qua HTTPS
+            response.addCookie(cookie);
+            user.setRememberToken(hashToken);
+            userService.updateUser(user);
+        }
+        session.setAttribute("UserLogin", user);
+        response.sendRedirect("index.jsp");
     }
 }

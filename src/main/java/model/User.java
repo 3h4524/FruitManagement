@@ -14,9 +14,9 @@ import java.time.Instant;
         @NamedQuery(name = "User.findByRegistrationDateRange",
                 query = "SELECT u FROM User u WHERE u.registrationDate BETWEEN :startDate AND :endDate"),
         @NamedQuery(name = "User.findByName", query = "SELECT u FROM User u WHERE u.name LIKE :name"),
-        @NamedQuery(name = "User.findByPhone", query = "SELECT u FROM User u WHERE u.phone = :phone")
+        @NamedQuery(name = "User.findByPhone", query = "SELECT u FROM User u WHERE u.phone = :phone"),
+        @NamedQuery(name = "User.findByRememberToken", query = "SELECT u FROM User u WHERE u.rememberToken = :rememberToken")
 })
-
 @Entity
 @Table(name = "Users")
 public class User {
@@ -58,7 +58,7 @@ public class User {
     @Column(name = "Role", length = 20)
     private String role;
 
-    @Column(name = "remember_token")
+    @Column(name = "RememberToken")
     private String rememberToken;
 
     public Integer getId() {

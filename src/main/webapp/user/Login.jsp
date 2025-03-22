@@ -5,6 +5,13 @@
 <head>
   <link href="${pageContext.request.contextPath}/css/bootstrap/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
+  <script src="https://www.gstatic.com/dialogflow-console/fast/messenger/bootstrap.js?v=1"></script>
+  <df-messenger
+          intent="WELCOME"
+          chat-title="FruitShopBot"
+          agent-id="17a68f67-ccc6-4fe8-ab13-0d52e4591475"
+          language-code="vi"
+  ></df-messenger>
   <title>Đăng nhập</title>
   <style>
     :root {
@@ -186,8 +193,8 @@
             </div>
             <a href="${pageContext.request.contextPath}/user/UserTwoStepVerification.jsp" class="forgot-password-link">Quên mật khẩu?</a>
             <div class="remember-me">
-              <input type="checkbox" name="remember-me" id="remember-me">
-              <label for="remember-me">Remember me</label>
+              <input type="checkbox" name="rememberMe" id="rememberMe">
+              <label for="rememberMe">Remember me</label>
             </div>
             <button type="submit" class="btn btn-primary">Đăng nhập</button>
           </form>
