@@ -28,7 +28,7 @@
 
     <c:set var="user" value="${sessionScope.UserLogin}"/>
 
-    <form action="${pageContext.request.contextPath}/user/Confirm.jsp?type=updateProfile" method="post" class="row g-3">
+    <form id="userForm" action="${pageContext.request.contextPath}/user/Confirm.jsp?type=updateProfile" method="post" class="row g-3">
         <div class="col-md-6">
             <label class="form-label">Email</label>
             <div class="input-group">
@@ -49,8 +49,11 @@
             <label class="form-label">Số điện thoại</label>
             <div class="input-group">
                 <span class="input-group-text"><i class="bi bi-telephone"></i></span>
-                <input type="text" name="phone" class="form-control" value="${user.phone}" />
+                <input type="text" name="phone" id="phone" class="form-control" value="${user.phone}" />
             </div>
+            <small id="phoneError" class="text-danger d-none">
+                <i class="fas fa-exclamation-circle"></i> Số điện thoại không hợp lệ!
+            </small>
         </div>
 
         <div class="col-md-6">
@@ -93,5 +96,6 @@
     </form>
 </div>
 <script src="${pageContext.request.contextPath}/js/bootstrap/bootstrap.bundle.min.js"></script>
+<script src="${pageContext.request.contextPath}/js/userValidate.js"></script>
 </body>
 </html>

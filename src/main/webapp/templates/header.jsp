@@ -13,7 +13,7 @@
 <c:set var="user" value="${sessionScope.UserLogin}"/>
 <div class="fs-top-bar">
   <div class="fs-logo">
-    <a href="${pageContext.request.contextPath}/products?action=find">
+    <a href="${pageContext.request.contextPath}/index.jsp">
       <img src="${pageContext.request.contextPath}/images/Logo.png" alt="Fruit Shop Logo">
     </a>
   </div>
@@ -65,7 +65,7 @@
 </div>
 <div class="fs-line"></div>
 <div class="fs-navbar" id="navbar_1">
-  <a href="${pageContext.request.contextPath}/products?action=find">
+  <a href="${pageContext.request.contextPath}/index.jsp">
     <i class="fa-solid fa-home"></i> Trang chủ
   </a>
   <div class="fs-dropdown">
@@ -92,7 +92,7 @@
       <i class="fa-solid fa-seedling"></i> Khám Phá
     </a>
     <div class="fs-dropdown-content">
-      <a>Lịch Sử Phát triển</a>
+      <a href="${pageContext.request.contextPath}/pages/History.jsp">Lịch Sử Phát triển</a>
       <a>Giới Thiệu về dự án</a>
       <a>Dinh dưỡng trái cây</a>
     </div>

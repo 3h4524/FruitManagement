@@ -263,6 +263,11 @@ public class UserServlet extends HttpServlet {
         boolean isMatch = Utils.checkPassword(oldPassword, user.getPasswordHash());
 
         if (isMatch) {
+            if(!Utils.isValidPassword(newPassword)) {
+                session.setAttribute("error", "Mật khẩu phải có ít nhất 8 ký tự, ít nhất 1 chữ viết hoa và số");
+                response.sendRedirect("user/UserAccount.jsp?page=user/UserChangePasswordByOldPassword.jsp");
+                return;
+            }
             if (userService.changePassword(user, newPassword, confirmPassword)) {
                 session.removeAttribute("UserLogin"); // Xóa thuộc tính session trước
                 String successMessage = "Đổi mật khẩu thành công, vui lòng đăng nhập lại!";
@@ -291,7 +296,11 @@ public class UserServlet extends HttpServlet {
         if (!isLoggedIn) {
             user = (User) session.getAttribute("UserIsNotLoggedIn");
         }
-
+        if(Utils.isValidPassword(newPassword)) {
+            session.setAttribute("error", "Mật khẩu phải có ít nhất 8 ký tự, ít nhất 1 chữ viết hoa và số.");
+            response.sendRedirect(request.getContextPath() + "/user/UserChangePassword.jsp");
+            return;
+        }
         // Kiểm tra người dùng hợp lệ và mật khẩu mới hợp lệ
         if (user != null && userService.changePassword(user, newPassword, confirmPassword)) {
             String successMessage = "Đổi mật khẩu thành công, vui lòng đăng nhập lại!";

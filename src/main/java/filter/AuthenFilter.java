@@ -40,7 +40,9 @@ public class AuthenFilter implements Filter {
                 || (path.equals("/products") && queryString != null && queryString.startsWith("action=productDetail"))
                 || path.equals("/mails")
                 || path.equals("/accessDenied/AccessDenied.jsp")
-                || path.equals("/logout");
+                || path.equals("/logout")
+                || path.equals("/user/Confirm.jsp")
+                || path.equals("/pages/History.jsp");
     }
 
     private boolean isUserAuthorized(String role, String path, String queryString) {

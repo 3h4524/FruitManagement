@@ -228,5 +228,20 @@ public class ProductService {
             }
         }
     }
-
+    public List<Object[]> getMostOrderedProducts(int limit) {
+        EntityManager em = productDAO.emf.createEntityManager();
+        try {
+            return em.createNativeQuery(
+                    "SELECT TOP " + limit + " p.ProductID, p.Name, p.Description, p.ImageURL, p.ImportDate, p.IsDeleted, " +
+                            "COALESCE(SUM(od.Quantity), 0) AS TotalOrdered " +
+                            "FROM Products p " +
+                            "LEFT JOIN ProductVariant pv ON p.ProductID = pv.ProductID " +
+                            "LEFT JOIN OrderDetails od ON pv.ProductVariantID = od.ProductVariantID " +
+                            "GROUP BY p.ProductID, p.Name, p.Description, p.ImageURL, p.ImportDate, p.IsDeleted " +
+                            "ORDER BY TotalOrdered DESC"
+            ).getResultList();
+        } finally {
+            em.close();
+        }
+    }
 }

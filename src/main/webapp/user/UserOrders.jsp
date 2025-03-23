@@ -180,7 +180,7 @@
             <i class="bi bi-box-open"></i>
             <h3>Bạn chưa có đơn hàng nào!</h3>
             <p>Hãy tiếp tục mua sắm để tạo đơn hàng mới.</p>
-            <a href="${pageContext.request.contextPath}/shop.jsp" class="btn btn-success">Mua sắm ngay</a>
+            <a href="${pageContext.request.contextPath}/product?action=find" class="btn btn-success">Mua sắm ngay</a>
         </div>
     </c:when>
     <c:otherwise>
@@ -224,8 +224,7 @@
 
             <div class="order-item">
                 <div class="item-image">
-                    <img src="${detail.productVariantID.productID.imageURL}" alt="${detail.productVariantID.productID.name}">
-                </div>
+                    <img src="${pageContext.request.contextPath}/${detail.productVariantID.productID.imageURL}">                </div>
                 <div class="item-details">
                     <div class="item-name">${detail.productVariantID.productID.name}</div>
                     <div class="item-specs">
