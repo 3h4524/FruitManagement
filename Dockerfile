@@ -1,11 +1,17 @@
-# Sử dụng image Tomcat chính thức
-FROM tomcat:10.1
+# Sử dụng Tomcat 11 với JDK 21 (Ổn định, không cần tải Tomcat thủ công)
+FROM tomcat:11-jdk21
 
-# Copy file WAR vào thư mục webapps của Tomcat
-COPY target/E-CommerceProject-1.0-SNAPSHOT.war /usr/local/tomcat/webapps/ROOT.war
+# Đặt thư mục làm việc
+WORKDIR /usr/local/tomcat
 
-# Expose port 8080 (Render sẽ tự map cổng này)
+# Xóa ứng dụng mặc định của Tomcat
+RUN rm -rf webapps/ROOT webapps/ROOT.war
+
+# Sao chép ứng dụng WAR vào thư mục webapps
+COPY target/*.war webapps/ROOT.war
+
+# Mở cổng 8080
 EXPOSE 8080
 
 # Chạy Tomcat
-CMD ["catalina.sh", "run", "-Dserver.port=8080"]
+CMD ["catalina.sh", "run"]
