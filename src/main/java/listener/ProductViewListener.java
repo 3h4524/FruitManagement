@@ -2,6 +2,7 @@ package listener;
 
 import jakarta.servlet.ServletRequestEvent;
 import jakarta.servlet.ServletRequestListener;
+import jakarta.servlet.annotation.WebListener;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
@@ -9,15 +10,16 @@ import jakarta.servlet.http.HttpSession;
 import java.util.HashMap;
 import java.util.HashSet;
 
+@WebListener
 public class ProductViewListener implements ServletRequestListener {
     public void requestInitialized(ServletRequestEvent event) {
         HttpServletRequest request = (HttpServletRequest) event.getServletRequest();
         HttpSession session = request.getSession();
         HashSet<Integer> productViewed = (HashSet<Integer>) session.getAttribute("productViewed");
         Integer productID;
-        if(request.getParameter("productID") != null) {
+        if(request.getParameter("productId") != null) {
             try{
-                productID = Integer.parseInt(request.getParameter("productID"));
+                productID = Integer.parseInt(request.getParameter("productId"));
             } catch (NumberFormatException e) {
                 throw new NumberFormatException("Invalid product ID");
             }

@@ -18,15 +18,26 @@ import java.util.List;
         @NamedQuery(name = "Product.findByImageURL", query = "SELECT p FROM Product p WHERE p.imageURL = :imageURL"),
         @NamedQuery(name = "Product.findByImportDate", query = "SELECT p FROM Product p WHERE p.importDate = :importDate")
 })
+
 public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ProductID", nullable = false)
     private Integer id;
 
+
     @Nationalized
     @Column(name = "Name", nullable = false, length = 100)
     private String name;
+
+    @ManyToMany
+    @JoinTable(
+            name = "ProductsCategories",
+            joinColumns = @JoinColumn(name = "productID"),
+            inverseJoinColumns = @JoinColumn(name = "categoryID")
+    )
+
+    private List<Category> categories;
 
     @Nationalized
     @Lob
@@ -37,26 +48,21 @@ public class Product {
     @Column(name = "ImageURL")
     private String imageURL;
 
+
     @ColumnDefault("getdate()")
     @Column(name = "ImportDate")
     private Instant importDate;
+
+
     @Transient
     private BigDecimal price;
 
-    public BigDecimal getPrice() {
-        return price;
-    }
 
-    public void setPrice(BigDecimal price) {
-        this.price = price;
-    }
-    @ManyToMany
-    @JoinTable(
-            name = "ProductsCategories",
-            joinColumns = @JoinColumn(name = "productID"),
-            inverseJoinColumns = @JoinColumn(name = "categoryID")
-    )
-    private List<Category> categories;
+    @ColumnDefault("0")
+    @Column(name = "IsDeleted")
+    private Boolean isDeleted;
+
+
 
     public Integer getId() {
         return id;
@@ -96,6 +102,22 @@ public class Product {
 
     public void setImportDate(Instant importDate) {
         this.importDate = importDate;
+    }
+
+    public Boolean getIsDeleted() {
+        return isDeleted;
+    }
+
+    public void setIsDeleted(Boolean isDeleted) {
+        this.isDeleted = isDeleted;
+    }
+
+    public BigDecimal getPrice() {
+        return price;
+    }
+
+    public void setPrice(BigDecimal price) {
+        this.price = price;
     }
 
 }

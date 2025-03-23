@@ -1,0 +1,105 @@
+/* Pagination styling with more rounded corners */
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin-top: 30px;
+}
+
+.pagination a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 40px;
+    height: 40px;
+    padding: 0 12px;
+    background: var(--primary-light);
+    color: var(--white);
+    border-radius: 20px; /* More rounded corners */
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.pagination a:hover {
+    background: var(--primary-dark);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-hover);
+}
+
+.pagination strong {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 40px;
+    height: 40px;
+    padding: 0 12px;
+    background: var(--primary-dark);
+    color: var(--white);
+    border-radius: 20px; /* More rounded corners */
+    font-weight: 500;
+}
+
+/* Additional Bootstrap pagination overrides */
+nav .pagination {
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+}
+
+.pagination .page-item .page-link {
+    color: var(--white);
+    background-color: var(--primary-light);
+    border: none;
+    transition: all 0.3s ease;
+    padding: 8px 16px;
+    border-radius: 20px; /* More rounded corners */
+    font-weight: 500;
+    min-width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.pagination .page-item:hover .page-link {
+    background-color: var(--primary-dark);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-hover);
+}
+
+.pagination .page-item.active .page-link {
+    background-color: var(--primary-dark);
+    color: var(--white);
+}
+
+.pagination .page-item.disabled .page-link {
+    background-color: var(--light-gray);
+    color: #6c757d;
+    pointer-events: none;
+    transform: none;
+    box-shadow: none;
+}
+
+/* For "Next" button - more pill-shaped */
+.pagination .page-item:last-child .page-link {
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+/* Responsive adjustments for pagination */
+@media (max-width: 768px) {
+    .pagination {
+        gap: 5px;
+    }
+
+    .pagination a,
+    .pagination strong,
+    .pagination .page-item .page-link {
+        min-width: 35px;
+        height: 35px;
+        padding: 0 10px;
+        font-size: 0.9rem;
+        border-radius: 17.5px; /* Adjusted for smaller size */
+    }
+}

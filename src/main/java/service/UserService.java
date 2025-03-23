@@ -59,12 +59,16 @@ public class UserService {
     }
     public boolean changePassword(User user, String newPassword, String confirmPassword) {
         if(confirmPassword.equals(newPassword)) {
-           newPassword = Utils.hashPassword(confirmPassword);
-           user.setPasswordHash(newPassword);
-           if(updateUser(user)){
-               return true;
-           }
+            newPassword = Utils.hashPassword(confirmPassword);
+            user.setPasswordHash(newPassword);
+            if(updateUser(user)){
+                return true;
+            }
         }
         return false;
+    }
+    public User getUserByToken(String hashToken) {
+        List<User> users = userDao.findByAttribute("rememberToken", hashToken);
+        return users.isEmpty() ? null : users.get(0);
     }
 }

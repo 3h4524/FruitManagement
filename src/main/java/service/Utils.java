@@ -1,4 +1,7 @@
 package service;
+import java.security.SecureRandom;
+import java.util.Base64;
+
 
 import org.mindrot.jbcrypt.BCrypt;
 import java.security.SecureRandom;
@@ -6,6 +9,7 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.UUID;
 
 public class Utils {
     public static String hashPassword(String password) {
@@ -107,5 +111,11 @@ public class Utils {
         return dateTime.format(formatter);
     }
 
+    public static String generateSecureToken() {
+        return Base64.getUrlEncoder().encodeToString(UUID.randomUUID().toString().getBytes());
+    }
 
+    public static String hashToken(String token) {
+        return Base64.getEncoder().encodeToString(token.getBytes()); // Mã hóa đơn giản (có thể thay bằng SHA-256)
+    }
 }

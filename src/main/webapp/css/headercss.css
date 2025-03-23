@@ -1,13 +1,28 @@
+/* General Styles */
+:root {
+    --primary-color: #2e8b57;
+    --primary-light: #3c9d74;
+    --primary-dark: #247048;
+    --accent-color: #FFA500;
+    --text-color: #333;
+    --light-gray: #f5f5f5;
+    --white: #fff;
+    --border-color: #e0e0e0;
+}
+
+/* Top Bar */
 .fs-top-bar {
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 15px 5%;
-    background-color: white;
+    background-color: var(--white);
     height: 90px;
     box-sizing: border-box;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
 }
 
+/* Logo */
 .fs-logo {
     flex: 0 0 auto;
     display: flex;
@@ -17,8 +32,14 @@
 .fs-logo img {
     width: 70px;
     height: auto;
+    transition: transform 0.3s ease;
 }
 
+.fs-logo img:hover {
+    transform: scale(1.05);
+}
+
+/* Search Container */
 .fs-search-container {
     flex: 1;
     display: flex;
@@ -29,22 +50,24 @@
 .fs-search-box {
     max-width: 350px;
     margin: 0;
+    width: 100%;
 }
 
 .fs-search-wrapper {
     display: flex;
     align-items: center;
-    background: #f5f5f5;
-    border: 1px solid #ddd;
+    background: var(--light-gray);
+    border: 1px solid var(--border-color);
     border-radius: 25px;
     padding: 5px 10px;
     height: 40px;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-    transition: box-shadow 0.3s ease;
+    transition: box-shadow 0.3s ease, border-color 0.3s ease;
 }
 
-.fs-search-wrapper:hover {
-    box-shadow: 0 2px 6px rgba(255, 165, 0, 0.3);
+.fs-search-wrapper:hover, .fs-search-wrapper:focus-within {
+    box-shadow: 0 2px 6px rgba(60, 157, 116, 0.2);
+    border-color: var(--primary-light);
 }
 
 .fs-search-icon {
@@ -60,7 +83,7 @@
     flex: 1;
     font-size: 14px;
     padding: 5px;
-    color: #333;
+    color: var(--text-color);
 }
 
 .fs-search-box input::placeholder {
@@ -68,31 +91,35 @@
 }
 
 .fs-search-box .fs-search-button {
-    background: #FFA500;
+    background: var(--primary-light);
     border: none;
-    color: white;
+    color: var(--white);
     padding: 6px 15px;
     border-radius: 20px;
     font-size: 14px;
     cursor: pointer;
-    transition: background-color 0.3s ease;
+    transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
 .fs-search-box .fs-search-button:hover {
-    background-color: #e09400;
+    background-color: var(--primary-dark);
+    transform: translateY(-2px);
 }
 
+/* Authentication Area */
 .fs-auth {
     flex: 0 0 auto;
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 15px;
+    position: relative;
 }
 
 .fs-auth a {
     text-decoration: none;
-    color: black;
+    color: var(--text-color);
     font-size: 14px;
+    font-weight: 500;
     transition: color 0.3s ease-in-out;
     display: flex;
     align-items: center;
@@ -104,9 +131,9 @@
 }
 
 .fs-auth .fs-auth-user i {
-    font-size: 18px; /* Kích thước biểu tượng người dùng */
+    font-size: 18px;
     margin-right: 5px;
-    color: #666; /* Màu xám nhẹ cho biểu tượng */
+    color: #666;
 }
 
 .fs-auth .fs-auth-register {
@@ -117,58 +144,66 @@
     color: #ccc;
 }
 
-.fs-auth .fs-auth-cart {
+.fs-auth .cart-icon {
     font-size: 20px;
+    position: relative;
     cursor: pointer;
     transition: transform 0.3s ease-in-out;
+    margin-left: 10px;
+    display: flex;
+    align-items: center;
 }
 
 .fs-auth a:hover {
-    color: #FFA500;
+    color: var(--primary-color);
 }
 
 .fs-auth a:hover i {
-    color: #FFA500; /* Biểu tượng đổi màu khi hover */
+    color: var(--primary-color);
 }
 
-.fs-auth .fs-auth-cart:hover {
+.fs-auth .cart-icon:hover {
     transform: scale(1.1);
 }
 
+/* Divider Line */
 .fs-line {
     height: 2px;
-    background-color: #FFA500;
+    background-color: var(--primary-light);
     margin: 0;
+    background-image: linear-gradient(to right, var(--primary-light), var(--primary-color), var(--primary-light));
 }
 
-/* Thanh menu chính */
+/* Main Navigation */
 .fs-navbar {
-    background-color: rgba(255, 99, 71, 0);
-    padding: 15px;
+    background-color: var(--white);
+    padding: 0;
     display: flex;
     justify-content: center;
     align-items: center;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
 }
 
 .fs-navbar a {
-    color: black;
+    color: var(--text-color);
     text-decoration: none;
-    padding: 14px 20px;
-    font-size: 18px;
+    padding: 18px 24px;
+    font-size: 16px;
+    font-weight: 600;
     position: relative;
     display: flex;
     align-items: center;
+    transition: color 0.3s ease;
 }
 
 .fs-navbar a::after {
     content: "";
     position: absolute;
     left: 50%;
-    bottom: -2px;
+    bottom: 0;
     width: 0;
-    height: 2px;
-    background-color: #FFA500;
+    height: 3px;
+    background-color: var(--primary-color);
     transition: all 0.3s ease-in-out;
 }
 
@@ -178,62 +213,134 @@
 }
 
 .fs-navbar a:hover {
-    color: #FFA500;
+    color: var(--primary-color);
 }
 
-/* Menu cha */
+/* Dropdown Menus */
 .fs-dropdown {
     position: relative;
     display: flex;
     align-items: center;
 }
 
-/* Menu con */
 .fs-dropdown-content {
     display: none;
     position: absolute;
     top: 100%;
     left: 0;
-    background-color: white;
-    min-width: 200px;
-    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
-    z-index: 1;
+    background-color: var(--white);
+    min-width: 220px;
+    border-radius: 8px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    overflow: hidden;
+    transform: translateY(10px);
+    opacity: 0;
+    transition: opacity 0.3s ease, transform 0.3s ease;
 }
 
 .fs-dropdown-content a {
-    color: black;
+    color: var(--text-color);
     padding: 12px 16px;
     display: block;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    font-weight: 400;
+}
+
+.fs-dropdown-content a:last-child {
+    border-bottom: none;
 }
 
 .fs-dropdown-content a:hover {
-    background-color: #f1f1f1;
+    background-color: rgba(60, 157, 116, 0.1);
+    color: var(--primary-color);
 }
 
-/* Hiệu ứng dropdown */
 .fs-dropdown:hover .fs-dropdown-content {
     display: block;
-    animation: fadeIn 0.3s ease-in-out;
+    opacity: 1;
+    transform: translateY(0);
 }
 
+/* Fixed Navigation */
 .fs-fixed-navbar {
     position: fixed;
     top: 0;
     width: 100%;
-    background-color: rgba(255, 255, 255, 0.9);
+    background-color: rgba(255, 255, 255, 0.95);
     z-index: 1000;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    animation: slideDown 0.3s ease;
 }
+
+@keyframes slideDown {
+    from {
+        transform: translateY(-100%);
+    }
+    to {
+        transform: translateY(0);
+    }
+}
+
+/* Cart Count Badge */
 .cart-count {
     position: absolute;
-    top: -5px;
-    right: -5px;
-    background-color: purple;
-    color: white;
+    top: -8px;
+    right: -8px;
+    background-color: var(--primary-color);
+    color: var(--white);
     border-radius: 50%;
     width: 20px;
     height: 20px;
     text-align: center;
-    font-size: 14px;
+    font-size: 12px;
     line-height: 20px;
+    font-weight: bold;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 992px) {
+    .fs-navbar a {
+        padding: 16px 18px;
+        font-size: 15px;
+    }
+}
+
+@media (max-width: 768px) {
+    .fs-top-bar {
+        flex-direction: column;
+        height: auto;
+        padding: 15px 3%;
+    }
+
+    .fs-logo {
+        margin-bottom: 15px;
+    }
+
+    .fs-search-container {
+        width: 100%;
+        margin: 10px 0;
+    }
+
+    .fs-search-box {
+        max-width: 100%;
+    }
+
+    .fs-auth {
+        width: 100%;
+        justify-content: center;
+        margin-top: 15px;
+    }
+
+    .fs-navbar {
+        flex-wrap: wrap;
+        justify-content: space-between;
+        padding: 0 10px;
+    }
+
+    .fs-navbar a {
+        padding: 12px 10px;
+        font-size: 14px;
+    }
 }

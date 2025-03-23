@@ -8,6 +8,13 @@
   <script src="https://cdn.jsdelivr.net/npm/@goongmaps/goong-geocoder/dist/goong-geocoder.min.js"></script>
   <link href="https://cdn.jsdelivr.net/npm/@goongmaps/goong-geocoder/dist/goong-geocoder.css" rel="stylesheet" type="text/css" />
   <link rel="stylesheet" href="${pageContext.request.contextPath}/css/geocoder.css">
+  <script src="https://www.gstatic.com/dialogflow-console/fast/messenger/bootstrap.js?v=1"></script>
+  <df-messenger
+          intent="WELCOME"
+          chat-title="FruitShopBot"
+          agent-id="17a68f67-ccc6-4fe8-ab13-0d52e4591475"
+          language-code="vi"
+  ></df-messenger>
   <style>
     :root {
       --primary-color: #2e8b57;
@@ -207,7 +214,7 @@
             <c:remove var="success" scope="session"/>
           </c:if>
 
-          <form action="${pageContext.request.contextPath}/user/Confirm.jsp?type=updateUser" method="post">
+          <form id="userForm" action="${pageContext.request.contextPath}/user/Confirm.jsp?type=updateUser" method="post">
             <div class="mb-4">
               <label class="form-label">
                 <i class="fas fa-envelope me-2 text-muted"></i>Email
@@ -226,9 +233,11 @@
               <label class="form-label">
                 <i class="fas fa-phone me-2 text-muted"></i>Số điện thoại
               </label>
-              <input type="text" name="phone" class="form-control" value="${user.phone}" />
+              <input type="text" id="phone" name="phone" class="form-control" value="${user.phone}" />
+              <div id="phoneError" class="text-danger d-none">
+                <i class="fas fa-exclamation-circle"></i> Số điện thoại không hợp lệ!
+              </div>
             </div>
-
             <div class="mb-4">
               <label class="form-label">
                 <i class="fas fa-map-marker-alt me-2 text-muted"></i>Địa chỉ
@@ -311,6 +320,7 @@
 <jsp:include page="/templates/footer.jsp"/>
 <script src="${pageContext.request.contextPath}/js/bootstrap/bootstrap.bundle.min.js"></script>
 <script src="${pageContext.request.contextPath}/js/geocoder.js"></script>
+<script src="${pageContext.request.contextPath}/js/userValidate.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/js/all.min.js"></script>
 <script>
   document.addEventListener("DOMContentLoaded", function () {
@@ -362,6 +372,21 @@
     document.getElementById("ward").value = "";
     document.getElementById("district").value = "";
     document.getElementById("city").value = "";
+  });
+  document.addEventListener("DOMContentLoaded", function () {
+    document.querySelector("form").addEventListener("submit", function (event) {
+      let phoneInput = document.getElementById("phone");
+      let phoneError = document.getElementById("phoneError");
+      let phonePattern = /^(0[1-9][0-9]{8}|84[1-9][0-9]{8})$/; // Hỗ trợ số điện thoại Việt Nam
+      let phoneValue = phoneInput.value.trim();
+
+      if (phoneValue !== "" && !phonePattern.test(phoneValue)) {
+        phoneError.classList.remove("d-none");
+        event.preventDefault(); // Chặn submit nếu số điện thoại sai định dạng
+      } else {
+        phoneError.classList.add("d-none");
+      }
+    });
   });
 </script>
 </body>

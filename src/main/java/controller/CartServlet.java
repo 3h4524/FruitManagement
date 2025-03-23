@@ -12,7 +12,6 @@ import service.ProductService;
 import service.ProductVariantService;
 
 import java.io.IOException;
-import java.util.Map;
 
 @WebServlet(name = "cartServlet", value = "/carts")
 public class CartServlet extends HttpServlet {

@@ -14,6 +14,13 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://www.gstatic.com/dialogflow-console/fast/messenger/bootstrap.js?v=1"></script>
+    <df-messenger
+            intent="WELCOME"
+            chat-title="FruitShopBot"
+            agent-id="17a68f67-ccc6-4fe8-ab13-0d52e4591475"
+            language-code="vi"
+    ></df-messenger>
     <!-- Custom Styles -->
     <style>
         :root {
@@ -444,17 +451,24 @@
                                                 </a>
                                                 <c:choose>
                                                     <c:when test="${user.status == 'INACTIVE'}">
-                                                        <a href="${pageContext.request.contextPath}/users?action=restore&id=${user.id}" class="btn btn-outline-primary btn-sm" style="width: 100px;">
+                                                        <a href="${pageContext.request.contextPath}/users?action=restore&id=${user.id}"
+                                                           class="btn btn-outline-primary btn-sm"
+                                                           style="width: 100px;"
+                                                           onclick="return confirm('Bạn có chắc chắn muốn khôi phục người dùng này không?');">
                                                             <i class="fas fa-undo"></i> Restore
                                                         </a>
                                                     </c:when>
                                                     <c:otherwise>
-                                                        <a href="${pageContext.request.contextPath}/users?action=delete&id=${user.id}" class="btn btn-outline-danger btn-sm" style="width: 100px;">
-                                                            <i class="fas fa-trash"></i> Delete
+                                                        <a href="${pageContext.request.contextPath}/users?action=delete&id=${user.id}"
+                                                           class="btn btn-danger btn-sm"
+                                                           style="width: 100px;"
+                                                           onclick="return confirm('Bạn có chắc chắn muốn xóa người dùng này không? Hành động này không thể hoàn tác!');">
+                                                            <i class="fas fa-trash-alt"></i> Delete
                                                         </a>
                                                     </c:otherwise>
                                                 </c:choose>
                                             </td>
+
                                         </tr>
                                     </c:if>
                                 </c:forEach>

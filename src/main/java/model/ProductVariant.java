@@ -1,6 +1,7 @@
 package model;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.Nationalized;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
@@ -25,6 +26,7 @@ import java.math.BigDecimal;
                 query = "SELECT p FROM ProductVariant p ORDER BY p.id")
 })
 @Entity
+
 public class ProductVariant {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -43,6 +45,10 @@ public class ProductVariant {
     @Column(name = "Price", nullable = false, precision = 10, scale = 2)
     private BigDecimal price;
 
+    @ColumnDefault("0")
+    @Column(name = "IsDeleted")
+    private Boolean isDeleted;
+
     public Integer getId() {
         return id;
     }
@@ -59,7 +65,6 @@ public class ProductVariant {
         this.productID = productID;
     }
 
-
     public String getSize() {
         return size;
     }
@@ -74,6 +79,14 @@ public class ProductVariant {
 
     public void setPrice(BigDecimal price) {
         this.price = price;
+    }
+
+    public Boolean getIsDeleted() {
+        return isDeleted;
+    }
+
+    public void setIsDeleted(Boolean isDeleted) {
+        this.isDeleted = isDeleted;
     }
 
 }

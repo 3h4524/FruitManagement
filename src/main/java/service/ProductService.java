@@ -1,19 +1,24 @@
 package service;
 
 import dao.GenericDAO;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.Persistence;
 import model.Category;
-import model.Product;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
+import model.Product;
+import model.ProductStock;
+import model.ProductVariant;
 
 import java.math.BigDecimal;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 
 public class ProductService {
     private final GenericDAO<Product> productDAO = new GenericDAO<>(Product.class);
+    static final EntityManagerFactory emf = Persistence.createEntityManagerFactory("FruitManagementPU");
+
     public List<Product> getAllProducts() {
         return productDAO.getAll();
     }
@@ -26,13 +31,25 @@ public class ProductService {
         productDAO.insert(product);
     }
 
-    public boolean updateProduct(Product product){
+    public boolean updateProduct(Product product) {
         return productDAO.update(product);
     }
 
     public void deleteProduct(int id) {
-        productDAO.delete(id);
+        EntityManager em = emf.createEntityManager();
+        try {
+            em.getTransaction().begin();
+            Product product = productDAO.findById(id);
+            if(product != null){
+                product.setIsDeleted(!product.getIsDeleted());
+                em.merge(product);
+            }
+            em.getTransaction().commit();
+        } finally {
+            em.close();
+        }
     }
+
     public List<Product> listWithOffset(int page, int pageSize) {
         return productDAO.listWithOffset(page, pageSize);
     }
@@ -49,6 +66,7 @@ public class ProductService {
             em.close();
         }
     }
+
     public List<Category> getAllCategories() {
         EntityManager em = GenericDAO.emf.createEntityManager(); // Mở EntityManager
         try {
@@ -121,9 +139,9 @@ public class ProductService {
     }
 
 
-    public List<Map<String, Object>> detailProduct(int id){
+    public List<Map<String, Object>> detailProduct(int id) {
         EntityManager em = productDAO.emf.createEntityManager();
-        try{
+        try {
             String jpql = "SELECT p.id, p.name, p.imageURL, p.description, pv.size, pv.price, ps.amount " +
                     "FROM Product p " +
                     "JOIN ProductVariant pv ON p = pv.productID " +
@@ -142,6 +160,101 @@ public class ProductService {
                             "price", row[5],
                             "stock", row[6]
                     )).collect(Collectors.toList());
+        } finally {
+            em.close();
+        }
+    }
+
+
+    public void updateProductDetails(int productId, String name, String description, String imageURL,
+                                     String[] sizes, String[] prices, String[] quantities) {
+        ProductStockService productStockService = new ProductStockService();
+        InventoryLogService inventoryLogService = new InventoryLogService();
+        ProductService productService = new ProductService();
+        ProductVariantService productVariantService = new ProductVariantService();
+        Product product = productService.getProductById(productId);
+
+        if (product == null) {
+            return;
+        }
+
+        product.setName(name);
+        product.setDescription(description);
+        product.setImageURL(imageURL);
+        productService.updateProduct(product);
+
+        List<ProductVariant> existingVariant = productVariantService.getAllProductVariants(productId);
+        Set<String> newSize = new HashSet<>(Arrays.asList(sizes));
+        for(ProductVariant productVariant : existingVariant) {
+            if(!newSize.contains(productVariant.getSize())) {
+                productVariantService.deleteProductVariant(productVariant.getId());
+            }
+        }
+
+        if (sizes != null && prices != null && quantities != null) {
+            for (int i = 0; i < sizes.length; i++) {
+                try {
+                    String size = sizes[i];
+                    BigDecimal price = new BigDecimal(product.getId());
+                    int quantity = Integer.parseInt(quantities[i]);
+
+                    ProductVariant productVariant = productVariantService.getVariantByProductAndSize(productId, size);
+
+                    if (productVariant != null) {
+                        productVariant.setPrice(price);
+                        productVariantService.updateVariant(productVariant);
+                        ProductStock productStock = productStockService.getProductStock(productVariant.getId());
+                        productStock.setAmount(quantity);
+                        productStockService.updateProductStock(productStock);
+                    } else {
+                        productVariant = new ProductVariant();
+                        productVariant.setProductID(product);
+                        productVariant.setSize(size);
+                        productVariant.setPrice(price);
+                        productVariantService.addProductVariant(productVariant);
+
+                        productVariant = productVariantService.getVariantByProductAndSize(productId, size);
+
+                        // Tạo stock mới
+                        ProductStock newStock = new ProductStock();
+                        newStock.setProductVariantID(productVariant);
+                        newStock.setAmount(quantity);
+                        newStock.setInventoryID(new InventoryService().findById(1));
+                        productStockService.addProductStock(newStock);
+                    }
+                } catch (NumberFormatException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+    public List<Map<String, Object>> getMostOrderedProducts(Integer limit) {
+        EntityManager em = productDAO.emf.createEntityManager();
+        try {
+            String jpql = "SELECT p.id, p.name, p.description, p.imageURL, " +
+                    "COALESCE(SUM(od.quantity), 0) AS totalOrdered, " +
+                    "COALESCE(MIN(pv.price), 0) AS productPrice " +  // Lấy giá nhỏ nhất
+                    "FROM Product p " +
+                    "LEFT JOIN ProductVariant pv ON p = pv.productID " +
+                    "LEFT JOIN OrderDetail od ON pv = od.productVariantID " +
+                    "GROUP BY p.id, p.name, p.description, p.imageURL " +
+                    "ORDER BY totalOrdered DESC";
+
+            TypedQuery<Object[]> query = em.createQuery(jpql, Object[].class);
+
+            // Nếu limit > 0 thì giới hạn số lượng, nếu không thì lấy tất cả
+            if (limit != null && limit > 0) {
+                query.setMaxResults(limit);
+            }
+
+            return query.getResultStream().map(row -> Map.of(
+                    "productId", row[0],
+                    "productName", row[1],
+                    "description", row[2],
+                    "imageURL", row[3],
+                    "totalOrdered", row[4],
+                    "productPrice", row[5]  // Thêm giá nhỏ nhất vào Map
+            )).collect(Collectors.toList());
         } finally {
             em.close();
         }

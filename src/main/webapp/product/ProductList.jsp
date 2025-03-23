@@ -6,113 +6,25 @@
 <html>
 <head>
     <title>Product List</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f8f9fa;
-            margin: 0;
-            padding: 20px;
-            text-align: center;
-        }
-        .container {
-            max-width: 900px;
-            margin: auto;
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-        h2 {
-            color: #333;
-        }
-        .links {
-            margin-bottom: 20px;
-        }
-        .links a {
-            text-decoration: none;
-            background: #007bff;
-            color: white;
-            padding: 8px 12px;
-            border-radius: 5px;
-            margin: 5px;
-            display: inline-block;
-        }
-        .links a:hover {
-            background: #0056b3;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-        table, th, td {
-            border: 1px solid #ddd;
-        }
-        th, td {
-            padding: 10px;
-            text-align: left;
-        }
-        th {
-            background: #007bff;
-            color: white;
-        }
-        tr:nth-child(even) {
-            background: #f2f2f2;
-        }
-        .action-links a {
-            text-decoration: none;
-            padding: 5px 10px;
-            border-radius: 4px;
-            margin-right: 5px;
-        }
-        .edit {
-            background: #28a745;
-            color: white;
-        }
-        .delete {
-            background: #dc3545;
-            color: white;
-        }
-        .edit:hover {
-            background: #218838;
-        }
-        .delete:hover {
-            background: #c82333;
-        }
-        .pagination {
-            margin-top: 20px;
-            text-align: center;
-        }
-        .pagination a {
-            text-decoration: none;
-            background: #007bff;
-            color: white;
-            padding: 8px 12px;
-            border-radius: 5px;
-            margin: 3px;
-            display: inline-block;
-        }
-        .pagination a:hover {
-            background: #0056b3;
-        }
-        .pagination strong {
-            padding: 8px 12px;
-            background: #343a40;
-            color: white;
-            border-radius: 5px;
-        }
-    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/ProductListcss.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
 </head>
 <body>
 <jsp:include page="/templates/header.jsp"/>
 <div class="container">
-    <h2>Welcome, ${user.name}</h2>
+    <p class="welcome-text"><i class="fas fa-user-circle"></i> Welcome, ${user.name}</p>
     <h2>Product List</h2>
 
     <div class="links">
-        <a href="${pageContext.request.contextPath}/users">Go to Users Page</a>
-        <a href="${pageContext.request.contextPath}/products?action=create">Add New Product</a>
-        <a href="${pageContext.request.contextPath}/inventory">InventoryLog</a>
+        <a href="${pageContext.request.contextPath}/users" class="btn"><i class="fas fa-users"></i> Users Page</a>
+        <a href="${pageContext.request.contextPath}/products?action=create" class="btn"><i
+                class="fas fa-plus-circle"></i> Add New Product</a>
+        <a href="${pageContext.request.contextPath}/inventory" class="btn"><i class="fas fa-clipboard-list"></i>
+            Inventory Log</a>
+        <a href="${pageContext.request.contextPath}/order?action=topOrders" class="btn"><i class="fas fa-star"></i> Top Product</a>
     </div>
 
     <c:set var="products" value="${requestScope.products}"/>
@@ -123,38 +35,54 @@
     <c:set var="totalProducts" value="${products.size()}"/>
     <c:set var="totalPages" value="${Math.ceil(totalProducts / pageSize)}"/>
 
-    <table>
-        <tr>
-            <th>ID</th>
-            <th>Name</th>
-            <th>Description</th>
-            <th>Import Date</th>
-            <th>Views</th>
-            <th>Action</th>
-        </tr>
-        <c:forEach var="product" items="${products}" varStatus="status">
-            <c:if test="${status.index >= start && status.index < end}">
-                <tr>
-                    <td>${product.id}</td>
-                    <td>${product.name}</td>
-                    <td>${product.description}</td>
-                    <td>${product.importDate}</td>
-                    <td>${product.imageURL}</td>
-                    <td>
-                            ${applicationScope.productViewCount[product.id] != null ? applicationScope.productViewCount[product.id] : 0}
-                    </td>
-                    <td class="action-links">
-                        <a href="${pageContext.request.contextPath}/products?action=update&productId=${product.id}" class="edit">Edit</a>
-                        <a href="${pageContext.request.contextPath}/products?action=delete&productId=${product.id}" class="delete">Delete</a>
-                    </td>
-                </tr>
-            </c:if>
-        </c:forEach>
-    </table>
+    <div class="table-responsive">
+        <table>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Description</th>
+                <th>Import Date</th>
+                <th>Views</th>
+                <th>Actions</th> <!-- Combined column header -->
+            </tr>
+            <c:forEach var="product" items="${products}" varStatus="status">
+                <c:if test="${status.index >= start && status.index < end}">
+                    <tr>
+                        <td>${product.id}</td>
+                        <td>${product.name}</td>
+                        <td>${product.description}</td>
+                        <td>${product.importDate}</td>
+                        <td>
+                                ${applicationScope.productViewCount[product.id] != null ? applicationScope.productViewCount[product.id] : 0}
+                        </td>
+                        <td class="action-links"> <!-- Combined cell for both buttons -->
+                            <a href="${pageContext.request.contextPath}/products?action=update&productId=${product.id}"
+                               class="btn edit"><i class="fas fa-edit"></i> Edit</a>
+                            <c:choose>
+                                <c:when test="${!product.isDeleted}">
+                                    <a href="${pageContext.request.contextPath}/products?action=delete&productId=${product.id}"
+                                       class="btn btn-danger delete">
+                                        <i class="fas fa-trash"></i> Delete
+                                    </a>
+                                </c:when>
+                                <c:otherwise>
+                                    <a href="${pageContext.request.contextPath}/products?action=delete&productId=${product.id}"
+                                       class="btn btn-success restore">
+                                        <i class="fas fa-trash-restore"></i> Restore
+                                    </a>
+                                </c:otherwise>
+                            </c:choose>
+                        </td>
+                    </tr>
+                </c:if>
+            </c:forEach>
+        </table>
+    </div>
 
     <div class="pagination">
         <c:if test="${currentPage > 1}">
-            <a href="${pageContext.request.contextPath}/products?page=${currentPage - 1}">Previous</a>
+            <a href="${pageContext.request.contextPath}/products?page=${currentPage - 1}"><i
+                    class="fas fa-chevron-left"></i> Previous</a>
         </c:if>
 
         <c:forEach var="i" begin="1" end="${totalPages}">
@@ -169,7 +97,8 @@
         </c:forEach>
 
         <c:if test="${currentPage < totalPages}">
-            <a href="${pageContext.request.contextPath}/products?page=${currentPage + 1}">Next</a>
+            <a href="${pageContext.request.contextPath}/products?page=${currentPage + 1}">Next <i
+                    class="fas fa-chevron-right"></i></a>
         </c:if>
     </div>
 </div>

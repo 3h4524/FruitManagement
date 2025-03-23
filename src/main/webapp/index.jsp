@@ -1,8 +1,9 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page import="service.ProductService" %>
 <jsp:useBean id="productService" class="service.ProductService" scope="page"/>
-<c:set var="products" value="${productService.getAllProducts()}" scope="request"/>
+<c:set var="products" value="${productService.getMostOrderedProducts(12)}" scope="request"/>
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -11,6 +12,13 @@
     <title>Chào Mừng Đến Với Fruitiverse</title>
     <link href="${pageContext.request.contextPath}/css/bootstrap/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/ProductListCartcss.css"/>
+    <script src="https://www.gstatic.com/dialogflow-console/fast/messenger/bootstrap.js?v=1"></script>
+    <df-messenger
+            intent="WELCOME"
+            chat-title="FruitShopBot"
+            agent-id="17a68f67-ccc6-4fe8-ab13-0d52e4591475"
+            language-code="vi"
+    ></df-messenger>
     <style>
         :root {
             --primary-color: #2e8b57;
@@ -109,8 +117,14 @@
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
     </style>
 </head>
@@ -121,7 +135,8 @@
     <div class="overlay">
         <h2 class="intro-title mb-4">Chào Mừng Đến Với Fruitiverse</h2>
         <p class="intro-text mb-5">
-            Fruitiverse - Shop trái cây tươi ngon mỗi ngày! Chúng tôi tự hào mang đến những loại trái cây chất lượng cao, an toàn và giàu dinh dưỡng. Hãy khám phá thế giới trái cây tươi mát cùng chúng tôi!
+            Fruitiverse - Shop trái cây tươi ngon mỗi ngày! Chúng tôi tự hào mang đến những loại trái cây chất lượng
+            cao, an toàn và giàu dinh dưỡng. Hãy khám phá thế giới trái cây tươi mát cùng chúng tôi!
         </p>
         <button onclick="scrollToProducts()" class="btn btn-green">
             Bắt Đầu Mua Sắm
@@ -132,34 +147,35 @@
 <!-- Danh sách sản phẩm - giới hạn 20 sản phẩm -->
 <section id="products-section" class="products-section">
     <div class="container">
-        <h2 class="text-primary text-center mb-4">Danh Sách Sản Phẩm</h2>
+        <h2 class="text-primary text-center mb-4">Danh Sách Sản Phẩm Bán Chạy</h2>
         <div class="row">
             <c:forEach var="product" items="${products}" varStatus="status">
-                <c:if test="${status.index < 20}">
-                    <div class="col-md-3 mb-4">
-                        <div class="card" style="--animation-order: ${status.index + 1}">
-                            <a href="products?action=productDetail&productId=${product.id}" class="text-decoration-none text-dark">
-                                <img src="${product.imageURL}" class="card-img-top" style="height: 200px; object-fit: cover;">
-                                <div class="card-body">
-                                    <h5 class="card-title">${product.name}</h5>
-                                    <p class="card-text">Giá: ${product.price} VND</p>
-                                </div>
-                            </a>
-                            <div class="card-footer text-center">
-                                <form action="AddToCartServlet" method="post">
-                                    <input type="hidden" name="productId" value="${product.id}">
-                                    <button type="submit" class="btn btn-primary">Thêm vào giỏ hàng</button>
-                                </form>
+                <div class="col-md-3 mb-4">
+                    <div class="card" style="--animation-order: ${status.index + 1}">
+                        <a href="products?action=productDetail&productId=${product['productId']}"
+                           class="text-decoration-none text-dark">
+                            <img src="${product['imageURL']}" class="card-img-top"
+                                 style="height: 200px; object-fit: cover;">
+                            <div class="card-body">
+                                <h5 class="card-title">${product['productName']}</h5>
+                                <p class="card-text">Giá: <fmt:formatNumber value="${product['productPrice']}"
+                                                                            pattern="#,###"/> VND</p>
                             </div>
+                        </a>
+                        <div class="card-footer text-center">
+                            <form action="AddToCartServlet" method="post">
+                                <input type="hidden" name="productId" value="${product['productId']}">
+                                <button type="submit" class="btn btn-primary">Thêm vào giỏ hàng</button>
+                            </form>
                         </div>
                     </div>
-                </c:if>
+                </div>
             </c:forEach>
         </div>
 
         <!-- Nút "Xem thêm" -->
         <div class="view-more-container">
-            <a href="${pageContext.request.contextPath}/products?action=find" class="btn btn-view-more">
+            <a href="${pageContext.request.contextPath}/products?action=productBestSeller" class="btn btn-view-more">
                 Xem Thêm Sản Phẩm <i class="bi bi-arrow-right"></i>
             </a>
         </div>
@@ -170,11 +186,11 @@
 <!-- JavaScript để cuộn xuống -->
 <script>
     function scrollToProducts() {
-        document.getElementById("products-section").scrollIntoView({ behavior: "smooth" });
+        document.getElementById("products-section").scrollIntoView({behavior: "smooth"});
     }
 
     // Add animation delay for each card
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
         const cards = document.querySelectorAll('.card');
         cards.forEach((card, index) => {
             card.style.setProperty('--animation-order', index + 1);

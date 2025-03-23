@@ -1,17 +1,13 @@
 
-
 package controller;
 
 import jakarta.servlet.*;
 import jakarta.servlet.http.*;
 import jakarta.servlet.annotation.*;
 import model.User;
-import service.MailService;
 import service.UserService;
 import service.Utils;
 import java.io.IOException;
-import java.net.URLEncoder;
-import java.util.ArrayList;
 import java.util.List;
 
 @WebServlet(name = "userServlet", value = "/users")
@@ -114,46 +110,10 @@ public class UserServlet extends HttpServlet {
 
     }
     public void searchUser(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String type = request.getParameter("searchType");
-        String value = request.getParameter("searchValue");
-        HttpSession session = request.getSession();
-        if(type == null){
-            type = "";
-        }
-        List<User> users = new ArrayList<>();
-        try {
-            switch (type) {
-                case "name":
-                    users = userService.getCustomerByName(value);
-                    break;
-                case "id":
-                    int userId = Integer.parseInt(value); // Chuyển đổi ID từ String sang int
-                    User userById = userService.getUserById(userId);
-                    if (userById != null) {
-                        users.add(userById);
-                    }
-                    break;
-                case "email":
-                    User userByEmail = userService.getUserByEmail(value);
-                    if (userByEmail != null) {
-                        users.add(userByEmail);
-                    }
-                    break;
-                case "phone":
-                    users = userService.getUserByPhone(value);
-                    break;
-                default:
-                    users = userService.getAllUser();
-            }
-        } catch (NumberFormatException e) {
-            session.setAttribute("error", "ID không hợp lệ. Vui lòng nhập số nguyên hợp lệ!");
-            e.printStackTrace(); // In lỗi ra console
-        } catch (Exception e) {
-            session.setAttribute("error", "Đã xảy ra lỗi khi tìm kiếm người dùng!");
-            e.printStackTrace();
-        }
-        session.setAttribute("users", users);
-        request.getRequestDispatcher("user/UserList.jsp").forward(request, response);
+        int id = Integer.parseInt(request.getParameter("id"));
+        User user = userService.getUserById(id);
+        request.setAttribute("users", user);
+        request.getRequestDispatcher("UserList.jsp").forward(request, response);
     }
     public void updateUserEdit(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         int id = Integer.parseInt(request.getParameter("id"));
@@ -273,18 +233,13 @@ public class UserServlet extends HttpServlet {
 
         if (user != null) {
             user.setAddress(address);
-            boolean success = userService.updateUser(user);
-            if(success) {
-                session.setAttribute("UserLogin", user);
-                session.setAttribute("success", "Thay đổi thành công");
-            }else{
-                session.setAttribute("error", "Thay đổi thất bại");
-            }
+            session.setAttribute("UserLogin", user);
         } else {
             session.setAttribute("error", "Không tìm thấy thông tin người dùng.");
         }
 
         // 6️⃣ Kiểm tra tham số "page" trong URL của referer
+        session.setAttribute("success", "Thay đổi thành công");
         response.sendRedirect(contextPath + "/user/UserAccount.jsp?page=user/UserSaveAddress.jsp");
     }
 
@@ -308,6 +263,11 @@ public class UserServlet extends HttpServlet {
         boolean isMatch = Utils.checkPassword(oldPassword, user.getPasswordHash());
 
         if (isMatch) {
+            if(!Utils.isValidPassword(newPassword)) {
+                session.setAttribute("error", "Mật khẩu phải có ít nhất 8 ký tự, ít nhất 1 chữ viết hoa và số");
+                response.sendRedirect("user/UserAccount.jsp?page=user/UserChangePasswordByOldPassword.jsp");
+                return;
+            }
             if (userService.changePassword(user, newPassword, confirmPassword)) {
                 session.removeAttribute("UserLogin"); // Xóa thuộc tính session trước
                 String successMessage = "Đổi mật khẩu thành công, vui lòng đăng nhập lại!";
@@ -336,7 +296,11 @@ public class UserServlet extends HttpServlet {
         if (!isLoggedIn) {
             user = (User) session.getAttribute("UserIsNotLoggedIn");
         }
-
+        if(Utils.isValidPassword(newPassword)) {
+            session.setAttribute("error", "Mật khẩu phải có ít nhất 8 ký tự, ít nhất 1 chữ viết hoa và số.");
+            response.sendRedirect(request.getContextPath() + "/user/UserChangePassword.jsp");
+            return;
+        }
         // Kiểm tra người dùng hợp lệ và mật khẩu mới hợp lệ
         if (user != null && userService.changePassword(user, newPassword, confirmPassword)) {
             String successMessage = "Đổi mật khẩu thành công, vui lòng đăng nhập lại!";

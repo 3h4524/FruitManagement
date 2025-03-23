@@ -25,6 +25,8 @@ import org.hibernate.annotations.OnDeleteAction;
         @NamedQuery(name="ProductStock.listWithOffset",
                 query = "SELECT p FROM ProductStock p ORDER BY p.id")
 })
+
+
 @Entity
 public class ProductStock {
     @Id

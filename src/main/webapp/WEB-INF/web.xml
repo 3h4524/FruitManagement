@@ -15,4 +15,7 @@
         <param-name>email.password</param-name>
         <param-value>xxgj oguu egrq jhks</param-value>
     </context-param>
+    <listener>
+        <listener-class>listener.AppListener</listener-class>
+    </listener>
 </web-app>

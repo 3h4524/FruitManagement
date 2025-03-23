@@ -4,6 +4,7 @@ import jakarta.servlet.*;
 import jakarta.servlet.http.*;
 import jakarta.servlet.annotation.*;
 import model.*;
+import org.hibernate.annotations.ColumnDefault;
 import service.InventoryService;
 import service.ProductService;
 import service.ProductStockService;
@@ -12,6 +13,7 @@ import service.ProductVariantService;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -33,6 +35,7 @@ public class ProductServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String action = request.getParameter("action");
+        System.out.println("Action received: " + action);
         if (action == null) {
             action = "";
         }
@@ -52,12 +55,20 @@ public class ProductServlet extends HttpServlet {
             case "productDetail":
                 detailProduct(request, response);
                 break;
+            case "productBestSeller":
+                getProductBestSeller(request, response);
+                break;
             default:
                 listProducts(request, response);
                 break;
         }
     }
 
+    private void getProductBestSeller(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        List<Map<String, Object>> products = productService.getMostOrderedProducts(20);
+        request.setAttribute("products", products);
+        request.getRequestDispatcher("product/ProductBestSeller.jsp").forward(request, response);
+    }
     private void listProducts(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         List<Product> products = productService.getAllProducts();
         request.setAttribute("products", products);
@@ -105,13 +116,8 @@ public class ProductServlet extends HttpServlet {
     private void deleteProduct(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         try {
             int id = Integer.parseInt(request.getParameter("productId"));
-            Product product = productService.getProductById(id);
             productService.deleteProduct(id);
 
-            List<ProductVariant> productVariants = productVariantService.getAllProductVariants(id);
-            for (ProductVariant productVariant : productVariants) {
-                productVariantService.deleteProductVariant(productVariant.getId());
-            }
             response.sendRedirect(request.getContextPath() + "/products");
         } catch (NumberFormatException e) {
             throw new NumberFormatException("id must be an integer");
@@ -210,70 +216,7 @@ public class ProductServlet extends HttpServlet {
             String[] prices = request.getParameterValues("prices");
             String[] quantities = request.getParameterValues("quantities");
 
-
-            Product product = productService.getProductById(productId);
-            if (product != null) {
-                product.setName(name);
-                product.setDescription(description);
-                product.setImageURL(imageURL);
-                productService.updateProduct(product);
-            }
-
-            List<ProductVariant> existingVariants = productVariantService.getAllProductVariants(productId);
-            Set<String> newSizeSet = null;
-            if (sizes != null) {
-                newSizeSet = new HashSet<>(Arrays.asList(sizes));
-            }
-
-            for (ProductVariant variant : existingVariants) {
-                if (!newSizeSet.contains(variant.getSize())) {
-                    productVariantService.deleteProductVariant(variant.getId());
-                }
-            }
-
-
-            if (sizes != null && prices != null && quantities != null) {
-                for (int i = 0; i < sizes.length; i++) {
-                    try {
-                        String size = sizes[i];
-                        BigDecimal price = new BigDecimal(prices[i]);
-                        Integer quantity = Integer.parseInt(quantities[i]);
-
-                        // Kiểm tra xem ProductVariant có tồn tại không
-                        ProductVariant productVariant = productVariantService.getVariantByProductAndSize(productId, size);
-
-                        if (productVariant != null) {
-                            // ✅ Nếu size đã tồn tại → Cập nhật giá và số lượng
-                            productVariant.setPrice(price);
-                            productVariantService.updateVariant(productVariant);
-
-                            ProductStock productStock = productStockService.getProductStock(productVariant.getId());
-                            productStock.setAmount(quantity);
-                            productStockService.updateProductStock(productStock);
-                        } else {
-                            // 🔥 Nếu size chưa tồn tại → Thêm mới vào database
-                            productVariant = new ProductVariant();
-                            productVariant.setProductID(product);
-                            productVariant.setSize(size);
-                            productVariant.setPrice(price);
-                            productVariantService.addProductVariant(productVariant);
-
-                            // Lấy lại productVariant vừa thêm để có ID chính xác
-                            productVariant = productVariantService.getVariantByProductAndSize(productId, size);
-
-                            // Tạo stock mới cho size mới
-                            ProductStock newStock = new ProductStock();
-                            newStock.setProductVariantID(productVariant);
-                            newStock.setAmount(quantity);
-                            newStock.setInventoryID(new InventoryService().findById(1));
-                            productStockService.addProductStock(newStock);
-                        }
-                    } catch (NumberFormatException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-
+            productService.updateProductDetails(productId, name, description, imageURL, sizes, prices, quantities);
             response.sendRedirect(request.getContextPath() + "/products");
         } catch (NumberFormatException e) {
             request.setAttribute("error", e.getMessage());

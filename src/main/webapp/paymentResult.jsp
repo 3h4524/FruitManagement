@@ -7,6 +7,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kết quả thanh toán</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <script src="https://www.gstatic.com/dialogflow-console/fast/messenger/bootstrap.js?v=1"></script>
+    <df-messenger
+            intent="WELCOME"
+            chat-title="FruitShopBot"
+            agent-id="17a68f67-ccc6-4fe8-ab13-0d52e4591475"
+            language-code="vi"
+    ></df-messenger>
     <style>
         body {
             font-family: Arial, sans-serif;
