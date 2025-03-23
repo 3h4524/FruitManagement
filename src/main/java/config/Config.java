@@ -78,7 +78,10 @@ public class Config {
 
     public static String hmacSHA512(final String key, final String data) {
         try {
+<<<<<<< HEAD
 
+=======
+>>>>>>> c836193 (add order management)
             if (key == null || data == null) {
                 throw new NullPointerException();
             }

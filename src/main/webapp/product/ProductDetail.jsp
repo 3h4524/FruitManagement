@@ -72,8 +72,7 @@
             <p class="text-secondary" id="stockCount">Còn lại: ${productDetails[0].stock}</p>
 
             <!-- Form thêm vào giỏ hàng -->
-            <form action="carts" method="post">
-                <input type="hidden" name="action" value="addToCart">
+            <form action="carts" method="get">
                 <input type="hidden" id="productId" name="productId" value="${productDetails[0].productId}">
                 <input type="hidden" id="size" name="size" value="">
 
@@ -100,9 +99,9 @@
                 </div>
 
                 <!-- Nút thêm vào giỏ -->
-                <!-- Nút thêm vào giỏ -->
                 <div class="text-center">
-                    <button type="button" id="addToCartBtn" class="btn btn-outline-primary px-4 me-2">THÊM VÀO GIỎ</button>
+                    <button type="button" id="addToCartBtn" class="btn btn-outline-primary px-4 me-2">THÊM VÀO GIỎ
+                    </button>
                     <button type="submit" name="action" value="buyNow" class="btn btn-danger px-4">MUA NGAY</button>
                 </div>
             </form>

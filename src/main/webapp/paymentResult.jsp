@@ -1,62 +1,68 @@
-<%--
-  Created by IntelliJ IDEA.
-  User: DELL
-  Date: 18/03/2025
-  Time: 7:46 CH
-  To change this template use File | Settings | File Templates.
---%>
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<html>
+<%@ page contentType="text/html; charset=UTF-8" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<!DOCTYPE html>
+<html lang="vi">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kết quả thanh toán</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
-          integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA=="
-          crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            text-align: center;
+            padding: 50px;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        .success {
+            color: #28a745;
+        }
+        .error {
+            color: #dc3545;
+        }
+        .btn {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 20px;
+            color: white;
+            background-color: #007bff;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background 0.3s;
+        }
+        .btn:hover {
+            background-color: #0056b3;
+        }
+    </style>
 </head>
 <body>
-<section style="margin-top: 50px; text-align: center;">
-    <div>
-        <img src="https://cdn2.cellphones.com.vn/insecure/rs:fill:150:0/q:90/plain/https://cellphones.com.vn/media/wysiwyg/Review-empty.png"
-             alt="Transaction Status"
-             style="width: 120px; height: 120px; margin-bottom: 20px;">
+<div class="container">
+    <c:choose>
+        <c:when test="${transResult eq true}">
+            <h2 class="success">✅ Thanh toán thành công!</h2>
+            <p>Cảm ơn bạn đã thanh toán qua VNPay.</p>
+            <p><strong>Mã đơn hàng:</strong> ${param.vnp_TxnRef}</p>
+            <p><strong>Mã giao dịch:</strong> ${param.vnp_TransactionNo}</p>
+            <p><strong>Số tiền:</strong> ${param.vnp_Amount / 100} VNĐ</p>
+        </c:when>
+        <c:otherwise>
+            <h2 class="error">❌ Thanh toán thất bại!</h2>
+            <p>Rất tiếc, giao dịch của bạn không thành công.</p>
+            <p>Vui lòng thử lại hoặc chọn phương thức thanh toán khác.</p>
+        </c:otherwise>
+    </c:choose>
+
+    <div class="mt-4">
+        <a href="${pageContext.request.contextPath}/products?action=find" class="btn">🛒 Tiếp tục mua sắm</a>
     </div>
-
-    <!-- Giao dịch thành công -->
-    <c:if test="${transResult eq true}">
-        <div>
-            <h3 style="font-weight: bold; color: #28a745;">
-                Bạn đã giao dịch thành công!
-                <i class="fas fa-check-circle"></i>
-            </h3>
-            <p style="font-size: 18px; margin-top: 15px;">Vui lòng để ý số điện thoại của nhân viên tư vấn:</p>
-            <strong style="color: red; font-size: 24px;">0383459560</strong>
-        </div>
-    </c:if>
-
-    <!-- Giao dịch thất bại -->
-    <c:if test="${transResult eq false}">
-        <div>
-            <h3 style="font-weight: bold; color: #dc3545;">
-                Đơn hàng giao dịch thất bại!
-            </h3>
-            <p style="font-size: 18px; margin-top: 15px;">Cảm ơn quý khách đã dùng dịch vụ của chúng tôi.</p>
-            <p style="font-size: 18px;">Liên hệ tổng đài để được tư vấn:</p>
-            <strong style="color: red; font-size: 24px;">0383456xxx</strong>
-        </div>
-    </c:if>
-
-    <!-- Đang xử lý giao dịch -->
-    <c:if test="${transResult == null}">
-        <div>
-            <h3 style="font-weight: bold; color: #ffc107;">
-                Chúng tôi đã tiếp nhận đơn hàng, xin chờ quá trình xử lý!
-            </h3>
-            <p style="font-size: 18px; margin-top: 15px;">Vui lòng để ý số điện thoại của nhân viên tư vấn:</p>
-            <strong style="color: red; font-size: 24px;">0383456xxx</strong>
-        </div>
-    </c:if>
-</section>
-<a href="${pageContext.request.contextPath}/index.jsp">Quay về trang chủ</a>
+</div>
 </body>
 </html>

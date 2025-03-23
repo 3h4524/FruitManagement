@@ -63,7 +63,7 @@ public class VnpayReturnServlet extends HttpServlet {
                 }
                 orderService.updateOrder(order);
                 request.setAttribute("transResult", transSuccess);
-                request.getRequestDispatcher("paymentResult.jsp").forward(request, response);
+                request.getRequestDispatcher("PaymentResult.jsp").forward(request, response);
             } else {
                 //RETURN PAGE ERROR
                 System.out.println("GD KO HOP LE (invalid signature)");
