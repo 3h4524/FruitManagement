@@ -37,7 +37,7 @@ public class GenericDAO<T> extends BaseDAO<T> {
             em.getTransaction().commit();
             return true;
         } catch (Exception e) {
-            em.getTransaction().rollback(); // Rollback nếu có lỗi
+            em.getTransaction().rollback(); // Rollback nếu có  lỗi
             System.out.println("LỖI INSERT: " + e.getMessage()); // In lỗi ra console
             e.printStackTrace(); // In toàn bộ lỗi
             return false;

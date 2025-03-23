@@ -334,7 +334,6 @@
 
             <div class="product-divider"></div>
 
-            <h2 class="product-price"><span id="productPrice">${productDetails[0].price}</span> VND</h2>
             <div class="stock-info">
                 <span class="stock-indicator"></span>
                 <span id="stockCount">Còn lại: ${productDetails[0].stock} sản phẩm</span>

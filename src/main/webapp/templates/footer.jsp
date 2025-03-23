@@ -8,6 +8,7 @@
   <style>
     /* Footer styling */
     .footer {
+      width: 100%;
       background-color: #f8f9fa;
       color: #333;
       font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;

@@ -12,6 +12,7 @@
 
 /* Top Bar */
 .fs-top-bar {
+    width: 100%;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -176,6 +177,8 @@
 
 /* Main Navigation */
 .fs-navbar {
+    width: 100%;
+    box-sizing: border-box;
     background-color: var(--white);
     padding: 0;
     display: flex;

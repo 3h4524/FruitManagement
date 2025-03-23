@@ -11,7 +11,7 @@ import java.io.IOException;
 import java.util.Set;
 
 @WebFilter("/*")
-public class AuthenFilter implements Filter {
+public class AuthenticationFilter implements Filter {
     private static final Set<String> FUNC_FOR_USER = Set.of(
             "/carts", "/cart/Cart.jsp", "/products?action=find", "/product/ProductListCart.jsp",
             "/product/ProductDetail.jsp", "/checkout", "/cart/Success.jsp", "/PaymentResult.jsp", "/vnpayReturn", "/user/UserAccount.jsp", "/user/UserOrders.jsp"

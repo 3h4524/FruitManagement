@@ -5,6 +5,8 @@ import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.Nationalized;
 
 import java.time.Instant;
+
+@Entity
 @NamedQueries({
         @NamedQuery(name = "User.findAll", query = "SELECT u FROM User u"),
         @NamedQuery(name = "User.findById", query = "SELECT u FROM User u WHERE u.id = :id"),
@@ -14,10 +16,11 @@ import java.time.Instant;
         @NamedQuery(name = "User.findByRegistrationDateRange",
                 query = "SELECT u FROM User u WHERE u.registrationDate BETWEEN :startDate AND :endDate"),
         @NamedQuery(name = "User.findByName", query = "SELECT u FROM User u WHERE u.name LIKE :name"),
-        @NamedQuery(name = "User.findByPhone", query = "SELECT u FROM User u WHERE u.phone = :phone")
+        @NamedQuery(name = "User.findByPhone", query = "SELECT u FROM User u WHERE u.phone = :phone"),
+        // Added new named query to support OAuth functionality
+        @NamedQuery(name = "User.findByRememberToken",
+                query = "SELECT u FROM User u WHERE u.rememberToken = :token AND u.status = 'ACTIVE'")
 })
-
-@Entity
 @Table(name = "Users")
 public class User {
     @Id
@@ -60,6 +63,16 @@ public class User {
 
     @Column(name = "remember_token")
     private String rememberToken;
+
+    @Column(name = "profile_picture")
+    private String profilePicture;
+
+    @ColumnDefault("0")
+    @Column(name = "is_oauth_user")
+    private Boolean isOauthUser;
+
+    @Column(name = "oauth_provider", length = 20)
+    private String oauthProvider;
 
     public Integer getId() {
         return id;
@@ -141,4 +154,34 @@ public class User {
         this.rememberToken = rememberToken;
     }
 
+    public String getProfilePicture() {
+        return profilePicture;
+    }
+
+    public void setProfilePicture(String profilePicture) {
+        this.profilePicture = profilePicture;
+    }
+
+    public Boolean getIsOauthUser() {
+        return isOauthUser;
+    }
+
+    public void setIsOauthUser(Boolean isOauthUser) {
+        this.isOauthUser = isOauthUser;
+    }
+
+    public String getOauthProvider() {
+        return oauthProvider;
+    }
+
+    public void setOauthProvider(String oauthProvider) {
+        this.oauthProvider = oauthProvider;
+    }
+    public boolean isActive() { return "ACTIVE".equals(this.status); } // Utility method to check if user is an admin public boolean isAdmin() { return "Admin".equalsIgnoreCase(this.role); }
+/*
+ TODO [Reverse Engineering] create field to map the 'last_login' column
+ Available actions: Define target Java type | Uncomment as is | Remove column mapping
+    @Column(name = "last_login", columnDefinition = "timestamp not null")
+    private Object lastLogin;
+*/
 }

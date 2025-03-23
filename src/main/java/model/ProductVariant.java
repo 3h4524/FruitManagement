@@ -7,6 +7,9 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 import java.math.BigDecimal;
+import java.time.Instant;
+
+@Entity
 @NamedQueries({
         @NamedQuery(name = "ProductVariant.findAll",
                 query = "SELECT p FROM ProductVariant p"),
@@ -25,8 +28,6 @@ import java.math.BigDecimal;
         @NamedQuery(name="ProductVariant.listWithOffset",
                 query = "SELECT p FROM ProductVariant p ORDER BY p.id")
 })
-@Entity
-
 public class ProductVariant {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -48,6 +49,13 @@ public class ProductVariant {
     @ColumnDefault("0")
     @Column(name = "IsDeleted")
     private Boolean isDeleted;
+
+    @ColumnDefault("NULL")
+    @Column(name = "discountPrice", precision = 10, scale = 2)
+    private BigDecimal discountPrice;
+
+    @Column(name = "discountExpiry")
+    private Instant discountExpiry;
 
     public Integer getId() {
         return id;
@@ -87,6 +95,22 @@ public class ProductVariant {
 
     public void setIsDeleted(Boolean isDeleted) {
         this.isDeleted = isDeleted;
+    }
+
+    public BigDecimal getDiscountPrice() {
+        return discountPrice;
+    }
+
+    public void setDiscountPrice(BigDecimal discountPrice) {
+        this.discountPrice = discountPrice;
+    }
+
+    public Instant getDiscountExpiry() {
+        return discountExpiry;
+    }
+
+    public void setDiscountExpiry(Instant discountExpiry) {
+        this.discountExpiry = discountExpiry;
     }
 
 }

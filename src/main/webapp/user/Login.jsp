@@ -3,8 +3,12 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Đăng nhập</title>
   <link href="${pageContext.request.contextPath}/css/bootstrap/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/css/headercss.css"/>
   <title>Đăng nhập</title>
   <style>
     :root {
@@ -194,7 +198,9 @@
           <form action="${pageContext.request.contextPath}/registers">
             <button type="submit" class="btn btn-secondary">Đăng ký</button>
           </form>
-        </div>
+          <a href="https://accounts.google.com/o/oauth2/auth?client_id=${googleClientId}&redirect_uri=${googleRedirectUri}&response_type=code&scope=email profile" class="btn btn-light mt-3 w-100">
+            <i class="bi bi-google me-2"></i>Login with Google
+          </a></div>
       </div>
     </div>
   </div>

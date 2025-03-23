@@ -78,7 +78,7 @@
     <div class="col-md-8 text-center content-overlay">
         <h2 class="intro-title mb-4">Chào Mừng Đến Với Fruitiverse</h2>
         <p class="intro-text mb-5">
-            Fruitiverse - Shop trái cây tươi ngon mỗi ngày! Chúng tôi tự hào mang đến những loại trái cây chất lượng cao, an toàn và giàu dinh dưỡng. Hãy khám phá thế giới trái cây tươi mát cùng chúng tôi!
+                Fruitiverse - Shop trái cây tươi ngon mỗi ngày! Chúng tôi tự hào mang đến những loại trái cây chất lượng cao, an toàn và giàu dinh dưỡng. Hãy khám phá thế giới trái cây tươi mát cùng chúng tôi!
         </p>
         <a href="<%= request.getContextPath()%>/products?action=find" class="btn btn-green">
             Bắt Đầu Mua Sắm
