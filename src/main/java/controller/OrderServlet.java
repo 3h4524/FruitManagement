@@ -34,6 +34,9 @@ public class OrderServlet extends HttpServlet {
             case "detail":
                 listOrderDetail(request, response);
                 break;
+            case "topOrders":
+                listTopOrders(request, response);
+                break;
         }
     }
 
@@ -48,6 +51,13 @@ public class OrderServlet extends HttpServlet {
             case "edit":
                 break;
         }
+    }
+    private void listTopOrders(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        int limit = 20; // Lấy top 10 đơn hàng
+        List<Object[]> topOrders = orderService.getTopOrderedProducts(limit);
+
+        request.setAttribute("topOrders", topOrders);
+        request.getRequestDispatcher("/order/TopOrders.jsp").forward(request, response);
     }
 
 

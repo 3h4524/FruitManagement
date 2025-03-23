@@ -110,6 +110,7 @@
         <a href="${pageContext.request.contextPath}/products"><i class="fa-solid fa-boxes-stacked"></i> Sản phẩm</a>
         <a href="${pageContext.request.contextPath}/order?action=listOrder"><i class="fa-solid fa-file-invoice"></i> Đơn hàng</a>
         <a href="${pageContext.request.contextPath}/inventory"><i class="fa-solid fa-warehouse"></i> Kho hàng</a>
+        <a href="${pageContext.request.contextPath}/order?action=topOrders" ><i class="fas fa-star"></i> Top Product</a>
       </div>
     </div>
   </c:if>

@@ -101,5 +101,11 @@ public class OrderService {
         query.setParameter("userId", userId);
         return query.getResultList();
     }
+    public List<Object[]> getTopOrderedProducts(int limit) {
+        EntityManager em = GenericDAO.emf.createEntityManager();
+        TypedQuery<Object[]> query = em.createNamedQuery("OrderDetails.findTopOrderedProducts", Object[].class);
+        query.setMaxResults(limit);
+        return query.getResultList();
+    }
 
 }

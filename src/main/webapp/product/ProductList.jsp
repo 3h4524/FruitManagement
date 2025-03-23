@@ -246,6 +246,7 @@
                     class="fas fa-plus-circle"></i> Add New Product</a>
             <a href="${pageContext.request.contextPath}/inventory" class="btn"><i class="fas fa-clipboard-list"></i>
                 Inventory Log</a>
+            <a href="${pageContext.request.contextPath}/order?action=topOrders" class="btn"><i class="fas fa-star"></i> Top Product</a>
         </div>
 
         <c:set var="products" value="${requestScope.products}"/>

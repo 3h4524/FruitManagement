@@ -19,6 +19,7 @@ public class AuthenFilter implements Filter {
     private static final Set<String> FUNC_FOR_ADMIN = Set.of(
             "/products", "/users", "/product/CreateProduct.jsp",
             "/product/ProductList.jsp", "/product/UpdateProduct.jsp", "/inventory", "/order", "/user/UserAccount.jsp"
+            ,"/order?action=topOrders","/oder/TopOrders.jsp"
     );
 
     private boolean isStaticResource(String path) {
