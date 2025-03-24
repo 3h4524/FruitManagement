@@ -1,7 +1,3 @@
-import static org.junit.jupiter.api.Assertions.*;
-
-import model.Product;
-import model.ProductStock;
 import static org.mockito.Mockito.*;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -13,8 +9,6 @@ import service.ProductVariantService;
 
 import java.math.BigDecimal;
 import java.time.Instant;
-import java.util.List;
-import java.util.Arrays;
 
 public class ProductServiceTest {
     private ProductService productService;

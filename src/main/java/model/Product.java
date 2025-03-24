@@ -62,54 +62,6 @@ public class Product {
     @Column(name = "IsDeleted")
     private Boolean isDeleted;
 
-    @Transient
-    private BigDecimal originalPrice;
-
-    @Transient
-    private BigDecimal discountPrice;
-
-    @Transient
-    private Integer discountPercent;
-    @Transient
-
-    private String displaySize;
-
-    public String getDisplaySize() {
-        return displaySize;
-    }
-
-    public void setDisplaySize(String displaySize) {
-        this.displaySize = displaySize;
-    }
-
-    // Existing getters and setters...
-
-    // Add getters and setters for new properties
-    public BigDecimal getOriginalPrice() {
-        return originalPrice;
-    }
-
-    public void setOriginalPrice(BigDecimal originalPrice) {
-        this.originalPrice = originalPrice;
-    }
-
-    public BigDecimal getDiscountPrice() {
-        return discountPrice;
-    }
-
-    public void setDiscountPrice(BigDecimal discountPrice) {
-        this.discountPrice = discountPrice;
-    }
-
-    public Integer getDiscountPercent() {
-        return discountPercent;
-    }
-
-    public void setDiscountPercent(Integer discountPercent) {
-        this.discountPercent = discountPercent;
-    }
-
-
 
 
     public Integer getId() {

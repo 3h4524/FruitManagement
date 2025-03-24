@@ -11,10 +11,9 @@
 </head>
 <body>
 <c:set var="user" value="${sessionScope.UserLogin}"/>
-<div class="container-fluid p-0">
 <div class="fs-top-bar">
   <div class="fs-logo">
-    <a href="${pageContext.request.contextPath}/products?action=find">
+    <a href="${pageContext.request.contextPath}/index.jsp">
       <img src="${pageContext.request.contextPath}/images/Logo.png" alt="Fruit Shop Logo">
     </a>
   </div>
@@ -66,8 +65,11 @@
 </div>
 <div class="fs-line"></div>
 <div class="fs-navbar" id="navbar_1">
-  <a href="${pageContext.request.contextPath}/products?action=find">
+  <a href="${pageContext.request.contextPath}/index.jsp">
     <i class="fa-solid fa-home"></i> Trang chủ
+  </a>
+  <a href="products?action=productBestSeller">
+    <i class="fa-solid fa-crown"></i> Best Seller
   </a>
   <div class="fs-dropdown">
     <a href="products?action=find">
@@ -85,7 +87,7 @@
       <a href="products?action=find&categoryId=8&searchName=&sort=price_asc">Trái cây địa phương</a>
     </div>
   </div>
-  <a>
+  <a href="${pageContext.request.contextPath}/products?action=showDiscountedProducts">
     <i class="fa-solid fa-tag"></i> Khuyến Mãi
   </a>
   <div class="fs-dropdown">
@@ -93,9 +95,8 @@
       <i class="fa-solid fa-seedling"></i> Khám Phá
     </a>
     <div class="fs-dropdown-content">
-      <a>Lịch Sử Phát triển</a>
-      <a>Giới Thiệu về dự án</a>
-      <a>Dinh dưỡng trái cây</a>
+      <a href="${pageContext.request.contextPath}/pages/History.jsp">Lịch Sử Phát triển</a>
+      <a href="${pageContext.request.contextPath}/pages/FruitNutrition.jsp">Dinh dưỡng trái cây</a>
     </div>
   </div>
   <a href="https://www.facebook.com/nextmorningiwillforgether">
@@ -110,11 +111,11 @@
         <a href="${pageContext.request.contextPath}/users"><i class="fa-solid fa-users"></i> Người dùng</a>
         <a href="${pageContext.request.contextPath}/products"><i class="fa-solid fa-boxes-stacked"></i> Sản phẩm</a>
         <a href="${pageContext.request.contextPath}/products?action=manageDiscounts"><i class="fa-solid fa-percent"></i> Khuyến mãi</a>
-        <a href="${pageContext.request.contextPath}/order?action=listOrder"><i class="fa-solid fa-file-invoice"></i> Đơn hàng</a>
+        <a href="${pageContext.request.contextPath}/user/UserAccount.jsp?page=user/UserOrders.jsp"><i class="fa-solid fa-file-invoice"></i> Đơn hàng</a>
         <a href="${pageContext.request.contextPath}/inventory"><i class="fa-solid fa-warehouse"></i> Kho hàng</a>
       </div>
     </div>
-  </c:if></div>
+  </c:if>
 </div>
 <script>
   // Sticky Navigation

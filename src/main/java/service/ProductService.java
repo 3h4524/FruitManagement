@@ -3,7 +3,6 @@ package service;
 import dao.GenericDAO;
 import jakarta.persistence.*;
 import model.Category;
-import model.Product;
 import model.ProductStock;
 import model.ProductVariant;
 
@@ -20,9 +19,20 @@ public class ProductService {
 
     // Basic CRUD operations
     public List<Product> getAllProducts() {
-        return productDAO.getAll().stream()
-                .filter(p -> !p.getIsDeleted())
-                .collect(Collectors.toList());
+        EntityManager em = emf.createEntityManager();
+        try {
+            List<Product> products = productDAO.getAll().stream()
+                    .filter(p -> !p.getIsDeleted())
+                    .collect(Collectors.toList());
+
+            for (Product product : products) {
+                BigDecimal price = getSmallSizePrice(product.getId());
+                product.setOriginalPrice(price); // Gán giá vào thuộc tính originalPrice
+            }
+            return products;
+        } finally {
+            em.close();
+        }
     }
 
     public Product getProductById(int id) {
@@ -507,6 +517,38 @@ public class ProductService {
             return em.createQuery(jpql, Long.class)
                     .getSingleResult()
                     .intValue();
+        } finally {
+            em.close();
+        }
+    }
+
+    public List<Map<String, Object>> getMostOrderedProducts(Integer limit) {
+        EntityManager em = productDAO.emf.createEntityManager();
+        try {
+            String jpql = "SELECT p.id, p.name, p.description, p.imageURL, " +
+                    "COALESCE(SUM(od.quantity), 0) AS totalOrdered, " +
+                    "COALESCE(MIN(pv.price), 0) AS productPrice " +  // Lấy giá nhỏ nhất
+                    "FROM Product p " +
+                    "LEFT JOIN ProductVariant pv ON p = pv.productID " +
+                    "LEFT JOIN OrderDetail od ON pv = od.productVariantID " +
+                    "GROUP BY p.id, p.name, p.description, p.imageURL " +
+                    "ORDER BY totalOrdered DESC";
+
+            TypedQuery<Object[]> query = em.createQuery(jpql, Object[].class);
+
+            // Nếu limit > 0 thì giới hạn số lượng, nếu không thì lấy tất cả
+            if (limit != null && limit > 0) {
+                query.setMaxResults(limit);
+            }
+
+            return query.getResultStream().map(row -> Map.of(
+                    "productId", row[0],
+                    "productName", row[1],
+                    "description", row[2],
+                    "imageURL", row[3],
+                    "totalOrdered", row[4],
+                    "productPrice", row[5]  // Thêm giá nhỏ nhất vào Map
+            )).collect(Collectors.toList());
         } finally {
             em.close();
         }

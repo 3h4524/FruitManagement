@@ -260,7 +260,7 @@
                                 <img src="${product.imageURL}" class="card-img-top" style="height: 200px; object-fit: cover;">
                                 <div class="card-body">
                                     <h5 class="card-title">${product.name}</h5>
-                                    <p class="card-text">Giá: ${product.price} VND</p>
+                                    <p class="card-text">Giá: ${product.originalPrice} VND</p>
                                 </div>
                             </a>
                             <div class="card-footer text-center">

@@ -10,6 +10,13 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://www.gstatic.com/dialogflow-console/fast/messenger/bootstrap.js?v=1"></script>
+    <df-messenger
+            intent="WELCOME"
+            chat-title="FruitShopBot"
+            agent-id="17a68f67-ccc6-4fe8-ab13-0d52e4591475"
+            language-code="vi"
+    ></df-messenger>
     <style>
         :root {
             --primary-color: #2e8b57;
@@ -334,6 +341,7 @@
 
             <div class="product-divider"></div>
 
+            <h2 class="product-price"><span id="productPrice">${productDetails[0].originalPrice} ${productDetails[0].discountPrice}</span> VND</h2>
             <div class="stock-info">
                 <span class="stock-indicator"></span>
                 <span id="stockCount">Còn lại: ${productDetails[0].stock} sản phẩm</span>
@@ -349,7 +357,8 @@
                     <label class="option-label">Chọn kích thước:</label>
                     <div class="size-container" id="sizeOptions">
                         <c:forEach var="entry" items="${productDetails}">
-                            <button type="button" class="size-btn" data-size="${entry.size}" data-price="${entry.price}"
+                            <button type="button" class="size-btn" data-size="${entry.size}" data-price="${entry.originalPrice}"
+                                    data-discount="${entry.discountPrice}"
                                     data-stock="${entry.stock}" data-productid="${entry.productId}">
                                     ${entry.size}
                             </button>
@@ -393,11 +402,12 @@
             $(".size-btn").removeClass("active");
             $(this).addClass("active");
 
-            let price = $(this).data("price");
+            let originalPrice = $(this).data("price");
+            let discountPrice = $(this).data("discount");
             let stock = $(this).data("stock");
             selectedSize = $(this).data("size");
 
-            $("#productPrice").text(price);
+            $("#productPrice").text(originalPrice +"  " + discountPrice);
             $("#stockCount").text("Còn lại: " + stock + " sản phẩm");
             $("#quantity").attr("max", stock);
             $("#size").val(selectedSize);

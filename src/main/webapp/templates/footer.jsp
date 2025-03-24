@@ -8,7 +8,6 @@
   <style>
     /* Footer styling */
     .footer {
-      width: 100%;
       background-color: #f8f9fa;
       color: #333;
       font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
@@ -129,7 +128,7 @@
 <div class="footer">
   <div class="footer-container">
     <div class="Logo-footer">
-      <a href="#"><img src="images/Logo.png" alt="Fruitiverse Logo"></a>
+      <a href="#"><img src="${pageContext.request.contextPath}/images/Logo.png" alt="Fruitiverse Logo"></a>
       <p>Trái cây tươi ngon mỗi ngày</p>
     </div>
 
@@ -137,7 +136,7 @@
       <h2>Giới Thiệu</h2>
       <p>Fruitiverse là shop Trái cây tươi ngon mỗi ngày! Chúng tôi cung cấp đa dạng các loại trái cây chất lượng cao, đảm bảo an toàn và giàu dinh dưỡng.</p>
       <div class="Bct">
-        <a href="#"><img src="images/chungnhan.png" alt="Chứng nhận Bộ Công Thương"></a>
+        <a href="#"><img src="${pageContext.request.contextPath}/images/chungnhan.png" alt="Chứng nhận Bộ Công Thương"></a>
       </div>
     </div>
 

@@ -63,11 +63,21 @@
                 case "removeDiscount":
                     removeDiscount(request, response);
                     break;
+                case "productBestSeller":
+                    getProductBestSeller(request, response);
+                    break;
                 default:
                     listProducts(request, response);
                     break;
             }
         }
+
+        private void getProductBestSeller(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+            List<Map<String, Object>> products = productService.getMostOrderedProducts(20);
+            request.setAttribute("products", products);
+            request.getRequestDispatcher("product/ProductBestSeller.jsp").forward(request, response);
+        }
+
 
         private void listProducts(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
             List<Product> products = productService.getAllProducts();
@@ -179,7 +189,7 @@
                     response.sendError(HttpServletResponse.SC_NOT_FOUND, "Product not found");
                     return;
                 }
-
+                System.out.println(productDetails);
                 request.setAttribute("productDetails", productDetails);
 
                 request.getRequestDispatcher("/product/ProductDetail.jsp").forward(request, response);
