@@ -162,13 +162,11 @@
           <!-- Thông báo lỗi -->
           <c:if test="${not empty sessionScope.error}">
             <div class="alert alert-danger">${sessionScope.error}</div>
-            <c:remove var="error" scope="session"/>
           </c:if>
 
           <!-- Thông báo thành công -->
           <c:if test="${not empty sessionScope.success}">
             <div class="alert alert-success">${sessionScope.success}</div>
-            <c:remove var="success" scope="session"/>
           </c:if>
 
           <form action="${pageContext.request.contextPath}/registers" method="post">

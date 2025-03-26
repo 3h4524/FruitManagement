@@ -296,8 +296,9 @@ public class UserServlet extends HttpServlet {
         if (!isLoggedIn) {
             user = (User) session.getAttribute("UserIsNotLoggedIn");
         }
-        if(Utils.isValidPassword(newPassword)) {
-            session.setAttribute("error", "Mật khẩu phải có ít nhất 8 ký tự, ít nhất 1 chữ viết hoa và số.");
+
+        if(!Utils.isValidPassword(newPassword)) {
+            session.setAttribute("error", "Mật khẩu phải đủ 8 ký tự và có ít nhật một ký tự viết hoa và số");
             response.sendRedirect(request.getContextPath() + "/user/UserChangePassword.jsp");
             return;
         }

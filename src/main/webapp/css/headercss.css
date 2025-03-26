@@ -30,14 +30,11 @@
 }
 
 .fs-logo img {
-    width: 70px;
+    width: 90px;
     height: auto;
-    transition: transform 0.3s ease;
 }
 
-.fs-logo img:hover {
-    transform: scale(1.05);
-}
+
 
 /* Search Container */
 .fs-search-container {

@@ -43,29 +43,29 @@ public class  RegisterServlet extends HttpServlet {
 
         // Kiểm tra thông tin có đầy đủ không
         if (user.getName().isEmpty() || user.getEmail().isEmpty() || user.getPasswordHash().isEmpty()) {
-            request.setAttribute("error", "Vui lòng nhập đầy đủ thông tin!");
+            session.setAttribute("error", "Vui lòng nhập đầy đủ thông tin!");
             request.getRequestDispatcher("/user/Register.jsp").forward(request, response);
             return;
         }
         if(!Utils.isValidPassword(password)) {
-            request.setAttribute("error", "Mật khẩu phải có ít nhất 8 ký tự, ít nhất 1 chữ viết hoa và số");
+            session.setAttribute("error", "Mật khẩu phải có ít nhất 8 ký tự, ít nhất 1 chữ viết hoa và số");
             request.getRequestDispatcher("/user/Register.jsp").forward(request, response);
             return;
         }
 
         // Kiểm tra tên đăng nhập đã tồn tại chưa
         if (userService.getUserByEmail(user.getEmail()) != null) {
-            request.setAttribute("error", "Email đã tồn tại!");
+            session.setAttribute("error", "Email đã tồn tại!");
             request.getRequestDispatcher("/user/Register.jsp").forward(request, response);
             return;
         }
 
         // Lưu vào database
         if (userService.addUser(user)) {
-            request.setAttribute("success", "Đăng ký thành công!");
+            session.setAttribute("success", "Đăng ký thành công!");
             response.sendRedirect(request.getContextPath() + "/index.jsp");
         } else {
-            request.setAttribute("error", "Đăng ký không thành công. Vui lòng thử lại!");
+            session.setAttribute("error", "Đăng ký không thành công. Vui lòng thử lại!");
             request.getRequestDispatcher("/user/Register.jsp").forward(request, response);
         }
     }

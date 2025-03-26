@@ -48,7 +48,7 @@
                     <a href="${pageContext.request.contextPath}/user/UserAccount.jsp">
                         <i class="fa-solid fa-id-card"></i> Tài khoản của tôi
                     </a>
-                    <a href="${pageContext.request.contextPath}/user/UserOrders.jsp">
+                    <a href="${pageContext.request.contextPath}/user/UserAccount.jsp?page=user/UserOrders.jsp">
                         <i class="fa-solid fa-clipboard-list"></i> Đơn hàng của tôi
                     </a>
                     <a href="${pageContext.request.contextPath}/logout">
@@ -110,7 +110,7 @@
             <div class="fs-dropdown-content">
                 <a href="${pageContext.request.contextPath}/users"><i class="fa-solid fa-users"></i> Người dùng</a>
                 <a href="${pageContext.request.contextPath}/products"><i class="fa-solid fa-boxes-stacked"></i> Sản phẩm</a>
-                <a href="${pageContext.request.contextPath}/user/UserAccount.jsp?page=user/UserOrders.jsp"><i class="fa-solid fa-file-invoice"></i> Đơn hàng</a>
+                <a href="${pageContext.request.contextPath}/order?action=listOrder"><i class="fa-solid fa-file-invoice"></i> Đơn hàng</a>
                 <a href="${pageContext.request.contextPath}/inventory"><i class="fa-solid fa-warehouse"></i> Kho hàng</a>
             </div>
         </div>

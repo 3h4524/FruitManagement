@@ -22,7 +22,7 @@ public class AuthenFilter implements Filter {
     );
     private static final Set<String> FUNC_FOR_ADMIN = Set.of(
             "/products", "/users", "/product/CreateProduct.jsp",
-            "/product/ProductList.jsp", "/product/UpdateProduct.jsp", "/inventory", "/order", "/user/UserAccount.jsp"
+            "/product/ProductList.jsp", "/product/UpdateProduct.jsp", "/inventory", "/order", "/user/UserAccount.jsp", "/user/UserEdit.jsp"
     );
 
     private boolean isStaticResource(String path) {
@@ -43,14 +43,20 @@ public class AuthenFilter implements Filter {
                 || path.equals("/logout")
                 || path.equals("/user/Confirm.jsp")
                 || path.equals("/pages/History.jsp")
-                || path.equals(("/pages/FruitNutrition.jsp"));
+                || path.equals(("/pages/FruitNutrition.jsp"))
+                || path.equals(("/user/UserChangePassword.jsp"))
+                || path.equals(("/user/UserTwoStepVerification.jsp"))
+                || path.equals(("product/ProductBestSeller.jsp"))
+                || (path.equals("/products") && queryString != null && queryString.startsWith("action=productBestSeller"))
+                || (path.equals("/users") && queryString != null && queryString.startsWith("action=update&type=changePassword"));
     }
 
     private boolean isUserAuthorized(String role, String path, String queryString) {
         return "Customer".equalsIgnoreCase(role) && (FUNC_FOR_USER.contains(path) ||
                 (path.equals("/products") && queryString != null &&
                         (queryString.startsWith("action=find") || queryString.startsWith("action=productDetail"))
-                )
+                ) ||
+                (path.equals("/carts") || path.equals("/cart/Cart.jsp"))
         );
     }
 
