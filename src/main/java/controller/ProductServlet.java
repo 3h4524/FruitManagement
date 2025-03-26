@@ -4,11 +4,7 @@
     import jakarta.servlet.http.*;
     import jakarta.servlet.annotation.*;
     import model.*;
-    import org.hibernate.annotations.ColumnDefault;
-    import service.InventoryService;
-    import service.ProductService;
-    import service.ProductStockService;
-    import service.ProductVariantService;
+    import service.*;
 
     import java.io.IOException;
     import java.math.BigDecimal;
@@ -40,7 +36,10 @@
             }
             switch (action) {
                 case "create":
-                    request.getRequestDispatcher("/product/CreateProduct.jsp").forward(request, response);
+                    List<Category> categories = productService.getAllCategories();
+                    request.setAttribute("categories", categories);
+                    RequestDispatcher dispatcher = request.getRequestDispatcher("product/CreateProduct.jsp");
+                    dispatcher.forward(request, response);
                     break;
                 case "update":
                     sendToUpdateProduct(request, response);
@@ -80,7 +79,21 @@
 
 
         private void listProducts(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-            List<Product> products = productService.getAllProducts();
+            int page = 1;
+            int pageSize = 10;
+            String pageStr = request.getParameter("page");
+            String pageSizeStr = request.getParameter("pageSize");
+
+            if (pageStr != null){
+                page = Integer.parseInt(pageStr);
+            }
+
+            if (pageSizeStr != null){
+                pageSize = Integer.parseInt(pageSizeStr);
+            }
+
+
+            List<Product> products = productService.getAllProduct(page, pageSize);
             request.setAttribute("products", products);
             request.getRequestDispatcher("product/ProductList.jsp").forward(request, response);
         }
@@ -153,12 +166,30 @@
 
         // Thang bo sung phan search product
         private void searchProduct(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+            int page = 1;
+            int pageSize = 8; // Changed to match the grid layout
+
+            String pageStr = request.getParameter("page");
+            String pageSizeStr = request.getParameter("pageSize");
+
+            if(pageStr != null){
+                page = Integer.parseInt(pageStr);
+            }
+
+            if(pageSizeStr != null){
+                pageSize = Integer.parseInt(pageSizeStr);
+            }
             String categoryID = request.getParameter("categoryId");
             String sort = request.getParameter("sort");
             String searchName = request.getParameter("searchName");
 
             // Gọi service để lấy sản phẩm với giá của size "Small"
-            List<Product> products = productService.searchAndFilterProducts(searchName, categoryID, sort);
+            List<Product> products = productService.searchAndFilterProducts(searchName, categoryID, sort, page, pageSize);
+
+            // Calculate total number of products to determine total pages
+            int totalProducts = productService.countFilteredProducts(searchName, categoryID);
+            int totalPages = (int) Math.ceil((double) totalProducts / pageSize);
+
             List<Category> categories = productService.getAllCategories();
 
             request.setAttribute("products", products);
@@ -166,6 +197,9 @@
             request.setAttribute("selectedCategory", categoryID);
             request.setAttribute("selectedSort", sort);
             request.setAttribute("searchName", searchName);
+            request.setAttribute("currentPage", page);
+            request.setAttribute("totalPages", totalPages);
+
             request.getRequestDispatcher("/product/ProductListCart.jsp").forward(request, response);
         }
 
@@ -255,6 +289,7 @@
                 String description = request.getParameter("description");
                 Integer stock = Integer.parseInt(request.getParameter("stock"));
                 String imageURL = request.getParameter("imageURL");
+                Integer categoryId = Integer.parseInt(request.getParameter("categoryId"));
 
                 String importDateStr = request.getParameter("importDate");
 
@@ -263,6 +298,12 @@
 
                 Instant importDateUTC = importDate.atZone(ZoneId.systemDefault()).toInstant();
 
+                Category category = new CategoryService().findCategory(categoryId);
+                System.out.println(category);
+                if (category == null) {
+                    throw new IllegalArgumentException("Category not found");
+                }
+
                 Product newProduct = new Product();
                 newProduct.setName(name);
                 newProduct.setDescription(description);
@@ -270,9 +311,15 @@
                 newProduct.setImportDate(importDateUTC);
                 productService.addProduct(newProduct);
 
+                ProductsCategory productCategory = new ProductsCategory();
+                productCategory.setProductID(newProduct);
+                productCategory.setCategoryID(category);
+                new ProductCategoryService().insert(productCategory); // Lưu vào bảng trung gian
+
+
 
                 ProductVariant newProductVariant = new ProductVariant();
-                newProductVariant.setProductID(newProduct);
+                newProductVariant.setProduct(newProduct);
                 newProductVariant.setSize(size);
                 newProductVariant.setPrice(price);
                 productVariantService.addProductVariant(newProductVariant);

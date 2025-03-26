@@ -2,29 +2,14 @@
 <%@ page import="java.util.List, model.Product, model.Category" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
-<jsp:useBean id="productService" scope="page" class="service.ProductService"/>
-<%
-    if (request.getAttribute("products") == null) {
-        request.setAttribute("products", productService.getAllProducts());
-    }
-    if(request.getAttribute("categories") == null){
-        request.setAttribute("categories", productService.getAllCategories());
-    }
-%>
+<!DOCTYPE html>
 <html>
 <head>
     <title>Danh sách sản phẩm</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-    <script src="https://www.gstatic.com/dialogflow-console/fast/messenger/bootstrap.js?v=1"></script>
-    <df-messenger
-            intent="WELCOME"
-            chat-title="FruitShopBot"
-            agent-id="17a68f67-ccc6-4fe8-ab13-0d52e4591475"
-            language-code="vi"
-    ></df-messenger>
-    <!-- Custom CSS for Green and White Theme -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        /* General body styling */
+        /* Reuse styles from discountedProducts.jsp */
         body {
             background-color: #f8f9fa;
             color: #333;
@@ -33,7 +18,6 @@
             padding: 0;
         }
 
-        /* Container styling */
         .container {
             background-color: #fff;
             padding: 30px;
@@ -43,8 +27,6 @@
             margin-bottom: 30px;
         }
 
-        /* Only include product-specific styles here */
-        /* Header styling */
         h2.text-primary {
             color: #2e8b57 !important;
             font-weight: 700;
@@ -64,7 +46,6 @@
             background-color: #2e8b57;
         }
 
-        /* Card styling */
         .card {
             border: none;
             border-radius: 12px;
@@ -72,6 +53,7 @@
             transition: all 0.3s ease;
             box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
             overflow: hidden;
+            position: relative;
         }
 
         .card:hover {
@@ -112,13 +94,17 @@
             margin-bottom: 0.75rem;
         }
 
-        .card-footer {
-            background-color: #fff;
-            border-top: 1px solid rgba(46, 139, 87, 0.1);
-            padding: 1rem;
+        .card-text .text-decoration-line-through {
+            color: #999;
+            font-size: 0.9rem;
         }
 
-        /* Buttons */
+        .card-text .discount-price {
+            color: #dc3545;
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
         .btn-primary {
             background-color: #3c9d74;
             border-color: #3c9d74;
@@ -137,7 +123,33 @@
             transform: translateY(-2px);
         }
 
-        /* Form controls */
+        .pagination {
+            justify-content: center;
+            margin-top: 2rem;
+        }
+
+        .page-item.active .page-link {
+            background-color: #3c9d74;
+            border-color: #3c9d74;
+        }
+
+        .page-link {
+            color: #3c9d74;
+        }
+
+        .page-link:hover {
+            color: #2e8b57;
+        }
+
+        /* Search and Filter Styles */
+        .filter-section {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
+            margin-bottom: 2rem;
+        }
+
         .form-select, .form-control {
             border: 1px solid #e0e0e0;
             border-radius: 6px;
@@ -149,41 +161,6 @@
         .form-select:focus, .form-control:focus {
             border-color: #3c9d74;
             box-shadow: 0 0 0 0.25rem rgba(60, 157, 116, 0.15);
-        }
-
-        /* Filter section */
-        .row.g-3.mb-4 {
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
-            margin-bottom: 2rem !important;
-        }
-
-        /* Alert */
-        .alert-warning {
-            background-color: #edf7f0;
-            border-color: #c8e6d7;
-            color: #2e8b57;
-            border-radius: 8px;
-            padding: 1rem;
-        }
-
-        /* Link styling */
-        a.text-decoration-none.text-dark {
-            display: block;
-            height: 100%;
-        }
-
-        /* Dialog flow messenger styling */
-        df-messenger {
-            --df-messenger-bot-message: #3c9d74;
-            --df-messenger-button-titlebar-color: #3c9d74;
-            --df-messenger-chat-background-color: #fafafa;
-            --df-messenger-font-color: white;
-            --df-messenger-send-icon: #3c9d74;
-            --df-messenger-user-message: #e6e6e6;
-            --df-messenger-minimized-chat-close-icon-color: #3c9d74;
         }
 
         /* Animation for page load */
@@ -207,18 +184,36 @@
         .col-md-3:nth-child(6) .card { --animation-order: 6; }
         .col-md-3:nth-child(7) .card { --animation-order: 7; }
         .col-md-3:nth-child(8) .card { --animation-order: 8; }
+
+        /* Discount Badge */
+        .discount-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: #dc3545;
+            color: white;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            font-size: 1rem;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            z-index: 10;
+        }
     </style>
 </head>
 <body>
 <!-- Include the header JSP file -->
 <jsp:include page="/templates/header.jsp"/>
 
-<!-- Main content starts here -->
 <div class="container mt-4">
     <h2 class="text-center text-primary mb-4">Danh sách sản phẩm</h2>
 
-    <!-- Bộ lọc & Tìm kiếm -->
-    <form method="GET" action="products" class="row g-3 mb-4">
+    <!-- Search and Filter Section -->
+    <form method="GET" action="products" class="filter-section row g-3 mb-4">
         <input type="hidden" name="action" value="find">
         <div class="col-md-3">
             <select name="categoryId" class="form-select">
@@ -251,16 +246,32 @@
             </div>
         </c:when>
         <c:otherwise>
-            <!-- Danh sách sản phẩm -->
+            <!-- Product List -->
             <div class="row">
                 <c:forEach var="product" items="${products}">
                     <div class="col-md-3 mb-4">
                         <div class="card">
+                            <!-- Discount badge (only shown if there's a discount) -->
+                            <c:if test="${product.discountPercent > 0}">
+                                <div class="discount-badge">
+                                    -${product.discountPercent}%
+                                </div>
+                            </c:if>
                             <a href="products?action=productDetail&productId=${product.id}" class="text-decoration-none text-dark">
-                                <img src="${product.imageURL}" class="card-img-top" style="height: 200px; object-fit: cover;">
+                                <img src="${product.imageURL}" class="card-img-top" alt="${product.name}">
                                 <div class="card-body">
                                     <h5 class="card-title">${product.name}</h5>
-                                    <p class="card-text">Giá: ${product.originalPrice} VND</p>
+                                    <p class="card-text">
+                                        <c:choose>
+                                            <c:when test="${product.discountPercent > 0}">
+                                                <span class="text-decoration-line-through">${product.originalPrice} VND</span><br>
+                                                <span class="discount-price">${product.discountPrice} VND</span>
+                                            </c:when>
+                                            <c:otherwise>
+                                                <span>${product.originalPrice} VND</span>
+                                            </c:otherwise>
+                                        </c:choose>
+                                    </p>
                                 </div>
                             </a>
                             <div class="card-footer text-center">
@@ -273,6 +284,33 @@
                     </div>
                 </c:forEach>
             </div>
+
+            <!-- Pagination -->
+            <nav aria-label="Page navigation">
+                <ul class="pagination">
+                    <c:if test="${currentPage > 1}">
+                        <li class="page-item">
+                            <a class="page-link" href="products?action=find&page=${currentPage-1}&categoryId=${param.categoryId}&searchName=${param.searchName}&sort=${param.sort}" aria-label="Previous">
+                                <span aria-hidden="true">&laquo;</span>
+                            </a>
+                        </li>
+                    </c:if>
+
+                    <c:forEach begin="1" end="${totalPages}" var="pageNumber">
+                        <li class="page-item ${pageNumber == currentPage ? 'active' : ''}">
+                            <a class="page-link" href="products?action=find&page=${pageNumber}&categoryId=${param.categoryId}&searchName=${param.searchName}&sort=${param.sort}">${pageNumber}</a>
+                        </li>
+                    </c:forEach>
+
+                    <c:if test="${currentPage < totalPages}">
+                        <li class="page-item">
+                            <a class="page-link" href="products?action=find&page=${currentPage+1}&categoryId=${param.categoryId}&searchName=${param.searchName}&sort=${param.sort}" aria-label="Next">
+                                <span aria-hidden="true">&raquo;</span>
+                            </a>
+                        </li>
+                    </c:if>
+                </ul>
+            </nav>
         </c:otherwise>
     </c:choose>
 </div>
@@ -280,9 +318,5 @@
 <!-- Include the footer JSP file -->
 <jsp:include page="/templates/footer.jsp"/>
 
-<!-- Add any additional scripts here -->
-<script>
-    // Any additional JavaScript can go here
-</script>
 </body>
 </html>

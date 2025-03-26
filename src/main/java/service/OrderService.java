@@ -43,7 +43,7 @@ public class OrderService {
             String jpql = "SELECT od.id, p.name, pv.size, pv.price, od.quantity FROM OrderDetail od " +
                     "JOIN od.orderID o " +
                     "JOIN od.productVariantID pv " +
-                    "JOIN pv.productID p " +
+                    "JOIN pv.product p " +
                     "WHERE o.id = :orderId";
 
 

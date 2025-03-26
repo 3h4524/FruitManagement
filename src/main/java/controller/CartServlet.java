@@ -120,7 +120,7 @@ public class CartServlet extends HttpServlet {
 
         ProductVariant productVariant = productVariantService.getVariantByProductAndSize(productId, size);
         if(productVariant != null) {
-            Hibernate.initialize(productVariant.getProductID());
+            Hibernate.initialize(productVariant.getProduct());
             CartItem cartItem = new CartItem(quantity, productVariant);
             cartService.addCartItem(cart, cartItem);
         }

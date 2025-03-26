@@ -50,7 +50,7 @@ public class InventoryLogService {
             String jpql = "SELECT p.name, pv.size, i.quantityChanged, i.actionType, i.actionDate, i.storeLocation " +
                     "FROM InventoryLog i " +
                     "JOIN ProductVariant pv ON i.productVariantID = pv " +
-                    "JOIN Product p ON pv.productID = p " +
+                    "JOIN Product p ON pv.product = p " +
                     "ORDER BY i.id";
 
             return em.createQuery(jpql, Object[].class)

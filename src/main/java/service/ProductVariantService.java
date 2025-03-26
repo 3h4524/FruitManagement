@@ -30,7 +30,7 @@ public class ProductVariantService {
 
         try {
             TypedQuery<ProductVariant> query = em.createQuery(
-                    "SELECT pv FROM ProductVariant pv JOIN FETCH pv.productID WHERE pv.productID.id = :productId AND pv.size = :size",
+                    "SELECT pv FROM ProductVariant pv JOIN FETCH pv.product WHERE pv.product.id = :productId AND pv.size = :size",
                     ProductVariant.class);
             query.setParameter("productId", productId);
             query.setParameter("size", size);

@@ -147,7 +147,7 @@
 <div class="container mt-4">
     <h2 class="text-center text-primary mb-4">Quản lý Khuyến Mãi</h2>
 
-    <!-- Display success/error messages if any -->
+        <!-- Display success/error messages if any -->
     <c:if test="${not empty message}">
         <div class="alert alert-success">${message}</div>
     </c:if>

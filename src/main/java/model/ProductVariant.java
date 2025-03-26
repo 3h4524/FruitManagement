@@ -18,7 +18,7 @@ import java.time.Instant;
                 query = "SELECT p FROM ProductVariant p WHERE p.id = :id"),
 
         @NamedQuery(name = "ProductVariant.findByProductID",
-                query = "SELECT p FROM ProductVariant p WHERE p.productID.id = :productID"),
+                query = "SELECT p FROM ProductVariant p WHERE p.product.id = :productID"),
 
         @NamedQuery(name = "ProductVariant.findBySize",
                 query = "SELECT p FROM ProductVariant p WHERE p.size = :size"),
@@ -37,7 +37,7 @@ public class ProductVariant {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "ProductID", nullable = false)
-    private Product productID;
+    private Product product;
 
     @Nationalized
     @Column(name = "\"Size\"", nullable = false, length = 50)
@@ -65,12 +65,12 @@ public class ProductVariant {
         this.id = id;
     }
 
-    public Product getProductID() {
-        return productID;
+    public Product getProduct() {
+        return product;
     }
 
-    public void setProductID(Product productID) {
-        this.productID = productID;
+    public void setProduct(Product productID) {
+        this.product = productID;
     }
 
     public String getSize() {

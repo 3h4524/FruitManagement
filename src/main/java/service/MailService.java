@@ -72,7 +72,7 @@ public class MailService {
 
             for(OrderDetail item : orderDetails) {
                 emailContent.append("<tr>")
-                        .append("<td>").append(item.getProductVariantID().getProductID().getName()).append("</td>")
+                        .append("<td>").append(item.getProductVariantID().getProduct().getName()).append("</td>")
                         .append("<td>").append(item.getQuantity()).append("</td>")
                         .append("<td>").append(item.getProductVariantID().getPrice()).append(" VND</td>")
                         .append("<td>").append(item.getPrice()).append(" VND</td>")
