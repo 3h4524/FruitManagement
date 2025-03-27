@@ -11,6 +11,7 @@ import model.OrderDetail;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class OrderService {
@@ -77,14 +78,15 @@ public class OrderService {
                     .setMaxResults(pageSize)
                     .getResultStream()
                     .map(row -> Map.of(
-                            "orderId", row[0],
-                            "userName", row[1],
-                            "userAddress", row[2],
-                            "userPhone", row[3],
-                            "orderDate", row[4],
-                            "status", row[5],
-                            "totalAmount", row[6]
+                            "orderId", Objects.requireNonNullElse(row[0], 0),
+                            "userName", Objects.requireNonNullElse(row[1], "Unknown"),
+                            "userAddress", Objects.requireNonNullElse(row[2], "No Address"),
+                            "userPhone", Objects.requireNonNullElse(row[3], "No Phone"),
+                            "orderDate", Objects.requireNonNullElse(row[4], "No Date"),
+                            "status", Objects.requireNonNullElse(row[5], "Unknown"),
+                            "totalAmount", Objects.requireNonNullElse(row[6], 0.0)
                     )).collect(Collectors.toList());
+
         } finally {
             em.close();
         }

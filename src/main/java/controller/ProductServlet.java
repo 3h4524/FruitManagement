@@ -36,8 +36,6 @@
             }
             switch (action) {
                 case "create":
-                    List<Category> categories = productService.getAllCategories();
-                    request.setAttribute("categories", categories);
                     RequestDispatcher dispatcher = request.getRequestDispatcher("product/CreateProduct.jsp");
                     dispatcher.forward(request, response);
                     break;
@@ -79,21 +77,7 @@
 
 
         private void listProducts(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-            int page = 1;
-            int pageSize = 10;
-            String pageStr = request.getParameter("page");
-            String pageSizeStr = request.getParameter("pageSize");
-
-            if (pageStr != null){
-                page = Integer.parseInt(pageStr);
-            }
-
-            if (pageSizeStr != null){
-                pageSize = Integer.parseInt(pageSizeStr);
-            }
-
-
-            List<Product> products = productService.getAllProduct(page, pageSize);
+            List<Product> products = productService.getAllProducts();
             request.setAttribute("products", products);
             request.getRequestDispatcher("product/ProductList.jsp").forward(request, response);
         }
@@ -289,20 +273,12 @@
                 String description = request.getParameter("description");
                 Integer stock = Integer.parseInt(request.getParameter("stock"));
                 String imageURL = request.getParameter("imageURL");
-                Integer categoryId = Integer.parseInt(request.getParameter("categoryId"));
-
                 String importDateStr = request.getParameter("importDate");
 
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
                 LocalDateTime importDate = LocalDateTime.parse(importDateStr, formatter);
 
                 Instant importDateUTC = importDate.atZone(ZoneId.systemDefault()).toInstant();
-
-                Category category = new CategoryService().findCategory(categoryId);
-                System.out.println(category);
-                if (category == null) {
-                    throw new IllegalArgumentException("Category not found");
-                }
 
                 Product newProduct = new Product();
                 newProduct.setName(name);
@@ -311,17 +287,12 @@
                 newProduct.setImportDate(importDateUTC);
                 productService.addProduct(newProduct);
 
-                ProductsCategory productCategory = new ProductsCategory();
-                productCategory.setProductID(newProduct);
-                productCategory.setCategoryID(category);
-                new ProductCategoryService().insert(productCategory); // Lưu vào bảng trung gian
-
-
 
                 ProductVariant newProductVariant = new ProductVariant();
                 newProductVariant.setProduct(newProduct);
                 newProductVariant.setSize(size);
                 newProductVariant.setPrice(price);
+                newProductVariant.setIsDeleted(false);
                 productVariantService.addProductVariant(newProductVariant);
 
 

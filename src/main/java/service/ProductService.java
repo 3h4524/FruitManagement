@@ -19,56 +19,9 @@ public class ProductService {
     private final GenericDAO<Product> productDAO = new GenericDAO<>(Product.class);
     static final EntityManagerFactory emf = Persistence.createEntityManagerFactory("FruitManagementPU");
 
-    // Basic CRUD operations
-    public List<Product> getAllProduct(int page, int pageSize) {
-        EntityManager em = emf.createEntityManager();
-        try {
-            System.out.println("Fetching all products with or without discounts...");
-
-            String jpql = "SELECT p, " +
-                    "COALESCE(MIN(CASE WHEN v.discountPrice IS NOT NULL AND v.discountExpiry >= CURRENT_TIMESTAMP THEN v.discountPrice END), NULL) AS minDiscountPrice, " +
-                    "MIN(v.price) AS minOriginalPrice, " +
-                    "COALESCE(MIN(v.size), NULL) AS displaySize " +
-                    "FROM Product p " +
-                    "LEFT JOIN p.variants v " +
-                    "WHERE p.isDeleted = false AND v.isDeleted = false " +
-                    "GROUP BY p " +
-                    "ORDER BY p.id";
-
-            List<Object[]> results = em.createQuery(jpql, Object[].class)
-                    .setFirstResult((page - 1) * pageSize)
-                    .setMaxResults(pageSize)
-                    .getResultList();
-
-            List<Product> products = new ArrayList<>();
-            for (Object[] row : results) {
-                Product product = (Product) row[0];
-                BigDecimal minDiscountPrice = (BigDecimal) row[1];
-                BigDecimal minOriginalPrice = (BigDecimal) row[2];
-                String displaySize = (String) row[3];
-
-                product.setOriginalPrice(minOriginalPrice);
-                product.setDiscountPrice(minDiscountPrice);
-                product.setDisplaySize(displaySize);
-
-                if (minDiscountPrice != null) {
-                    BigDecimal discount = minOriginalPrice.subtract(minDiscountPrice);
-                    BigDecimal percentage = discount.multiply(BigDecimal.valueOf(100))
-                            .divide(minOriginalPrice, 0, RoundingMode.HALF_UP);
-                    product.setDiscountPercent(percentage.intValue());
-                } else {
-                    product.setDiscountPercent(0);
-                }
-
-                products.add(product);
-            }
-
-            return products;
-        } finally {
-            em.close();
-        }
+    public List<Product> getAllProducts() {
+        return productDAO.getAll();
     }
-
     public boolean hasNextPage(int page, int pageSize){
         return productDAO.hasNextPage(page, pageSize);
     }
@@ -149,9 +102,9 @@ public class ProductService {
                             "MIN(v.price) AS minOriginalPrice, " +
                             "COALESCE(MIN(v.size), NULL) AS displaySize " +
                             "FROM Product p " +
-                            "LEFT JOIN p.variants v " +
+                            "LEFT JOIN p.variants v ON v.isDeleted = false " +
                             "LEFT JOIN p.categories c " +
-                            "WHERE p.isDeleted = false AND v.isDeleted = false"
+                            "WHERE p.isDeleted = false "
             );
 
             boolean hasCategoryFilter = categoryID != null && !categoryID.trim().isEmpty();
@@ -236,7 +189,6 @@ public class ProductService {
             em.close();
         }
     }
-
     // Get product details
     public List<Map<String, Object>> detailProduct(int id) {
         EntityManager em = emf.createEntityManager();
@@ -245,8 +197,7 @@ public class ProductService {
                     "FROM Product p " +
                     "JOIN ProductVariant pv ON p = pv.product " +
                     "JOIN ProductStock ps ON pv = ps.productVariantID " +
-                    "WHERE p.id = :productId AND p.isDeleted = false AND pv.isDeleted = false " +
-                    "ORDER BY pv.size";
+                    "WHERE p.id = :productId AND p.isDeleted = false AND pv.isDeleted = false ";
 
             return em.createQuery(jpql, Object[].class)
                     .setParameter("productId", id)

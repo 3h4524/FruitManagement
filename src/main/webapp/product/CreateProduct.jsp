@@ -258,15 +258,6 @@
         <form id="productForm" action="products" method="post">
             <input type="hidden" name="action" value="create"/>
 
-            <div class="form-group">
-                <label for="categoryId" class="form-label">Danh mục sản phẩm</label>
-                <select name="categoryId" id="categoryId" class="form-select">
-                    <option value="">Chọn danh mục</option>
-                    <c:forEach var="category" items="${categories}">
-                        <option value="${category.id}">${category.name}</option>
-                    </c:forEach>
-                </select>
-            </div>
 
             <div class="form-group">
                 <label for="name" class="form-label">Tên sản phẩm</label>

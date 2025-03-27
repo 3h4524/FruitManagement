@@ -341,7 +341,17 @@
 
             <div class="product-divider"></div>
 
-            <h2 class="product-price"><span id="productPrice">${productDetails[0].originalPrice} ${productDetails[0].discountPrice}</span> VND</h2>
+            <h2 class="product-price">
+                <c:choose>
+                    <c:when test="${productDetails[0].discountPrice != null}">
+                        <span class="original-price text-muted text-decoration-line-through me-2">${productDetails[0].originalPrice} VND</span>
+                        <span class="discount-price text-success fw-bold">${productDetails[0].discountPrice} VND</span>
+                    </c:when>
+                    <c:otherwise>
+                        <span class="original-price">${productDetails[0].originalPrice} VND</span>
+                    </c:otherwise>
+                </c:choose>
+            </h2>
             <div class="stock-info">
                 <span class="stock-indicator"></span>
                 <span id="stockCount">Còn lại: ${productDetails[0].stock} sản phẩm</span>
@@ -395,6 +405,7 @@
 
 <script>
     $(document).ready(function () {
+
         let selectedSize = "";
 
         // Chọn kích thước và cập nhật giá + số lượng
@@ -407,7 +418,8 @@
             let stock = $(this).data("stock");
             selectedSize = $(this).data("size");
 
-            $("#productPrice").text(originalPrice +"  " + discountPrice);
+            $(".original-price").text(originalPrice + " VND");
+            $(".discount-price").text(discountPrice + " VND");
             $("#stockCount").text("Còn lại: " + stock + " sản phẩm");
             $("#quantity").attr("max", stock);
             $("#size").val(selectedSize);

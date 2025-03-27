@@ -38,7 +38,7 @@
             }
 
             @Override
-            protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+            public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
                 HttpSession session = request.getSession();
                 Cart cart = (Cart) session.getAttribute("cart");
                 User user = (User) session.getAttribute("UserLogin");
@@ -78,7 +78,7 @@
 
                     //Tính tổng giá trị đơn hàng
                     BigDecimal totalPrice = selectedItems.values().stream()
-                            .map(item -> item.getProductVariant().getPrice().multiply(BigDecimal.valueOf(item.getQuantity())))
+                            .map(item -> (item.getProductVariant().getDiscountPrice() != null ? item.getProductVariant().getDiscountPrice() : item.getProductVariant().getPrice()).multiply(BigDecimal.valueOf(item.getQuantity())))
                             .reduce(BigDecimal.ZERO, BigDecimal::add);
 
                     // tạo đơn hàng
@@ -95,7 +95,7 @@
                         orderDetail.setOrderID(order);
                         orderDetail.setProductVariantID(item.getProductVariant());
                         orderDetail.setQuantity(item.getQuantity());
-                        orderDetail.setPrice(item.getProductVariant().getPrice().multiply(BigDecimal.valueOf(item.getQuantity())));
+                        orderDetail.setPrice((item.getProductVariant().getDiscountPrice() != null ? item.getProductVariant().getDiscountPrice() : item.getProductVariant().getPrice()).multiply(BigDecimal.valueOf(item.getQuantity())));
                         return orderDetail;
                     }).collect(Collectors.toList());
 
@@ -103,6 +103,13 @@
 
                     if("vnpay".equals(paymentMethod)){
                         String vnpayUrl = createVnpayPaymentUrl(request, order.getId(), totalPrice);
+
+                        selectedIds.forEach(id -> cartService.removeCartItem(cart, id));
+                        session.setAttribute("cart", cart);
+                        Integer cartCount = cartService.getTotalQuantity(cart);
+                        session.setAttribute("cartCount", cartCount);
+
+                        // Trả về URL thanh toán
 
                         Map<String, Object> paymentResponse = new HashMap<>();
                         paymentResponse.put("paymentUrl", vnpayUrl);

@@ -39,7 +39,8 @@ public class AuthenticationFilter implements Filter {
                 || path.equals("/logout")
                 || path.equals("/callback")
                 || (path.equals("/products") && queryString != null && queryString.startsWith("action=productBestSeller"))
-                || path.equals("/product/ProductBestSeller.jsp");
+                || path.equals("/product/ProductBestSeller.jsp")
+                || (path.equals("/products") && queryString != null && queryString.startsWith("action=showDiscountedProducts"));
     }
 
     private boolean isUserAuthorized(String role, String path, String queryString) {

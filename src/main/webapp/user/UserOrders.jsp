@@ -224,9 +224,9 @@
 
             <div class="order-item">
                 <div class="item-image">
-                    <img src="${pageContext.request.contextPath}/${detail.productVariantID.productID.imageURL}">                </div>
+                    <img src="${pageContext.request.contextPath}/${detail.productVariantID.product.imageURL}">                </div>
                 <div class="item-details">
-                    <div class="item-name">${detail.productVariantID.productID.name}</div>
+                    <div class="item-name">${detail.productVariantID.product.name}</div>
                     <div class="item-specs">
                             ${detail.productVariantID.size}
                     </div>
